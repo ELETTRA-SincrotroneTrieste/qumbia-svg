@@ -28,7 +28,7 @@ QumbiaSvg::~QumbiaSvg() {
     delete d;
 }
 
-QuDom &QumbiaSvg::quDom() {
+QuDom QumbiaSvg::quDom() const {
     return d->qudom;
 }
 

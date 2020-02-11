@@ -2,6 +2,7 @@
 #include <cumacros.h>
 #include <QMap>
 #include <QtDebug>
+#include <qudomelement.h>
 
 class QuDomPrivate {
 public:
@@ -13,6 +14,13 @@ public:
 
 QuDom::QuDom() {
     d = new QuDomPrivate;
+}
+
+QuDom::QuDom(const QuDom &other) {
+    d = new QuDomPrivate;
+    d->domdoc = other.d->domdoc;
+    d->id_cache = other.d->id_cache;
+    d->dom_listeners = other.d->dom_listeners;
 }
 
 QuDom::~QuDom() {
@@ -73,6 +81,9 @@ void QuDom::collectItemIds(const QDomNode &parent) const {
 }
 
 bool QuDom::setItemAttribute(const QString &id, const QString &attnam, const QString &value) {
+    qDebug() << __PRETTY_FUNCTION__ << d << &d->id_cache;
+    qDebug() << __PRETTY_FUNCTION__ << d << d->id_cache.size();
+    qDebug() << __PRETTY_FUNCTION__ << "seeing if cache " << d->id_cache.keys() << "contains " << id;
     bool item_exists = d->id_cache.contains(id);
     if(item_exists) {
         QDomElement& e = d->id_cache[id];
@@ -92,6 +103,15 @@ QList<QuDomListener *> QuDom::getDomListeners() const {
     return d->dom_listeners;
 }
 
+QMap<QString, QDomElement> &QuDom::m_get_id_cache() const {
+    return d->id_cache;
+}
+
+void QuDom::m_notify_attribute_change(const QString &id, const QString &attnam, const QString &attval) {
+    foreach (QuDomListener *l, d->dom_listeners)
+        l->onAttributeChange(id, attnam, attval);
+}
+
 /*!
  * \brief returns the QDomElement with the given id, searched under parent
  * \param id the id to search for
@@ -102,20 +122,16 @@ QList<QuDomListener *> QuDom::getDomListeners() const {
  * the *item* attribute), use the operator [] or findByItemId, that perform the search
  * in a cached id - QDomElement map.
  */
-QDomElement QuDom::findById(const QString& id, const QDomNode& parent) const {
-    QDomNodeList nl = parent.childNodes();
-    for(int i = 0; i < nl.size(); i++) {
-        QDomNode node = nl.at(i);
-        QDomElement e = node.toElement();
-        if(!e.isNull() && e.attribute("id") == id)
-            return e;
-        if(node.hasChildNodes()) {
-            QDomElement de = findById(id, node);
-            if(!de.isNull())
-                return de;
-        }
-    }
-    return QDomElement();
+QDomElement QuDom::findById(const QString& id, const QDomElement& parent) const {
+    QDomElement root;
+    if(d->id_cache.contains(id))
+        root = d->id_cache[id].toElement();
+    if(root.isNull())
+        root = parent.toElement();
+    else
+        return root;
+    QuDomElement qde(parent);
+    return qde.findById(id, root).element();
 }
 
 /*! \brief Same as operator []: finds the element with the provided id among those
@@ -146,11 +162,9 @@ QDomElement& QuDom::findByItemId(const QString &id)
  *
  */
 QDomElement &QuDom::operator[](const char *item_id) {
+
     if(!d->id_cache.contains(item_id)) {
-        QDomElement el = d->domdoc.createElement("element");
-        el.setAttribute("id", item_id);
-        el.setAttribute("item", true);
-        d->id_cache[item_id] = el;
+        return d->empty_el;
     }
     return d->id_cache[item_id];
 }

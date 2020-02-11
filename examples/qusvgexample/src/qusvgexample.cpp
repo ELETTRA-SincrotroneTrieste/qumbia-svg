@@ -77,7 +77,7 @@ QuSvgExample::QuSvgExample(CumbiaPool *cumbia_pool, QWidget *parent) :
     }
 
     qDebug() << __PRETTY_FUNCTION__ << "1. Test find elements that are items";
-    QuDom &dom = m_qu_svg->quDom();
+    QuDom dom = m_qu_svg->quDom();
     foreach(QString id, QStringList() << "ellipse" << "stella" << "rettangolo"
             << "duecerchi" << "spirale") {
         qDebug() << id << dom[id].attribute("item") << &dom[id] << "NULL? " << dom[id].isNull();
@@ -86,7 +86,7 @@ QuSvgExample::QuSvgExample(CumbiaPool *cumbia_pool, QWidget *parent) :
     qDebug() << "";
     qDebug() << "";
 
-    qDebug() << __PRETTY_FUNCTION__ << "2. Test find elements that are not items, with findById";
+    printf("\e[1;32m2. Test find elements that are not items, with findById\e[0m\n");
     foreach(QString id, QStringList() << "ellipse" << "stella" << "rettangolo_blu"
             << "spirale") {
         QDomElement found = dom.findById(id, dom.getDocument().documentElement());
@@ -98,7 +98,23 @@ QuSvgExample::QuSvgExample(CumbiaPool *cumbia_pool, QWidget *parent) :
 
     qDebug() << __PRETTY_FUNCTION__ << "3. test change attributes";
     dom.setItemAttribute("rettangolo", "duck", "now");
-    qDebug() << __PRETTY_FUNCTION__ << "dom svg" << dom.getDocument().toString();
+//    qDebug() << __PRETTY_FUNCTION__ << "dom svg" << dom.getDocument().toString();
+
+    printf("\e[1;32m4. test QuDomElement\e[0m\n");
+    QuDomElement de(dom);
+    qDebug() << "- ellipse" << "IS NULL? " << de["ellipse"].isNull();
+    qDebug() << "- rettangolo" << "IS NULL? " << de["rettangolo"].isNull();
+    de["rettangolo"].a("x", "30");
+    de["rettangolo"].a("style", "fill:#06fff0;stroke:#007cff;"
+                                           "stroke-width:2;");
+    qDebug() << "- cambio style under duecerchi/ellipse";
+
+    de["duecerchi/ellipse"].a("style", "fill:#f6f0f0;stroke:#000c00;");
+    de["duecerchi/gr2/cerchio_blu"].a("rx", "41");
+    de["duecerchi"]["gr2"]["cerchio_blu"].a("style", "fill:#ccccff;stroke:#ff0009;");
+    de["duecerchi/gr2/stellina"].a("style", "fill:#ff00ac;stroke:#33ffaa");
+
+
 }
 
 QuSvgExample::~QuSvgExample()
@@ -111,11 +127,15 @@ void QuSvgExample::applyClicked()
     QString id = findChild<QLineEdit *>("le_id")->text();
     QString attn = findChild<QLineEdit *>("le_attnam")->text();
     QString attv = findChild<QLineEdit *>("le_attval")->text();
-    QuDom &dom = m_qu_svg->quDom();
-    bool ok = dom.setItemAttribute(id, attn, attv);
-    if(!ok)
+    QuDom dom = m_qu_svg->quDom();
+    QuDomElement dome(dom);
+    QuDomElement de = dome[id];
+    if(de.isNull()) {
         QMessageBox::information(this, "Could not change attribute",
                                  QString("Failed to set value \"%1\" on attribute"
                                          "\'%2\" element id \"%3\"").arg(attv)
                                  .arg(attn).arg(id));
+    }
+    else
+        de.a(attn, attv);
 }

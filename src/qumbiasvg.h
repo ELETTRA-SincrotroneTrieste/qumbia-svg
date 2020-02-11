@@ -48,7 +48,7 @@ public:
     QumbiaSvg(QuDomListener *domlis);
     virtual ~QumbiaSvg();
 
-    QuDom &quDom();
+    QuDom quDom() const;
 
     bool loadFile(const QString &fileName);
     bool loadSvg(const QByteArray &svg);

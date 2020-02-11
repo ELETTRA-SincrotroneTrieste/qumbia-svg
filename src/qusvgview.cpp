@@ -198,7 +198,8 @@ void QuSvgView::onDocumentLoaded(QuDom *dom, const QStringList &ids) {
         svgItem->setSharedRenderer(renderer);
         svgItem->setElementId(id);
         svgItem->setFlag(QGraphicsItem::ItemIsMovable, true);
-        svgItem->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+//        svgItem->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+        svgItem->setCacheMode(QGraphicsItem::NoCache);
         svgItem->setObjectName(id);
         s->addItem(svgItem);
         d->items_cache[id] = svgItem;
@@ -209,17 +210,22 @@ void QuSvgView::onDocumentLoaded(QuDom *dom, const QStringList &ids) {
 void QuSvgView::onAttributeChange(const QString &id,
                                   const QString &attribute,
                                   const QString &value) {
-    qDebug() << __PRETTY_FUNCTION__ << id << attribute << value;
     findChild<QSvgRenderer *>()->load(d->m_dom->getDocument().toString().toLatin1());
-    qDebug() << __PRETTY_FUNCTION__ << "dom svg" << d->m_dom->getDocument().toString();
+
     QGraphicsSvgItem *it = d->items_cache[id];
     if(it) {
-        QPointF pos = renderer()->boundsOnElement(id).topLeft();
+        QRectF oldBounds = it->boundingRect();
+        QRectF bounds = renderer()->boundsOnElement(id);
+        qDebug() << __PRETTY_FUNCTION__ << "bounds on element " << id << bounds;
+        QPointF pos = bounds.topLeft();
+        it->update();
         if(pos != it->pos()) {
             qDebug() << __PRETTY_FUNCTION__ << it->objectName() << "position changed? " << it->pos() << "-->" << pos;
             it->setPos(pos);
         }
-        else
-            it->update();
+
+    }
+    else {
+
     }
 }
