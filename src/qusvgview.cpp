@@ -1,5 +1,5 @@
 #include "qusvgview.h"
-#include "qumbiasvg.h"
+#include "qusvg.h"
 #include "qudom.h"
 
 #include <QSvgRenderer>
@@ -203,16 +203,21 @@ void QuSvgView::onDocumentLoaded(QuDom *dom, const QStringList &ids) {
         svgItem->setObjectName(id);
         s->addItem(svgItem);
         d->items_cache[id] = svgItem;
+        qDebug() << __PRETTY_FUNCTION__ << "adding in cache " << id << svgItem;
         svgItem->setPos(renderer->boundsOnElement(id).topLeft());
     }
 }
 
 void QuSvgView::onAttributeChange(const QString &id,
                                   const QString &attribute,
-                                  const QString &value) {
+                                  const QString &value, QuDomElement *dom_e) {
     findChild<QSvgRenderer *>()->load(d->m_dom->getDocument().toString().toLatin1());
 
-    QGraphicsSvgItem *it = d->items_cache[id];
+    QGraphicsSvgItem *it = d->items_cache.value(id);
+    if(!it)
+        it = d->items_cache.value(dom_e->itemId());
+    qDebug() << __PRETTY_FUNCTION__ << "graphics item id" << dom_e->itemId()
+             << d->items_cache.keys() << "item" << it;
     if(it) {
         QRectF oldBounds = it->boundingRect();
         QRectF bounds = renderer()->boundsOnElement(id);

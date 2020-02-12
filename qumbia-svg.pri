@@ -45,14 +45,3 @@ QT       += widgets xml svg opengl
 
 LIBS += -L$${INSTALL_ROOT}/lib -l$${qumbia_svg_LIB}
 
-HEADERS += \
-    $$PWD/src/qudom.h \
-    $$PWD/src/qudomelement.h \
-    $$PWD/src/qumbiasvg.h \
-    $$PWD/src/qusvgview.h
-
-SOURCES += \
-    $$PWD/src/qudom.cpp \
-    $$PWD/src/qudomelement.cpp \
-    $$PWD/src/qumbiasvg.cpp \
-    $$PWD/src/qusvgview.cpp

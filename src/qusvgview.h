@@ -14,7 +14,7 @@ class QPaintEvent;
 QT_END_NAMESPACE
 
 class QuSvgViewPrivate;
-class QumbiaSvg;
+class QuSvg;
 class QuDom;
 
 class QuSvgView : public QGraphicsView, public QuDomListener
@@ -59,7 +59,8 @@ private:
     // QuDomListener interface
 public:
     void onDocumentLoaded(QuDom *dom, const QStringList &ids);
-    void onAttributeChange(const QString &id, const QString &attribute, const QString &value);
+    void onAttributeChange(const QString &id, const QString &attribute,
+                           const QString &value, QuDomElement* dom_e);
 };
 
 #endif // QUSVGVIEW_H

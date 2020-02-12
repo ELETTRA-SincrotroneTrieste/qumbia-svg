@@ -30,6 +30,9 @@ public:
 
     QString itemId() const;
 
+    bool splitAttName(const QString& full, QString& attribute, QString& property);
+    QString toDeclarationList(QString &name, const QString &value);
+
 private:
     QuDom m_qudom;
     QDomElement m_dome;

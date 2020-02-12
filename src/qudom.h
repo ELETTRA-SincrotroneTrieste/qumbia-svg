@@ -6,6 +6,8 @@
 
 class QuDomPrivate;
 class QuDom;
+class QuDomElement;
+class QuSvgLink;
 
 class QuDomListener {
 public:
@@ -14,7 +16,8 @@ public:
 
     virtual void onAttributeChange(const QString& source,
                                    const QString& id,
-                                   const QString& value) = 0;
+                                   const QString& value,
+                                   QuDomElement* dom_e) = 0;
 };
 
 class QuDom
@@ -26,7 +29,7 @@ public:
     virtual ~QuDom();
 
     QDomDocument getDocument() const;
-    bool setContent(const QByteArray &svg, QString *m_msg, int *line,  int *column);
+    bool setContent(const QByteArray &svg);
 
     QString getAttribute(const QDomElement& el, const QString& attribute);
     double getAttributeAsDouble(const QDomElement& el, const QString& attribute, bool *ok = nullptr);
@@ -42,7 +45,7 @@ public:
     QDomElement& operator[] (const std::string& id);
     const QDomElement& operator[] (const std::string&) const;
 
-    void collectItemIds(const QDomNode &parent) const;
+    void parse(const QDomNode &parent) const;
 
     bool setItemAttribute(const QString& id, const QString& attnam, const QString& attval);
     QString itemAttribute(const QString& id, const QString& attnam);
@@ -51,11 +54,19 @@ public:
     void addDomListener(QuDomListener *l);
     QList<QuDomListener *> getDomListeners() const;
 
+    QList<QuSvgLink> takeLinkDefs() const;
+    bool hasLinks() const;
+
+    QString linkTagName() const;
+
+    QString error() const;
+
 private:
     QuDomPrivate *d;
 
     QMap<QString, QDomElement >& m_get_id_cache() const;
-    void m_notify_attribute_change(const QString& id, const QString& attnam, const QString& attval);
+    void m_notify_attribute_change(const QString& id, const QString& attnam,
+                                   const QString& attval, QuDomElement *dome);
 };
 
 #endif // QUDOM_H

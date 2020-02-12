@@ -29,12 +29,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES +=
+SOURCES += \
+        src/cumbia/qusvgresultdata.cpp \
+        src/cumbia/qusvgresultdatainterpreter.cpp \
+        src/qusvglink.cpp \
+        src/cumbia/qusvgreaderspool.cpp \
+        src/cumbia/qusvgreader.cpp \
+        src/qudom.cpp \
+        src/qudomelement.cpp \
+        src/qusvg.cpp \
+        src/qusvgview.cpp
 
-HEADERS +=
+HEADERS += \
+    src/cumbia/qusvgdatalistener.h \
+    src/cumbia/qusvgresultdata.h \
+    src/cumbia/qusvgresultdatainterpreter.h \
+    src/qusvglink.h \
+    src/cumbia/qusvgreaderspool.h \
+        src/cumbia/qusvgreader.h \
+        src/qudom.h \
+        src/qudomelement.h \
+        src/qusvg.h \
+        src/qusvgview.h
 
 DISTFILES += \
-    qumbia-svg.pri \
     Doxyfile
 
 unix {
@@ -75,7 +93,10 @@ CONFIG += create_pc create_prl no_install_prl
     QMAKE_PKGCONFIG_VERSION = $${VERSION}
     QMAKE_PKGCONFIG_DESTDIR = pkgconfig
 
-INCLUDEPATH += src
+INCLUDEPATH += src src/cumbia
 
 # remove ourselves from -l (.pri)
 LIBS -= -l$${qumbia_svg_LIB}
+
+RESOURCES += \
+    qumbia-svg.qrc

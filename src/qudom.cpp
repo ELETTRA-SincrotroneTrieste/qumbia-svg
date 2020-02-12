@@ -4,12 +4,16 @@
 #include <QtDebug>
 #include <qudomelement.h>
 
+#include "qusvglink.h"
+
 class QuDomPrivate {
 public:
     QDomDocument domdoc;
     QMap<QString, QDomElement > id_cache;
     QList<QuDomListener *> dom_listeners;
     QDomElement empty_el;
+    QString error;
+    QList<QuSvgLink > links;
 };
 
 QuDom::QuDom() {
@@ -31,18 +35,25 @@ QDomDocument QuDom::getDocument() const {
     return d->domdoc;
 }
 
-bool QuDom::setContent(const QByteArray &svg, QString *msg, int *line, int *column)
+bool QuDom::setContent(const QByteArray &svg)
 {
-    bool ok = d->domdoc.setContent(svg, msg, line, column);
+    int line, column;
+    QString msg;
+    bool ok = d->domdoc.setContent(svg, &msg, &line, &column);
     if(ok) {
-        collectItemIds(d->domdoc.documentElement());
-        if(d->id_cache.isEmpty())
-            printf("\e[1;33m* \e[0mQuDom.setContent: no elements with \"item=\"true\" found in document\n");
-        foreach(QuDomListener *l, d->dom_listeners)
-            l->onDocumentLoaded(this, d->id_cache.keys());
-        qDebug() << __PRETTY_FUNCTION__ << "id cache" << d->id_cache.keys();
+        parse(d->domdoc.documentElement());
+        if(d->error.isEmpty()) {
+            if(d->id_cache.isEmpty())
+                printf("\e[1;33m* \e[0mQuDom.setContent: no elements with \"item=\"true\" found in document\n");
+            foreach(QuDomListener *l, d->dom_listeners)
+                l->onDocumentLoaded(this, d->id_cache.keys());
+        }
     }
-    return ok;
+    else {
+        d->error = QString("QDom.setContent: QDomDocument.setContent returned an error:"
+                           "\"%1\" at line %2 column %3").arg(msg).arg(line).arg(column);
+    }
+    return d->error.isEmpty();
 }
 
 QString QuDom::getAttribute(const QDomElement &el, const QString &attribute)
@@ -56,27 +67,44 @@ double QuDom::getAttributeAsDouble(const QDomElement &el, const QString &attribu
     return d;
 }
 
-/*!
- * \brief Find the elements having the *item* attribute set to "true" and return a
- *        string list with their ids.
- * \return List of the ids of the elements in the DOM that have the *item* attribute
- *         set to "true"
+/* 1. Find the elements having the "item" attribute set to a value different from "false"
+ *    and fill a map of ids -> QDomElement that will be associated to a QGraphicsSvgItem
+ * 2. Look for the "link" nodes and create a QuSvgLink for each of them. QuSvgLink
+ *    represents the link configuration: source, target attribute on the parent,
+ *    id of the parent, an optional alias.
  *
- * \note Elements with the *item="true" attribute will have a dedicated QGraphicsSvgItem
- *       in the QGraphicsScene. Respective child items will be rendered by the same
- *       QGraphicsSvgItem
+ *  NOTE
+ *  Elements with the item attribute defined and not set to "false" will have a dedicated QGraphicsSvgItem
+ *  in the QGraphicsScene. Its child items will be rendered by the same
+ *  QGraphicsSvgItem
  */
-void QuDom::collectItemIds(const QDomNode &parent) const {
+
+int indent = 0;
+
+void QuDom::parse(const QDomNode &parent) const {
+    ++indent;
+    d->error.clear();
+    // recursive into children
     QDomNodeList nl = parent.childNodes();
-    for(int i = 0; i < nl.size(); i++) {
+    for(int i = 0; i < nl.size() && d->error.isEmpty(); i++) {
         QString id;
         QDomElement de = nl.at(i).toElement();
-        if(!de.isNull() && de.hasAttribute("item")) {
+        if(!de.isNull() && !de.hasAttribute("id") && de.hasAttribute("item"))
+            d->error = QString("QuDom: line %1 col %2: item %3 has no id").arg(de.lineNumber()).arg(de.columnNumber()).arg(de.tagName());
+        else if(!de.isNull() && de.hasAttribute("item")) {
             id = de.attribute("id");
-            if(id.compare("false", Qt::CaseInsensitive) != 0)
+            if(de.attribute("item").compare("false", Qt::CaseInsensitive) != 0)
                 d->id_cache[id] = de;
         }
-        collectItemIds(de);
+        if(!de.isNull() && d->error.isEmpty() && de.tagName() == linkTagName()) {
+            QuSvgLink link(de);
+            if(link.isValid())
+                d->links.append(link);
+            else
+                d->error = QString("QuDom: error building link: %1").arg(link.message());
+        }
+        if(d->error.isEmpty())
+            parse(de);
     }
 }
 
@@ -86,11 +114,9 @@ bool QuDom::setItemAttribute(const QString &id, const QString &attnam, const QSt
     qDebug() << __PRETTY_FUNCTION__ << "seeing if cache " << d->id_cache.keys() << "contains " << id;
     bool item_exists = d->id_cache.contains(id);
     if(item_exists) {
-        QDomElement& e = d->id_cache[id];
-        e.setAttribute(attnam, value);
-        foreach (QuDomListener *l, d->dom_listeners) {
-            l->onAttributeChange(id, attnam, value);
-        }
+        QuDomElement e = d->id_cache[id];
+        e.a(attnam, value);
+        m_notify_attribute_change(id, attnam, value, &e);
     }
     return item_exists;
 }
@@ -103,13 +129,30 @@ QList<QuDomListener *> QuDom::getDomListeners() const {
     return d->dom_listeners;
 }
 
+QList<QuSvgLink> QuDom::takeLinkDefs() const {
+    QList<QuSvgLink> links = d->links;
+    d->links.clear();
+    return links;
+}
+
+/*!
+ * \brief Returns true if the dom contains *<link>* nodes.
+ * \return true if the DOM contains *<link>* nodes, false otherwise.
+ */
+bool QuDom::hasLinks() const {
+    return d->links.size() > 0;
+}
+
 QMap<QString, QDomElement> &QuDom::m_get_id_cache() const {
     return d->id_cache;
 }
 
-void QuDom::m_notify_attribute_change(const QString &id, const QString &attnam, const QString &attval) {
+void QuDom::m_notify_attribute_change(const QString &id,
+                                      const QString &attnam,
+                                      const QString &attval,
+                                      QuDomElement *dome) {
     foreach (QuDomListener *l, d->dom_listeners)
-        l->onAttributeChange(id, attnam, attval);
+        l->onAttributeChange(id, attnam, attval, dome);
 }
 
 /*!
@@ -189,4 +232,12 @@ QDomElement &QuDom::operator[](const std::string &id) {
 
 const QDomElement &QuDom::operator[](const std::string & id) const {
     return operator [](id.c_str());
+}
+
+QString QuDom::linkTagName() const {
+    return "link";
+}
+
+QString QuDom::error() const {
+    return d->error;
 }
