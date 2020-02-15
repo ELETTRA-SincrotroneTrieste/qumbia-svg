@@ -1,4 +1,5 @@
 #include "qudomelement.h"
+#include <cumacros.h>
 #include <QtDebug>
 #include <QRegularExpression>
 
@@ -64,29 +65,50 @@ QDomElement QuDomElement::m_recursiveFind(const QString &id, const QDomElement &
     return QDomElement();
 }
 
+/*!
+ * \brief QuDomElement::operator [] search a QuDomElement with the attribute *id*
+ *        matching the given id or *id path*
+ * \param id_path A single *id* or an *id path* in the form id1/id2/.../idN
+ * \return Either a null QuDomElement if the search criteria did not produce a result
+ *         or the QuDomElement matching the input *id* or *id path*.
+ *
+ * \par Observation
+ * If a *search path* is provided, the child nodes are selected hierarchically
+ * and the result is found faster.
+ *
+ * \par Notes
+ * - The *id* matching is performed on *this* QuDomElement first, before descending
+ *   into the children
+ * - The QuDom *id cache* is searched first. If the result is a miss, a recursive
+ *   search is performed on this QuDomElement's children.
+ *
+ * @see QuDom::setCacheElementsOnAccessEnabled
+ *
+ *
+ */
 QuDomElement &QuDomElement::operator [](const QString& id_path) {
     QMap<QString, QDomElement>& idcache = m_qudom.m_get_id_cache();
     QString id;
     id_path.contains("/") ? id = id_path.section('/', 0, 0) : id = id_path;
     if(idcache.contains(id)) {
         m_dome = idcache[id];
+        return *this;
     }
-    else {
-        findById(id, m_dome);
-    }
+    findById(id, m_dome);
     if(id_path.contains('/') && !m_dome.isNull()) {
         return operator [](id_path.section('/', 1, id_path.count('/')));
+    }
+    if(!m_dome.isNull() && m_qudom.cacheOnAccessEnabled()) {
+        m_qudom.m_add_to_cache(id, m_dome);
     }
     return *this;
 }
 
-QuDomElement &QuDomElement::operator [](const std::string& id)
-{
+QuDomElement &QuDomElement::operator [](const std::string& id) {
     return operator [](QString::fromStdString(id));
 }
 
-QuDomElement &QuDomElement::operator [](const char *id)
-{
+QuDomElement &QuDomElement::operator [](const char *id) {
     return operator [](QString(id));
 }
 
@@ -132,11 +154,9 @@ QString QuDomElement::attribute(const QString &a) const
  */
 void QuDomElement::setAttribute(const QString &name, const QString &value)
 {
-    qDebug() << __PRETTY_FUNCTION__ << "setting" << name << value;
     QString v, nam(name);
     name.count("/") == 1 ? v = toDeclarationList(nam, value) : v = value;
     if(!v.isEmpty()) {
-        qDebug() << __PRETTY_FUNCTION__ << "setting" << nam << v;
         m_dome.setAttribute(nam, v);
         m_qudom.m_notify_attribute_change(m_dome.attribute("id"), nam, v, this);
     }

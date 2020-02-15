@@ -25,7 +25,7 @@ public:
     CuContext *context;
     QSet<QuSvgLink>links;
     QSet<QuSvgReaderListener *>listeners;
-    QString src;
+    QString raw_src;
 };
 
 /** \brief Constructor with the parent widget, an *engine specific* Cumbia implementation and a CuControlsReaderFactoryI interface.
@@ -96,14 +96,14 @@ void QuSvgReader::setSource(const QString &s)
 {
     CuControlsReaderA * r = d->context->replace_reader(s.toStdString(), this);
     if(r) {
+        d->raw_src = s;
         r->setSource(s);
-        d->src = s;
     }
 }
 
 void QuSvgReader::unsetSource() {
     d->context->disposeReader();
-    d->src.clear();
+    d->raw_src.clear();
 }
 
 int QuSvgReader::addLink(const QuSvgLink &link) {
@@ -126,21 +126,24 @@ void QuSvgReader::removeListener(QuSvgReaderListener *dl) {
 }
 
 void QuSvgReader::pause() {
-    printf("QuSvtReader.pause: pausing reader\n");
+    printf("QuSvtReader.pause: pausing reader %s\n", qstoc(d->context->getReader()->source()));
     d->context->disposeReader();
 }
 
 void QuSvgReader::resume() {
-    printf("QuSvtReader.resume: resuming reader\n");
-    CuControlsReaderA * r = d->context->replace_reader(d->src.toStdString(), this);
+    printf("QuSvtReader.resume: resuming reader %s\n", qstoc(d->raw_src));
+    CuControlsReaderA * r = d->context->replace_reader(d->raw_src.toStdString(), this);
     if(r)
-        r->setSource(d->src);
+        r->setSource(d->raw_src);
+}
+
+QString QuSvgReader::rawSrc() const {
+    return d->raw_src;
 }
 
 void QuSvgReader::m_configure(const CuData& da) {
     printf("\e[1;33m [CONF]\e[0m: QuSvgReader::m_configure: %s\n", da.toString().c_str());
 }
-
 
 void QuSvgReader::onUpdate(const CuData &da) {
     d->read_ok = !da["err"].toBool();
@@ -155,8 +158,44 @@ void QuSvgReader::onUpdate(const CuData &da) {
     }
     foreach(const QuSvgLink &link, d->links) {
         foreach(QuSvgReaderListener* l, d->listeners)
-            l->onUpdate(QuSvgResultData(da, link.id, link.objective,
-                                        link.property, link.key_hint));
+            l->onUpdate(QuSvgResultData(da, link));
     }
 }
 
+/*!
+ * \brief Set options on the reader
+ * \param options a map of option-names - option-values to set on the CuContext
+ *
+ * The method tries to convert the values into bool (if value is either "true" or "false"),
+ * integer (if no '.' or 'e' characters are found) or double. If conversion to numbers
+ * fails, the option is set as std::string
+ */
+void QuSvgReader::setOptions(const QMap<QString, QString> &options) {
+    if(options.size() > 0) {
+        CuData o;
+        foreach(QString key, options.keys()) {
+            const std::string& k = key.toStdString();
+            const QString &v = options.value(key);
+            if(v.compare("true", Qt::CaseInsensitive) == 0)
+                o[k] = true;
+            else if(v.compare("false", Qt::CaseInsensitive) == 0)
+                o[k] = false;
+            else {
+                int i; double d;
+                bool ok = false;
+                if(!v.contains('.') && !v.contains('e')) {
+                    i = v.toInt(&ok);
+                    if(ok) o[k] = i;
+                }
+                else {
+                    d = v.toDouble(&ok);
+                    if(ok) o[k] = d;
+                }
+                if(!ok)
+                    o[k] = v.toStdString();
+            }
+        }
+        d->context->setOptions(o);
+        printf("QuSvgReader.\e[1;32msetOptions: %s\e[0m\n", o.toString().c_str());
+    }
+}

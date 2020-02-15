@@ -6,6 +6,7 @@
 #include <cucontrolsfactories_i.h>
 #include <cucontrolsfactorypool.h>
 #include <cudata.h>
+#include <cucontrolsutils.h>
 
 class QuSvgReadersPoolPrivate {
 public:
@@ -53,6 +54,8 @@ void QuSvgReadersPool::add_link(const QuSvgLink &link, QuSvgReaderListener *lis)
         if(reader) {
             d->r_map.insert(link.src, reader);
             reader->addListener(lis);
+            if(link.options.size() > 0)
+                reader->setOptions(link.options);
             reader->setSource(link.src);
         }
     }
@@ -61,4 +64,12 @@ void QuSvgReadersPool::add_link(const QuSvgLink &link, QuSvgReaderListener *lis)
     if(reader) {
         reader->addLink(link);
     }
+}
+
+void QuSvgReadersPool::activateSources(const QStringList &srcs, bool activate)
+{
+    foreach(QString raw_src, d->r_map.keys())
+        if(srcs.contains(raw_src))
+            activate ? d->r_map.value(raw_src)->resume() :
+                       d->r_map.value(raw_src)->pause();
 }

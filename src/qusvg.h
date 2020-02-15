@@ -12,6 +12,7 @@ class Cumbia;
 class CuControlsReaderFactoryI;
 class CuControlsWriterFactoryI;
 class QuSvgDataListener;
+class QuSvgReadersPool;
 
 /*! \mainpage
  *
@@ -37,15 +38,28 @@ class QuSvgDataListener;
  *
  * \subsection cumbia_connect Connect to sources
  * Each property of a svg object can be *connected* to a cumbia *source*.
- * The connection is defined by means of the connect metod that links a *cumbia source*
- * (as exposed by the available engines, e.g. Tango, EPICS, random, ...) to a
- * property (e.g. the *radius* of a circle, a color, a position or a width) of an
- * element* identified by its *id*.
+ * The connection can be directly defined in the *svg* file, by introducing a
+ * *<link>* element as *direct child* of the target element.
+ * The *<link>* element will contain the following attributes
+ * - *src* (compulsory): specifies the name of the source of data
+ * - *attribute*: specifies the *target attribute* in the *parent* that will be changed
+ *   upon new data from *src*.
+ * If *attribute* is missing, then it must be clear from the context what is the
+ * target of the data update *in the parent*, for example, the parent is a *<text>*
+ * node.
+ * Please see also QuSvgLink::isValid
  *
+ * \subsubsection src_names Source names
+ * Source names must be conform to the syntax understood by the available engines,
+ * e.g. Tango, EPICS, random
+ *
+ * \subsection data_update Data update
  * When possible, the value of the source is directly updated: a number displayed on
  * a text label or the color of a state. In the other cases (an item position change
  * after a change in a value or a circle radius change proportional to another quantity)
  * custom mappings and transformations can be defined.
+ *
+ *
  *
  */
 class QuSvg : public QuSvgReaderListener
@@ -71,7 +85,11 @@ public:
               const CuControlsWriterFactoryI& w_fac);
 
     void addDataListener(QuSvgDataListener *l);
+    void addDataListener(const QString &id, QuSvgDataListener *l);
     void removeDataListener(QuSvgDataListener *l);
+    void removeDataListeners(const QString& id);
+
+    QuSvgReadersPool *getReadersPool() const;
 
 private:
     QumbiaSVGPrivate *d;

@@ -20,11 +20,15 @@
 // cumbia svg includes
 #include <qusvgview.h>
 #include <qusvg.h>
+#include <qusvglayerhelper.h>
+#include <qusvgreaderspool.h>
 #include <QtDebug>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QDateTime>
+#include <QComboBox>
+#include <QCheckBox>
 
 #include <QSettings> // save line edit values
 
@@ -84,9 +88,19 @@ QuSvgSynoptic::QuSvgSynoptic(CumbiaPool *cumbia_pool, QWidget *parent) :
     if(!ok) {
         QMessageBox::critical(this, "Error loading svg file", m_qu_svg->message());
     }
-    else
+    else {
         m_qu_svg->addDataListener(this);
+        m_qu_svg->addDataListener("mysvg", new QuSvgSynoGlobalListener);
+    }
 
+    QComboBox *cob = new QComboBox(this);
+    cob->insertItems(0, QStringList() << "daduck_layer" << "duckrect_layer");
+    QCheckBox *cb = new QCheckBox("Visible", this);
+    onLayerSelectChanged(0); // initialize checkbox
+    connect(cob, SIGNAL(currentIndexChanged(int)), this, SLOT(onLayerSelectChanged(int)));
+    connect(cb, SIGNAL(clicked(bool)), this, SLOT(onLayerVisibilityChange(bool)));
+    lo->addWidget(cob, 6, 0, 1, 4);
+    lo->addWidget(cb, 6, 4, 1, 1);
 }
 
 QuSvgSynoptic::~QuSvgSynoptic()
@@ -118,14 +132,39 @@ void QuSvgSynoptic::applyClicked()
         de.a(attn, attv);
 }
 
+void QuSvgSynoptic::onLayerSelectChanged(int ) {
+    QString layernam = findChild<QComboBox *>()->currentText();
+    QuDomElement de(m_qu_svg->quDom());
+    QuDomElement layer = de[layernam];
+    qDebug() << __PRETTY_FUNCTION__ << layer.a("visibility");
+    findChild<QCheckBox *>()->setChecked(layer.a("visibility") == "visible"
+                                      || layer.a("visibility").isEmpty());
+}
+
+void QuSvgSynoptic::onLayerVisibilityChange(bool visible) {
+    QuSvgLayerHelper lh(*m_qu_svg);
+    QObject::connect(&lh, SIGNAL(activeSourcesChanged(QStringList,bool)),
+            m_qu_svg->getReadersPool(), SLOT(activateSources(QStringList,bool)));
+    lh.setLayerVisible(findChild<QComboBox *>()->currentText(), visible);
+}
+
 bool QuSvgSynoptic::onUpdate(const QuSvgResultData &res, QuDom *qudom)
 {
     printf("QuSvgSynoptic.onUpdate [\e[1;32mDATA\e[0m]: %s %s [\e[1;36mRECIPIENT\e[0m]: "
         "id: \"\e[0;32m%s\e[0m\" attribute: \"%s/\e[1;36m%s\e[0m\"\n", qstoc(QDateTime::fromMSecsSinceEpoch(
                      res.data["timestamp_ms"].toLongInt()).toString()),
             res.data["value"].toString().c_str(),
-         qstoc(res.id), qstoc(res.attribute), qstoc(res.property()));
+         qstoc(res.link.id), qstoc(res.link.attribute), qstoc(res.link.property));
 
     printf("\e[1;35m: returning false: automatic processing...\e[0m\n");
     return false;
+}
+
+
+bool QuSvgSynoGlobalListener::onUpdate(const QuSvgResultData &res, QuDom *qudom)
+{
+    printf("\e[1;32mQuSvgSynoGlobalListener::onUpdate: specific global listener received"
+           "id %s node %s data %s\e[0m\n",
+           qstoc(res.link.id), qstoc(res.link.tag_name), res.data.toString().c_str());
+    return true;
 }

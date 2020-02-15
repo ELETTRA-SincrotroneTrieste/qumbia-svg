@@ -29,6 +29,9 @@ public:
 
     void add_link(const QuSvgLink &link, QuSvgReaderListener *l);
 
+public slots:
+    void activateSources(const QStringList& srcs, bool activate);
+
 signals:
 
 private:

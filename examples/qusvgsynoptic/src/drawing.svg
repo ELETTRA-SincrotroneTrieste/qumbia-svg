@@ -4,25 +4,13 @@
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
-   id="svg8"
+   id="mysvg"
    version="1.1"
    viewBox="0 0 210 297"
    height="297mm"
    width="210mm">
   <svg:defs
-     id="defs2">
-    <svg:filter
-       height="1.0251053"
-       y="-0.012552632"
-       width="1.022988"
-       x="-0.011493976"
-       id="filter4831"
-       style="color-interpolation-filters:sRGB">
-      <svg:feGaussianBlur
-         id="feGaussianBlur4833"
-         stdDeviation="0.30049106" />
-    </svg:filter>
-  </svg:defs>
+     id="defs2" />
   <svg:metadata
      id="metadata5">
     <rdf:RDF>
@@ -36,16 +24,52 @@
     </rdf:RDF>
   </svg:metadata>
   <svg:g
-     id="layer1">
+     id="daduck_layer">
     <svg:g
-       transform="translate(-6.047619,-0.75595238)"
+       item="rectangle_group"
+       id="rectangle_group">
+      <svg:rect
+         style="fill:#00ff00;fill-rule:nonzero;stroke:#007cff;stroke-width:3.39729857;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rettangolo"
+         width="127.17413"
+         height="53.787224"
+         x="43.138882"
+         y="16.730942">
+        <link
+           hint="state_color"
+           src="$1-&gt;State"
+           attribute="style/fill" />
+      </svg:rect>
+      <svg:text
+         id="text6205"
+         y="51.245438"
+         x="70.177216"
+         style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         xml:space="default">
+        <svg:tspan
+           style="stroke-width:0.26458332"
+           id="tspan6201"
+           y="51.245438"
+           x="69.090614">DAFUQQUZZANG</svg:tspan>
+        <link
+           src="$1/double_scalar" />
+      </svg:text>
+      <svg:ellipse
+         ry="7.9375005"
+         rx="8.3273783"
+         cy="29.77083"
+         cx="91.458336"
+         id="path6048"
+         style="opacity:1;fill:#ff86d5;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </svg:g>
+    <svg:g
        item="concentrico"
        id="duecerchi">
       <svg:ellipse
          style="fill:#00ff00;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="ellipse"
-         cx="120.57439"
-         cy="162.81845"
+         cx="101.5425"
+         cy="163.81288"
          rx="75.217262"
          ry="68.413696" />
       <svg:g
@@ -75,45 +99,40 @@
        id="stella"
        style="fill:#00ff00;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </svg:g>
-  <svg:path
-     item="sparzaiol"
-     d="m 52.08971,52.00478 c -2.066716,2.246674 -5.339142,-0.256275 -6.141118,-2.401601 -1.717635,-4.594764 2.194041,-9.084488 6.541901,-10.022648 6.836306,-1.475106 12.947865,4.144888 13.904177,10.682199 1.322153,9.038182 -6.099485,16.850504 -14.822498,17.785707 C 40.342092,69.252426 30.801245,59.993793 29.904935,49.085641 28.802357,35.667185 39.914822,24.384665 53.00803,23.536874 68.613332,22.526424 81.644859,35.502014 82.438327,50.780268 83.362313,68.571654 68.517931,83.356721 51.054635,84.092094 31.077583,84.93332 14.535966,68.216437 13.861279,48.568103 13.10026,26.405634 31.692206,8.1053652 53.525568,7.4932173 77.873299,6.8105734 97.933749,27.279424 98.481984,51.297805 98.738337,62.528774 94.816233,73.640154 87.690509,82.309489"
-     id="spirale"
-     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332" />
-  <svg:flowRoot
-     style="fill:black;fill-opacity:1;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;letter-spacing:0px;word-spacing:0px"
-     id="flowRoot4835"
-     xml:space="preserve"><svg:flowRegion
-       id="flowRegion4837"><svg:rect
-         y="111.0911"
-         x="485.6243"
-         height="122.85715"
-         width="160.08998"
-         id="rect4839" /></svg:flowRegion><svg:flowPara
-       id="flowPara4841"></svg:flowPara></svg:flowRoot>  <svg:g
-     id="g4850">
-    <svg:rect
-       style="fill:#00ff00;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rettangolo"
-       width="56"
-       height="42.333332"
-       x="128.4881"
-       y="29.392855"
-       item="rect">
-      <link
-         hint="state_color"
-         attribute="style/fill"
-         src="test/device/1-&gt;State" />
-    </svg:rect>
-    <svg:text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="139.09523"
-       y="52.071426"
-       id="text4845"><svg:tspan
-         id="tspan4843"
-         x="139.09523"
-         y="52.071426"
-         style="stroke-width:0.26458332">duck yea</svg:tspan></svg:text>
+  <link
+     src="$1/boolean_spectrum_ro" />
+  <svg:g
+     id="duckrect_layer">
+    <svg:g
+       item="true"
+       id="duckrect">
+      <svg:rect
+         style="opacity:1;fill:#ff86d5;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:3.94742584;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect8471"
+         width="71.687309"
+         height="37.920742"
+         x="127.3528"
+         y="217.01051" />
+      <svg:text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="143.70886"
+         y="237.69617"
+         id="ducktext"><svg:tspan
+           item="true"
+           x="141.20506"
+           y="237.69617"
+           id="tspan9054"
+           style="stroke-width:0.26458332">DUCK!</svg:tspan><link
+           options="properties-only:false;"
+           src="$1/long_scalar" /></svg:text>
+      <svg:ellipse
+         ry="5.2632909"
+         rx="6.0151896"
+         cy="243.61519"
+         cx="185.21771"
+         id="cerchiogiallo"
+         style="opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </svg:g>
   </svg:g>
 </svg:svg>

@@ -14,10 +14,12 @@ public:
     QDomElement empty_el;
     QString error;
     QList<QuSvgLink > links;
+    bool cache_on_access;
 };
 
 QuDom::QuDom() {
     d = new QuDomPrivate;
+    d->cache_on_access = true;
 }
 
 QuDom::QuDom(const QuDom &other) {
@@ -25,6 +27,9 @@ QuDom::QuDom(const QuDom &other) {
     d->domdoc = other.d->domdoc;
     d->id_cache = other.d->id_cache;
     d->dom_listeners = other.d->dom_listeners;
+    d->links = other.d->links;
+    d->error = other.d->error;
+    d->cache_on_access = other.d->cache_on_access;
 }
 
 QuDom::~QuDom() {
@@ -35,22 +40,33 @@ QDomDocument QuDom::getDocument() const {
     return d->domdoc;
 }
 
+/*!
+ * \brief Populate the DOM with the content in *svg*
+ * \param svg the svg source document as QByteArray
+ * \return true if successful, false otherwise
+ *
+ * If the method fails, the error message is available through the
+ * QuDom::error call.
+ *
+ * Cache is cleared before loading the document, so that multiple
+ * calls to setContent are possible on the same object.
+ */
 bool QuDom::setContent(const QByteArray &svg)
 {
     int line, column;
     QString msg;
+    d->id_cache.clear();
+    d->error.clear();
     bool ok = d->domdoc.setContent(svg, &msg, &line, &column);
     if(ok) {
         parse(d->domdoc.documentElement());
-        if(d->error.isEmpty()) {
-            if(d->id_cache.isEmpty())
-                printf("\e[1;33m* \e[0mQuDom.setContent: no elements with \"item=\"true\" found in document\n");
+        if(d->error.isEmpty() && !d->id_cache.isEmpty()) {
             foreach(QuDomListener *l, d->dom_listeners)
                 l->onDocumentLoaded(this, d->id_cache.keys());
         }
     }
     else {
-        d->error = QString("QDom.setContent: QDomDocument.setContent returned an error:"
+        d->error = QString("QuDom.setContent: error from QDomDocument.setContent:"
                            "\"%1\" at line %2 column %3").arg(msg).arg(line).arg(column);
     }
     return d->error.isEmpty();
@@ -59,12 +75,6 @@ bool QuDom::setContent(const QByteArray &svg)
 QString QuDom::getAttribute(const QDomElement &el, const QString &attribute)
 {
     return el.attribute(attribute);
-}
-
-double QuDom::getAttributeAsDouble(const QDomElement &el, const QString &attribute, bool *ok)
-{
-    double d = el.attribute(attribute).toDouble(ok);
-    return d;
 }
 
 /* 1. Find the elements having the "item" attribute set to a value different from "false"
@@ -78,11 +88,7 @@ double QuDom::getAttributeAsDouble(const QDomElement &el, const QString &attribu
  *  in the QGraphicsScene. Its child items will be rendered by the same
  *  QGraphicsSvgItem
  */
-
-int indent = 0;
-
 void QuDom::parse(const QDomNode &parent) const {
-    ++indent;
     d->error.clear();
     // recursive into children
     QDomNodeList nl = parent.childNodes();
@@ -109,16 +115,45 @@ void QuDom::parse(const QDomNode &parent) const {
 }
 
 bool QuDom::setItemAttribute(const QString &id, const QString &attnam, const QString &value) {
-    qDebug() << __PRETTY_FUNCTION__ << d << &d->id_cache;
-    qDebug() << __PRETTY_FUNCTION__ << d << d->id_cache.size();
-    qDebug() << __PRETTY_FUNCTION__ << "seeing if cache " << d->id_cache.keys() << "contains " << id;
-    bool item_exists = d->id_cache.contains(id);
-    if(item_exists) {
-        QuDomElement e = d->id_cache[id];
+    QuDomElement e = QuDomElement(findById(id, getDocument().firstChildElement()));
+    if(!e.isNull()) {
         e.a(attnam, value);
         m_notify_attribute_change(id, attnam, value, &e);
     }
-    return item_exists;
+    return !e.isNull();
+}
+
+QDomNode QuDom::m_findTexChild(const QDomNode &parent) {
+    QDomNode tn; // element with text
+    QDomNodeList dnl = parent.childNodes();
+    for(int i = 0; i < dnl.size(); i++) {
+        tn = dnl.at(i);
+        if(tn.isText())
+            return tn;
+        return m_findTexChild(tn);
+    }
+    return QDomNode();
+}
+
+bool QuDom::setItemText(const QString &id, const QString &text) {
+    QDomNode e = findById(id, getDocument().firstChildElement()).toElement();
+    if(!e.isNull() && !e.isText())
+        e = m_findTexChild(e);
+    if(!e.isNull()) {
+        e.toText().setNodeValue(text);
+        // checked dumping the result into a QTextStream + QString
+    }
+    return !e.isNull();
+}
+
+QString QuDom::itemText(const QString &id) const {
+    QString text;
+
+    return text;
+}
+
+bool QuDom::tagMatch(const QString &tag, const QString &other) const {
+    return other == tag || (QString("svg:%1").arg(other) == tag);
 }
 
 void QuDom::addDomListener(QuDomListener *l) {
@@ -147,6 +182,10 @@ QMap<QString, QDomElement> &QuDom::m_get_id_cache() const {
     return d->id_cache;
 }
 
+void QuDom::m_add_to_cache(const QString &id, QDomElement &dome) {
+    d->id_cache[id] = dome;
+}
+
 void QuDom::m_notify_attribute_change(const QString &id,
                                       const QString &attnam,
                                       const QString &attval,
@@ -161,9 +200,30 @@ void QuDom::m_notify_attribute_change(const QString &id,
  * \param parent the parent node
  * \return the found QDomElement or an empty QDomElement
  *
- * \note If you want to get references to dom elements that are *items* (i.e. have
- * the *item* attribute), use the operator [] or findByItemId, that perform the search
- * in a cached id - QDomElement map.
+ * \par Important observation
+ * Please consider using QuDomElement::operator [] if you want to perform a faster
+ * search when a *id search path* can be provided.
+ *
+ * Example:
+ * \code
+ * QuDomElement root_de(this);
+ * QuDomElement e = root_de["layer1/rectangle"];
+ * if(!e.isNull())
+ *      // found!
+ * \endcode
+ *
+ * QuDomElement::operator [] first performs a search on the cache.
+ *
+ * \par Notes
+ * Elements with the *item* attribute set to any value different from "false" are
+ * stored in a cache by default. Those represent nodes in the *svg* tree that are
+ * directly mapped into QGraphicsSvgItem items in the QuSvgView.
+ * If cacheElementsOnAccessEnabled is *true*, all other QDomElement are cached
+ * when they are found by this method, so that subsequent searches can hit the
+ * cache and be faster.
+ * If cacheElementsOnAccessEnabled is *false*, only elements with the *item*
+ * attribute not set to false remain cached, and every other search is done
+ * recursively traversing the tree.
  */
 QDomElement QuDom::findById(const QString& id, const QDomElement& parent) const {
     QDomElement root;
@@ -171,66 +231,49 @@ QDomElement QuDom::findById(const QString& id, const QDomElement& parent) const 
         root = d->id_cache[id].toElement();
     if(root.isNull())
         root = parent.toElement();
-    else
+    else // found in cache
         return root;
+    // search among children
     QuDomElement qde(parent);
-    return qde.findById(id, root).element();
-}
-
-/*! \brief Same as operator []: finds the element with the provided id among those
- *         with the *item* attribute defined
- *
- * @param id the id of the item to be searched
- * @return a reference to the QDomElement with the given id or a reference to an
- *         empty QDomElement
- *
- * \note
- * Use findById to search among all ids, including those that are not *item*s.
- */
-QDomElement& QuDom::findByItemId(const QString &id)
-{
-    return d->id_cache[id];
+    QDomElement found = qde.findById(id, root).element();
+    if(!found.isNull() && d->cache_on_access)
+        d->id_cache[id] = found;
+    return found;
 }
 
 /*!
- * \brief QuDom::operator [] returns the QDomElement with the given id or inserts a
- *        new element with tag name *"element"*, *id="item_id"* and *item="true"*
- * \param item_id the id to search in the *items cache*, i.e. the id must belong to
- *        an element whose attribute "item" is defined in the svg.
- * \return the QDomElement with the given id among the elements with the *item* attribute
- *         defined or a new element with tag name *"element"*, *id="item_id"* and *item="true"*
+ * \brief QuDom::operator [] returns the QDomElement with the given id or a
+ *        null QDomElement if the *svg* does not contain an element with the given id.
+ * \param id the id to search across the *svg* document
+ * \return the QDomElement with the given id or a null QDomElement
  *
- * \note item_id is searched under the elements with the *item* attribute defined.
- *       if you want to search through all the IDs, please use findById
+ * This is a convenience method for findById. It is equivalent to
+ * \code findById(id, getDocument().firstChildElement()); \endcode
+ *
+ * @see findById
  *
  */
-QDomElement &QuDom::operator[](const char *item_id) {
-
-    if(!d->id_cache.contains(item_id)) {
-        return d->empty_el;
-    }
-    return d->id_cache[item_id];
+QDomElement QuDom::operator[](const char *id) {
+    return findById(id, d->domdoc.firstChildElement());
 }
 
-const QDomElement &QuDom::operator[](const char *id) const {
-    if(d->id_cache.contains(id))
-        return d->id_cache[id];
-    return d->empty_el;
+const QDomElement QuDom::operator[](const char *id) const {
+    return findById(id, d->domdoc.firstChildElement());
 }
 
-QDomElement &QuDom::operator[](const QString &id) {
+QDomElement QuDom::operator[](const QString &id) {
     return operator [](id.toStdString().c_str());
 }
 
-const QDomElement &QuDom::operator[](const QString &id) const {
+const QDomElement QuDom::operator[](const QString &id) const {
     return operator [](id.toStdString().c_str());
 }
 
-QDomElement &QuDom::operator[](const std::string &id) {
+QDomElement QuDom::operator[](const std::string &id) {
     return operator [](id.c_str());
 }
 
-const QDomElement &QuDom::operator[](const std::string & id) const {
+const QDomElement QuDom::operator[](const std::string & id) const {
     return operator [](id.c_str());
 }
 
@@ -240,4 +283,12 @@ QString QuDom::linkTagName() const {
 
 QString QuDom::error() const {
     return d->error;
+}
+
+void QuDom::setCacheOnAccessEnabled(bool enabled) {
+    d->cache_on_access = enabled;
+}
+
+bool QuDom::cacheOnAccessEnabled() const {
+    return d->cache_on_access;
 }

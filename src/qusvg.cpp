@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QString>
 #include <QDir>
-#include <QSet>
+#include <QMultiMap>
 #include <QtDebug>
 
 #include <cumacros.h>
@@ -19,7 +19,7 @@ public:
     QString m_msg;
     QuDom qudom;
     QuSvgReadersPool *readers_pool;
-    QSet<QuSvgDataListener *> listeners;
+    QMultiMap<QString, QuSvgDataListener *> listeners;
 };
 
 QuSvg::QuSvg() {
@@ -72,7 +72,7 @@ bool QuSvg::loadSvg(const QByteArray &svg)
             d->readers_pool->setup_links(d->qudom.takeLinkDefs(), this);
         }
         else if(!d->readers_pool && d->qudom.hasLinks())
-           d->m_msg = "QumbiaSvg.loadSvg: init() has not been called";
+            d->m_msg = "QumbiaSvg.loadSvg: init() has not been called";
         // do not set an error condition if there are no <link> nodes in the DOM
     }
     return d->m_msg.isEmpty();
@@ -103,7 +103,7 @@ void QuSvg::init(Cumbia *cumbia, const CuControlsReaderFactoryI &r_fac)
 }
 
 void QuSvg::init(Cumbia *cumbia, const CuControlsReaderFactoryI &r_fac,
-                     const CuControlsWriterFactoryI &w_fac)
+                 const CuControlsWriterFactoryI &w_fac)
 {
     d->readers_pool = new QuSvgReadersPool(cumbia, r_fac, nullptr);
     // create writers here
@@ -117,9 +117,20 @@ void QuSvg::init(Cumbia *cumbia, const CuControlsReaderFactoryI &r_fac,
  * @see removeDataListener
  */
 void QuSvg::addDataListener(QuSvgDataListener *l) {
-    d->listeners.insert(l);
+    d->listeners.insertMulti(QString(), l);
 }
 
+/*!
+ * \brief associate the given listener to the specified id
+ * \param id the *id* attribute
+ * \param l the data listener
+ *
+ * \par Note
+ * *l* will receive updates only for that specific *id*.
+ */
+void QuSvg::addDataListener(const QString& id, QuSvgDataListener *l) {
+    d->listeners.insertMulti(id, l);
+}
 
 /*!
  * \brief Remove the given observer from the list of data listeners
@@ -128,24 +139,65 @@ void QuSvg::addDataListener(QuSvgDataListener *l) {
  * @see addDataListener
  */
 void QuSvg::removeDataListener(QuSvgDataListener *l) {
-    d->listeners.remove(l);
+    QMutableMapIterator<QString, QuSvgDataListener *> mi(d->listeners);
+    while(mi.hasNext()) {
+        mi.next();
+        if(mi.value() == l)
+            mi.remove();
+    }
+}
+
+/*!
+ * \brief removes all listeners associated to id
+ * \param id the element with id *id*
+ *
+ * \par Note
+ * calling removeDataListener with an empty string causes all listeners
+ * previously added with QuSvg::addDataListener(QuSvgDataListener *l) to
+ * be removed at once.
+ */
+void QuSvg::removeDataListeners(const QString &id){
+    d->listeners.remove(id);
+}
+
+QuSvgReadersPool *QuSvg::getReadersPool() const {
+    return d->readers_pool;
 }
 
 void QuSvg::onUpdate(const QuSvgResultData &rd) {
-    foreach(QuSvgDataListener *l, d->listeners) {
+    QList<QuSvgDataListener *> liss;
+    const QString& id = rd.link.id;
+    d->listeners.contains(id) ? liss = d->listeners.values(id)
+            : liss = d->listeners.values(QString());
+
+    foreach(QuSvgDataListener *l, liss) {
         bool accept = l->onUpdate(rd, &d->qudom);
         if(!accept) {
             // do our best
             printf("QuSvg.onUpdate: \e[1;32mautomatically processing\e[0m %s\t\t"
-                   "%s %s/%s \e[1;34mhint: %s\e[0m\n",
-                   rd.data.toString().c_str(), qstoc(rd.id), qstoc(rd.attribute),
-                   qstoc(rd.property()), qstoc(rd.key_hint));
-            QuSvgResultDataInterpreter interpreter(rd);
+                   "%s attribute \"%s/%s\" \e[1;34mhint: %s\e[0m\n",
+                   rd.data.toString().c_str(), qstoc(rd.link.id), qstoc(rd.link.attribute),
+                   qstoc(rd.link.property), qstoc(rd.link.key_hint));
+            QuSvgResultDataInterpreter interpreter(rd, &d->qudom);
             QString i = interpreter.interpret();
-            printf("interpreted: %s to set on %s %s\n", qstoc(i),
-                   qstoc(rd.id), qstoc(rd.full_attribute()));
-            if(!i.isEmpty()) {
-                d->qudom.setItemAttribute(rd.id, rd.full_attribute(), i);
+            printf("interpreted value (as string): \"%s\" objective id \"%s\" node \"%s\" att: %s {\e[1;36m%s\e[0m}\n", qstoc(i),
+                   qstoc(rd.link.id), qstoc(rd.link.tag_name), qstoc(rd.full_attribute()), qstoc(rd.link.src));
+            if(!i.isEmpty() && !rd.link.attribute.isEmpty()) {
+                if(!d->qudom.setItemAttribute(rd.link.id, rd.full_attribute(), i))
+                    perr("QuSvg.onUpdate: failed to set item text  on node <%s> id %s",
+                         qstoc(rd.link.tag_name), qstoc(rd.link.id));
+            }
+            else if(!i.isEmpty()) { // no attribute specified
+                if(!d->qudom.setItemText(rd.link.id, i))
+                    perr("QuSvg.onUpdate: failed to set item text  on node <%s> id %s",
+                         qstoc(rd.link.tag_name), qstoc(rd.link.id));
+            }
+            else {
+                perr("QuSvg.onUpdate: failed to automatically interpret the value from "
+                     "\"%s\" with objective node \"%s\" and id \"%s\"",
+                     qstoc(rd.link.src), qstoc(rd.link.id), qstoc(rd.link.tag_name));
+                perr("QuSvg.onUpdate: please let your QuSvgDataListener.onUpdate method");
+                perr("                process the result and return \e[1;31mtrue\e[0m");
             }
         }
     }

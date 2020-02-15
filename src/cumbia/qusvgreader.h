@@ -5,7 +5,7 @@
 #include <cudatalistener.h>
 #include <cucontexti.h>
 #include <cudata.h>
-
+#include <QMap>
 #include <QString>
 class QContextMenuEvent;
 
@@ -71,10 +71,13 @@ public:
     void addListener(QuSvgReaderListener *dl);
     void removeListener(QuSvgReaderListener *dl);
 
+    void setOptions(const QMap<QString, QString> &options);
 
     void pause();
 
     void resume();
+
+    QString rawSrc() const;
 
 protected:
 

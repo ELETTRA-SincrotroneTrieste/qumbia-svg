@@ -8,14 +8,10 @@ class QuSvgResultDataPrivate {
 public:
 };
 
-QuSvgResultData::QuSvgResultData(const CuData &_data, const QString &_id, const QString &_attribute, const QString &_att_property, const QString &_key_hint) :
-    data(_data),
-    id(_id),
-    attribute(_attribute),
-    att_property(_att_property),
-    key_hint(_key_hint)
+QuSvgResultData::QuSvgResultData(const CuData &_data, const QuSvgLink &lnk) :
+    data(_data), link(lnk)
 {
-    d = new QuSvgResultDataPrivate;
+    d = new QuSvgResultDataPrivate();
 }
 
 QuSvgResultData::~QuSvgResultData()
@@ -31,7 +27,7 @@ QuSvgResultData::~QuSvgResultData()
  *        attribute, like "rx", or "width".
  */
 bool QuSvgResultData::attributeHasProperty() const {
-    return att_property.size() > 0;
+    return link.property.size() > 0;
 }
 
 /*!
@@ -46,12 +42,12 @@ bool QuSvgResultData::attributeHasProperty() const {
  *         not empty or  the simple *attribute-name* otherwise
  */
 QString QuSvgResultData::full_attribute() const {
-    if(!att_property.isEmpty())
-        return QString("%1/%2").arg(attribute).arg(att_property);
-    return attribute;
+    if(!link.property.isEmpty())
+        return QString("%1/%2").arg(link.attribute).arg(link.property);
+    return link.attribute;
 }
 
 QString QuSvgResultData::property() const {
-    return att_property;
+    return link.property;
 }
 

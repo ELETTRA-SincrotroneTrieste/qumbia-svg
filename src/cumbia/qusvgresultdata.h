@@ -3,16 +3,15 @@
 
 #include <QString>
 #include <cudata.h>
+#include <qusvglink.h>
 
 class QuSvgResultDataPrivate;
 
 class QuSvgResultData {
 public:
 
-    QuSvgResultData(const CuData& _data, const QString& _id,
-                    const QString& _attribute,
-                    const QString& _att_property,
-                    const QString& _key_hint);
+    QuSvgResultData(const CuData& _data,
+                    const QuSvgLink& link);
 
     ~QuSvgResultData();
 
@@ -21,15 +20,8 @@ public:
     QString full_attribute() const;
 
     QString property() const;
-
-    const CuData& data; // CuData
-    const QString& id; // id of link node's parent
-    const QString& attribute;  // e.g. "style"
-    const QString& att_property; // e.g. fill or stroke
-    // hint for the key to use to extract data from CuData
-    // can be useful during automatic processing
-    const QString& key_hint;
-
+    const CuData& data; //!< CuData: result as CuData
+    const QuSvgLink& link; //! QuSvgLink: link information
 private:
 
     QuSvgResultDataPrivate *d;

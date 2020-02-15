@@ -32,6 +32,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         src/cumbia/qusvgresultdata.cpp \
         src/cumbia/qusvgresultdatainterpreter.cpp \
+        src/qusvglayerhelper.cpp \
         src/qusvglink.cpp \
         src/cumbia/qusvgreaderspool.cpp \
         src/cumbia/qusvgreader.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     src/cumbia/qusvgdatalistener.h \
     src/cumbia/qusvgresultdata.h \
     src/cumbia/qusvgresultdatainterpreter.h \
+    src/qusvglayerhelper.h \
     src/qusvglink.h \
     src/cumbia/qusvgreaderspool.h \
         src/cumbia/qusvgreader.h \

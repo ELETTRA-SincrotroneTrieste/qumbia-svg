@@ -12,6 +12,15 @@
 class CuData;
 class CumbiaPool;
 class QuSvg;
+
+class QuSvgSynoGlobalListener : public QuSvgDataListener {
+public:
+
+    // QuSvgDataListener interface
+public:
+    bool onUpdate(const QuSvgResultData &res, QuDom *qudom);
+};
+
 class QuSvgSynoptic : public QWidget, public QuSvgDataListener
 {
     Q_OBJECT
@@ -22,6 +31,8 @@ public:
 
 private slots:
     void applyClicked();
+    void onLayerSelectChanged(int index);
+    void onLayerVisibilityChange(bool visible);
 
 private:
     QuSvg *m_qu_svg;

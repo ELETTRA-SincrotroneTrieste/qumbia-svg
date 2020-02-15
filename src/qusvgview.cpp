@@ -204,7 +204,16 @@ void QuSvgView::onDocumentLoaded(QuDom *dom, const QStringList &ids) {
         s->addItem(svgItem);
         d->items_cache[id] = svgItem;
         qDebug() << __PRETTY_FUNCTION__ << "adding in cache " << id << svgItem;
-        svgItem->setPos(renderer->boundsOnElement(id).topLeft());
+        const QRectF &item_r = renderer->boundsOnElement(id);
+        const QMatrix& m = renderer->matrixForElement(id);
+        qDebug() << __PRETTY_FUNCTION__ << id << "transformation matrix" << m;
+        !m.isIdentity() ? svgItem->setPos(m.mapRect(item_r).topLeft())
+                        : svgItem->setPos(item_r.topLeft());
+        if(!m.isIdentity()) {
+            svgItem->setTransform(QTransform(m));
+            printf("\e[1;31m QTRansform is not itendinti!!!!!\e[0m\n\n");
+        }
+
     }
 }
 
@@ -221,7 +230,6 @@ void QuSvgView::onAttributeChange(const QString &id,
     if(it) {
         QRectF oldBounds = it->boundingRect();
         QRectF bounds = renderer()->boundsOnElement(id);
-        qDebug() << __PRETTY_FUNCTION__ << "bounds on element " << id << bounds;
         QPointF pos = bounds.topLeft();
         it->update();
         if(pos != it->pos()) {
