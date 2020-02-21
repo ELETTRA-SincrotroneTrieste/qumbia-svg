@@ -10,35 +10,33 @@
 
 #include <cumacros.h>
 
-#include "qusvgreaderspool.h"
+#include "qugraphicssvgitem.h"
+#include "qusvgconnectionspool.h"
 #include "qusvgdatalistener.h"
 #include "qusvgresultdatainterpreter.h"
 
 class QumbiaSVGPrivate {
 public:
     QString m_msg;
-    QuDom qudom;
-    QuSvgReadersPool *readers_pool;
+    QuDom *qudom;
+    QuSvgConnectionsPool *connections_pool;
     QMultiMap<QString, QuSvgDataListener *> listeners;
 };
-
-QuSvg::QuSvg() {
-    d = new QumbiaSVGPrivate;
-    d->readers_pool = nullptr;
-}
 
 QuSvg::QuSvg(QuDomListener *domlis)
 {
     d = new QumbiaSVGPrivate;
-    d->readers_pool = nullptr;
-    d->qudom.addDomListener(domlis);
+    d->connections_pool = nullptr;
+    d->qudom = new QuDom();
+    d->qudom->addDomListener(domlis);
 }
 
 QuSvg::~QuSvg() {
+    delete d->qudom;
     delete d;
 }
 
-QuDom QuSvg::quDom() const {
+QuDom *QuSvg::quDom() const {
     return d->qudom;
 }
 
@@ -64,14 +62,14 @@ bool QuSvg::loadFile(const QString &fileName)
 bool QuSvg::loadSvg(const QByteArray &svg)
 {
     d->m_msg.clear();
-    bool success = d->qudom.setContent(svg);
+    bool success = d->qudom->setContent(svg);
     if(!success)
-        d->m_msg = QString("QumbiaSvg.loadSvg: %1").arg(d->qudom.error());
+        d->m_msg = QString("QumbiaSvg.loadSvg: %1").arg(d->qudom->error());
     else  {//  connections
-        if(d->readers_pool && d->qudom.hasLinks()) {
-            d->readers_pool->setup_links(d->qudom.takeLinkDefs(), this);
+        if(d->connections_pool && d->qudom->hasLinks()) {
+            d->connections_pool->setup_links(d->qudom->takeReadLinkDefs(), this);
         }
-        else if(!d->readers_pool && d->qudom.hasLinks())
+        else if(!d->connections_pool && d->qudom->hasLinks())
             d->m_msg = "QumbiaSvg.loadSvg: init() has not been called";
         // do not set an error condition if there are no <link> nodes in the DOM
     }
@@ -86,28 +84,18 @@ bool QuSvg::hasError() const {
     return d->m_msg.size() > 0;
 }
 
-bool QuSvg::connect(const QString &source, const QString &id, const QString &property)
-{
-
-    return true;
-}
-
 void QuSvg::init(CumbiaPool *cupool, const CuControlsFactoryPool &fpool)
 {
-    d->readers_pool = new QuSvgReadersPool(cupool, fpool, nullptr);
-}
-
-void QuSvg::init(Cumbia *cumbia, const CuControlsReaderFactoryI &r_fac)
-{
-    d->readers_pool = new QuSvgReadersPool(cumbia, r_fac, nullptr);
+    if(!d->connections_pool)
+        d->connections_pool = new QuSvgConnectionsPool();
+    d->connections_pool->init(cupool, fpool);
 }
 
 void QuSvg::init(Cumbia *cumbia, const CuControlsReaderFactoryI &r_fac,
-                 const CuControlsWriterFactoryI &w_fac)
-{
-    d->readers_pool = new QuSvgReadersPool(cumbia, r_fac, nullptr);
-    // create writers here
-    Q_UNUSED(w_fac)
+                 const CuControlsWriterFactoryI &w_fac) {
+    if(!d->connections_pool)
+        d->connections_pool = new QuSvgConnectionsPool();
+    d->connections_pool->init(cumbia, r_fac, w_fac);
 }
 
 /*!
@@ -160,8 +148,17 @@ void QuSvg::removeDataListeners(const QString &id){
     d->listeners.remove(id);
 }
 
-QuSvgReadersPool *QuSvg::getReadersPool() const {
-    return d->readers_pool;
+/*!
+ * \brief get a reference to a QuSvgConnectionsPool
+ * \return a pointer to the QuSvgConnectionsPool in use
+ */
+QuSvgConnectionsPool *QuSvg::getConnectionsPool() const {
+    // allocate a non init-ed QuSvgConnectionsPool in case of early
+    // calls (e.g. to provide a reference to QuSvgConnectionsPool to
+    // objects requiring it)
+    if(!d->connections_pool)
+        d->connections_pool = new QuSvgConnectionsPool(nullptr);
+    return d->connections_pool;
 }
 
 void QuSvg::onUpdate(const QuSvgResultData &rd) {
@@ -171,34 +168,29 @@ void QuSvg::onUpdate(const QuSvgResultData &rd) {
             : liss = d->listeners.values(QString());
 
     foreach(QuSvgDataListener *l, liss) {
-        bool accept = l->onUpdate(rd, &d->qudom);
+        bool accept = l->onUpdate(rd, d->qudom);
         if(!accept) {
+            QString err;
             // do our best
-            printf("QuSvg.onUpdate: \e[1;32mautomatically processing\e[0m %s\t\t"
-                   "%s attribute \"%s/%s\" \e[1;34mhint: %s\e[0m\n",
-                   rd.data.toString().c_str(), qstoc(rd.link.id), qstoc(rd.link.attribute),
-                   qstoc(rd.link.property), qstoc(rd.link.key_hint));
-            QuSvgResultDataInterpreter interpreter(rd, &d->qudom);
+            QuSvgResultDataInterpreter interpreter(rd, d->qudom);
             QString i = interpreter.interpret();
-            printf("interpreted value (as string): \"%s\" objective id \"%s\" node \"%s\" att: %s {\e[1;36m%s\e[0m}\n", qstoc(i),
-                   qstoc(rd.link.id), qstoc(rd.link.tag_name), qstoc(rd.full_attribute()), qstoc(rd.link.src));
             if(!i.isEmpty() && !rd.link.attribute.isEmpty()) {
-                if(!d->qudom.setItemAttribute(rd.link.id, rd.full_attribute(), i))
-                    perr("QuSvg.onUpdate: failed to set item text  on node <%s> id %s",
-                         qstoc(rd.link.tag_name), qstoc(rd.link.id));
+                if(!d->qudom->setItemAttribute(rd.link.id, rd.full_attribute(), i))
+                    err = QString("QuSvg.onUpdate: failed to set item text  on node <%1> id %2")
+                         .arg(rd.link.tag_name).arg(rd.link.id);
             }
             else if(!i.isEmpty()) { // no attribute specified
-                if(!d->qudom.setItemText(rd.link.id, i))
-                    perr("QuSvg.onUpdate: failed to set item text  on node <%s> id %s",
-                         qstoc(rd.link.tag_name), qstoc(rd.link.id));
+                if(!d->qudom->setItemText(rd.link.id, i))
+                    err = QString("QuSvg.onUpdate: failed to set item text  on node <%1> id %1")
+                         .arg(rd.link.tag_name).arg(rd.link.id);
             }
             else {
-                perr("QuSvg.onUpdate: failed to automatically interpret the value from "
-                     "\"%s\" with objective node \"%s\" and id \"%s\"",
-                     qstoc(rd.link.src), qstoc(rd.link.id), qstoc(rd.link.tag_name));
-                perr("QuSvg.onUpdate: please let your QuSvgDataListener.onUpdate method");
-                perr("                process the result and return \e[1;31mtrue\e[0m");
+                err = QString("QuSvg.onUpdate: failed to interpret the value from "
+                     "\"%1\" target node: \"%2\", id: \"%3\"")
+                     .arg(rd.link.src).arg(rd.link.id).arg(rd.link.tag_name);
             }
+            if(!err.isEmpty())
+                l->onError(err);
         }
     }
 }

@@ -16,10 +16,10 @@ class CuControlsReaderFactoryI;
 class CuControlsFactoryPool;
 class CuContext;
 class CuLinkStats;
-class QuSvgLink;
+class QuSvgReadLink;
 class QuSvgResultData;
 
-class QuSvgReaderListener {
+class QuSvgConnectionListener {
 public:
     virtual void onUpdate(const QuSvgResultData& rd) = 0;
 };
@@ -64,18 +64,21 @@ public:
      */
     void unsetSource();
 
-    int addLink(const QuSvgLink& link);
+    int addLink(const QuSvgReadLink& link);
+    int removeLink(const QuSvgReadLink& link);
+    const QVector<QuSvgReadLink> &links() const;
 
-    int removeLink(const QuSvgLink& link);
+    void deactivate(const QString& id);
+    void reactivate(const QString& id);
 
-    void addListener(QuSvgReaderListener *dl);
-    void removeListener(QuSvgReaderListener *dl);
+    int inactiveCount() const;
+    void setLinkInactive(const QString& link_id, bool inactive);
+
+    void addListener(QuSvgConnectionListener *dl);
+    void removeListener(QuSvgConnectionListener *dl);
 
     void setOptions(const QMap<QString, QString> &options);
 
-    void pause();
-
-    void resume();
 
     QString rawSrc() const;
 

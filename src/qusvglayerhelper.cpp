@@ -8,15 +8,17 @@
 
 class QuSvgLayerHelperPrivate {
 public:
-    QuSvgLayerHelperPrivate(const QuSvg& _qu_svg) : qu_svg(_qu_svg) {
+    QuSvgLayerHelperPrivate(QuDom* _qu_dom) : qu_dom(_qu_dom) {
 
     }
-    const QuSvg& qu_svg;
+    QuDom *qu_dom;
+    QuSvgView *view;
 };
 
-QuSvgLayerHelper::QuSvgLayerHelper(const QuSvg &qusvg) : QObject(nullptr)
+QuSvgLayerHelper::QuSvgLayerHelper(QuDom *dom, QuSvgView *view) : QObject(nullptr)
 {
-    d = new QuSvgLayerHelperPrivate(qusvg);
+    d = new QuSvgLayerHelperPrivate(dom);
+    d->view = view;
 }
 
 QuSvgLayerHelper::~QuSvgLayerHelper()
@@ -25,7 +27,7 @@ QuSvgLayerHelper::~QuSvgLayerHelper()
 }
 
 bool QuSvgLayerHelper::layerVisible(const QString &name) {
-    QuDomElement e(d->qu_svg.quDom());
+    QuDomElement e(d->qu_dom);
     QuDomElement layer = e[name];
     if(!layer.isNull()) {
         return layer.a("visibility").isEmpty() || layer.a("visibility").compare("visible", Qt::CaseInsensitive) == 0;
@@ -35,23 +37,27 @@ bool QuSvgLayerHelper::layerVisible(const QString &name) {
 }
 
 void QuSvgLayerHelper::setLayerVisible(const QString &name, bool v) {
-    QuDomElement e(d->qu_svg.quDom());
+    QuDomElement e(d->qu_dom);
     QuDomElement layer = e[name];
     if(!layer.isNull()) {
         v ? layer.a("visibility", "visible") : layer.a("visibility", "hidden");
-        QStringList srcs = m_findSrcs(layer.element());
-        emit activeSourcesChanged(srcs, v);
+        QStringList ids = m_findSrcIds(layer.element());
+        d->view->scene()->update();
+        emit activeSourcesChanged(ids, v);
     }
 }
 
-QStringList QuSvgLayerHelper::m_findSrcs(const QDomNode &parent) {
+QStringList QuSvgLayerHelper::m_findSrcIds(const QDomNode &parent) {
     QStringList r;
     QDomElement e = parent.toElement();
-    if(e.hasAttribute("src"))
-        r << e.attribute("src");
+    if(e.hasAttribute("src") ) {
+        QDomElement parent_e = e.parentNode().toElement();
+        if(!parent_e.isNull() && parent_e.hasAttribute("id"))
+            r << parent_e.attribute("id");
+    }
     QDomNodeList children = e.childNodes();
     for(int i = 0; i < children.size(); i++) {
-        r += m_findSrcs(children.at(i));
+        r += m_findSrcIds(children.at(i));
     }
     return r;
 }

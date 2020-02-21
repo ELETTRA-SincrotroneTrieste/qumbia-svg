@@ -9,15 +9,20 @@
 class QuDomElement
 {
 public:
-    QuDomElement(const QuDom &x);
+    QuDomElement(QuDom *x);
     QuDomElement(const QDomElement& dome);
+    QuDomElement(QuDom *x, const QDomElement& e);
+    QuDomElement(const QuDomElement& other);
     QuDomElement();
+    QuDomElement& operator=(const QuDomElement&);
 
     bool isNull() const;
 
-    QuDomElement& operator []  (const QString &id_path);
-    QuDomElement& operator []  (const std::string& id);
-    QuDomElement& operator []  (const char* id);
+    QuDomElement operator []  (const QString &id_path);
+    QuDomElement operator []  (const std::string& id);
+    QuDomElement operator []  (const char* id);
+
+    QuDomElement operator [] (const QString &id_path) const;
 
     QDomElement element() const;
 
@@ -26,7 +31,9 @@ public:
     QString a(const QString& name) const;
     void a(const QString& name, const QString& value);
 
-    QuDomElement& findById(const QString &id, const QDomElement &parent);
+    QuDomElement findById(const QString &id, const QuDomElement &parent) const;
+    QDomElement firstChild(const QString& tagnam);
+    QDomNodeList children(const QString& tagnam) const;
 
     QString itemId() const;
 
@@ -34,9 +41,10 @@ public:
     QString toDeclarationList(QString &name, const QString &value);
 
 private:
-    QuDom m_qudom;
+    QuDom* m_qudom;
     QDomElement m_dome;
-    QDomElement m_recursiveFind(const QString& id, const QDomElement &parent);
+    QuDomElement m_recursiveFind(const QString& id, const QuDomElement &parent) const;
+    QuDomElement m_find_el(const QString &id_path) const;
 };
 
 #endif // QUDOMELEMENT_H

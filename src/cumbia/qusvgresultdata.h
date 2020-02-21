@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <cudata.h>
-#include <qusvglink.h>
+#include <qusvgreadlink.h>
 
 class QuSvgResultDataPrivate;
 
@@ -11,17 +11,14 @@ class QuSvgResultData {
 public:
 
     QuSvgResultData(const CuData& _data,
-                    const QuSvgLink& link);
-
+                    const QuSvgReadLink& link);
     ~QuSvgResultData();
 
     bool attributeHasProperty() const;
-
     QString full_attribute() const;
-
     QString property() const;
     const CuData& data; //!< CuData: result as CuData
-    const QuSvgLink& link; //! QuSvgLink: link information
+    const QuSvgReadLink& link; //! QuSvgLink: link information
 private:
 
     QuSvgResultDataPrivate *d;

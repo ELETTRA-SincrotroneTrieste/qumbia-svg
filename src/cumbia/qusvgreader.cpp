@@ -6,13 +6,14 @@
 #include <QContextMenuEvent>
 #include <QMetaProperty>
 #include <QtDebug>
+#include <QSetIterator>
 
 #include <cucontrolsfactories_i.h>
 #include <cucontrolsfactorypool.h>
 #include <culinkstats.h>
 #include <cucontext.h>
 
-#include "qusvglink.h"
+#include "qusvgreadlink.h"
 #include "qusvgdatalistener.h" // for QuSvgResultData
 
 
@@ -23,8 +24,8 @@ public:
     bool auto_configure;
     bool read_ok;
     CuContext *context;
-    QSet<QuSvgLink>links;
-    QSet<QuSvgReaderListener *>listeners;
+    QVector<QuSvgReadLink>links;
+    QSet<QuSvgConnectionListener *>listeners;
     QString raw_src;
 };
 
@@ -106,35 +107,63 @@ void QuSvgReader::unsetSource() {
     d->raw_src.clear();
 }
 
-int QuSvgReader::addLink(const QuSvgLink &link) {
-    d->links.insert(link);
+int QuSvgReader::addLink(const QuSvgReadLink &link) {
+    if(!d->links.contains(link))
+        d->links.append(link);
+    reactivate(link.id); // after d->links.insert
     return d->links.size();
 }
 
-int QuSvgReader::removeLink(const QuSvgLink &link)
+int QuSvgReader::removeLink(const QuSvgReadLink &link)
 {
-    d->links.remove(link);
+    deactivate(link.id);
+    d->links.removeAll(link); // after deactivate
     return d->links.size();
 }
 
-void QuSvgReader::addListener(QuSvgReaderListener *dl) {
+const QVector<QuSvgReadLink> &QuSvgReader::links() const {
+    return d->links;
+}
+
+void QuSvgReader::addListener(QuSvgConnectionListener *dl) {
     d->listeners.insert(dl);
 }
 
-void QuSvgReader::removeListener(QuSvgReaderListener *dl) {
+void QuSvgReader::removeListener(QuSvgConnectionListener *dl) {
     d->listeners.remove(dl);
 }
 
-void QuSvgReader::pause() {
-    printf("QuSvtReader.pause: pausing reader %s\n", qstoc(d->context->getReader()->source()));
-    d->context->disposeReader();
+void QuSvgReader::deactivate(const QString &id) {
+    setLinkInactive(id, true);
+    if(inactiveCount() == d->links.size()) {
+        printf("QuSvgReader.deactivate: pausing src %s\n", qstoc(d->context->getReader()->source()));
+        d->context->disposeReader();
+    }
 }
 
-void QuSvgReader::resume() {
-    printf("QuSvtReader.resume: resuming reader %s\n", qstoc(d->raw_src));
-    CuControlsReaderA * r = d->context->replace_reader(d->raw_src.toStdString(), this);
-    if(r)
-        r->setSource(d->raw_src);
+void QuSvgReader::reactivate(const QString& id) {
+    setLinkInactive(id, false);
+    if(d->context->getReader() == nullptr) {
+        printf("QuSvgReader.reactivate: resuming reader %s\n", qstoc(d->raw_src));
+        CuControlsReaderA * r = d->context->replace_reader(d->raw_src.toStdString(), this);
+        if(r)
+            r->setSource(d->raw_src);
+    }
+}
+
+int QuSvgReader::inactiveCount() const {
+    int cnt = 0;
+    foreach(const QuSvgReadLink& l, d->links) {
+        if(l.inactive) cnt++;
+    }
+    return cnt;
+}
+
+void QuSvgReader::setLinkInactive(const QString &link_id, bool inactive) {
+    for(int i = 0; i < d->links.size(); i++) {
+        if(d->links[i].id == link_id)
+            d->links[i].inactive = inactive;
+    }
 }
 
 QString QuSvgReader::rawSrc() const {
@@ -142,7 +171,7 @@ QString QuSvgReader::rawSrc() const {
 }
 
 void QuSvgReader::m_configure(const CuData& da) {
-    printf("\e[1;33m [CONF]\e[0m: QuSvgReader::m_configure: %s\n", da.toString().c_str());
+    pinfo("\e[1;33m [CONF]\e[0m: QuSvgReader::m_configure: %s", da.toString().c_str());
 }
 
 void QuSvgReader::onUpdate(const CuData &da) {
@@ -156,8 +185,8 @@ void QuSvgReader::onUpdate(const CuData &da) {
     if(d->read_ok && d->auto_configure && da["type"].toString() == "property") {
         m_configure(da);
     }
-    foreach(const QuSvgLink &link, d->links) {
-        foreach(QuSvgReaderListener* l, d->listeners)
+    foreach(const QuSvgReadLink &link, d->links) {
+        foreach(QuSvgConnectionListener* l, d->listeners)
             l->onUpdate(QuSvgResultData(da, link));
     }
 }

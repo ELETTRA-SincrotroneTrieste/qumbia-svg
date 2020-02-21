@@ -7,16 +7,14 @@
 class QuDomPrivate;
 class QuDom;
 class QuDomElement;
-class QuSvgLink;
+class QuSvgReadLink;
 
 class QuDomListener {
 public:
     virtual void onDocumentLoaded(QuDom *dom,
                                   const QStringList& ids) = 0;
 
-    virtual void onAttributeChange(const QString& source,
-                                   const QString& id,
-                                   const QString& value,
+    virtual void onElementChange(const QString& id,
                                    QuDomElement* dom_e) = 0;
 };
 
@@ -37,6 +35,8 @@ public:
     QuDom();
     QuDom(const QuDom &other);
     virtual ~QuDom();
+
+    QuDom& operator=(const QuDom&);
 
     QDomDocument getDocument() const;
     bool setContent(const QByteArray &svg);
@@ -66,10 +66,10 @@ public:
     void addDomListener(QuDomListener *l);
     QList<QuDomListener *> getDomListeners() const;
 
-    QList<QuSvgLink> takeLinkDefs() const;
+    QList<QuSvgReadLink> takeReadLinkDefs() const;
     bool hasLinks() const;
 
-    QString linkTagName() const;
+    QString readerTagName() const;
 
     QString error() const;
 
@@ -80,10 +80,10 @@ private:
     QuDomPrivate *d;
 
     QMap<QString, QDomElement >& m_get_id_cache() const;
-    void m_add_to_cache(const QString& id, QDomElement &dome);
-    void m_notify_attribute_change(const QString& id, const QString& attnam,
-                                   const QString& attval, QuDomElement *dome);
+    void m_add_to_cache(const QString& id, const QDomElement &dome);
+    void m_notify_element_change(const QString& id, QuDomElement *dome);
     QDomNode m_findTexChild(const QDomNode &parent);
+    void m_init_from(const QuDom& other);
 };
 
 #endif // QUDOM_H

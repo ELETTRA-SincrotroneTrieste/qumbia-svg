@@ -6,7 +6,8 @@
 #include <QColor>
 #include <QtDebug>
 
-QuSvgResultDataInterpreter::QuSvgResultDataInterpreter(const QuSvgResultData &rd, const QuDom *qudom)
+QuSvgResultDataInterpreter::QuSvgResultDataInterpreter(const QuSvgResultData &rd,
+                                                       const QuDom *qudom)
     : m_d(rd), m_qudom(qudom)
 {
     m_interpreted_type = Undefined;

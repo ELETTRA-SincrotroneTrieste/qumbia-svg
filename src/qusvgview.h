@@ -14,6 +14,7 @@ class QPaintEvent;
 QT_END_NAMESPACE
 
 class QuSvgViewPrivate;
+class QuGraphicsSvgItem;
 class QuSvg;
 class QuDom;
 
@@ -39,10 +40,22 @@ public slots:
     void zoomIn();
     void zoomOut();
     void resetZoom();
-    void refresh();
+
+    void onItemClicked(QuGraphicsSvgItem *item,
+                       const QPointF& scenePos,
+                       const QPointF& pos);
+    void onItemContextMenuRequest(QuGraphicsSvgItem *item,
+                                  const QPointF& scenePos,
+                                  const QPointF& pos) ;
 
 signals:
     void zoomChanged();
+    void itemClicked(QuGraphicsSvgItem *item,
+                     const QPointF& scenePos,
+                     const QPointF& pos);
+    void itemContextMenuRequest(QuGraphicsSvgItem *item,
+                                  const QPointF& scenePos,
+                                  const QPointF& pos) ;
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -59,8 +72,7 @@ private:
     // QuDomListener interface
 public:
     void onDocumentLoaded(QuDom *dom, const QStringList &ids);
-    void onAttributeChange(const QString &id, const QString &attribute,
-                           const QString &value, QuDomElement* dom_e);
+    void onElementChange(const QString &id, QuDomElement* dom_e);
 };
 
 #endif // QUSVGVIEW_H

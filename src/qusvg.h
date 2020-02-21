@@ -12,7 +12,8 @@ class Cumbia;
 class CuControlsReaderFactoryI;
 class CuControlsWriterFactoryI;
 class QuSvgDataListener;
-class QuSvgReadersPool;
+class QuSvgConnectionsPool;
+class QuGraphicsSvgItem;
 
 /*! \mainpage
  *
@@ -59,17 +60,57 @@ class QuSvgReadersPool;
  * after a change in a value or a circle radius change proportional to another quantity)
  * custom mappings and transformations can be defined.
  *
+ * \subsection target_and_events Targets names and *item events*
+ *
+ * \subsubsection targets Targets
+ * Target names must be conform to the syntax understood by the available engines,
+ * e.g. Tango, EPICS, random.
+ * Writings without arguments, like those triggered by a *push button*, can be done
+ * through a *clickable item*. Those involving input values are performed by dedicated
+ * dialogs, either executed from a contextual menu or a simple click.
+ * Items with a *target* attribute defined and the *clickable* attribute set to *true*
+ * will start a write operation after a left button click event.
+ * Items with a *target* attribute defined and *without* a clickable attribute will
+ * make a write operation available through a contextual menu. In the latter case,
+ * if an *action* string attribute is defined, its value will be set as text in the contextual
+ * menu action associated.
+ * The *type* attribute defines the type of desired *writer* used in the pop up dialog.
+ * Its value can be one of (case insensitive):
+ * - "quapplynumeric"
+ * - "qubutton"
+ * - "quinputoutput"
+ * - "qulineedit"
+ *
+ * \subsubsection Item events.
+ * If an item has the *clickable* attribute set to true, it will be highlighted when
+ * mouse enters the item as well as a click operation is performed.
+ * QuSvgView itemContextMenuRequest and itemClicked signals are emitted according to
+ * the event detected.
+ *
+ * The following scenarios are valid:
+ * - *target and clickable defined, type not defined*: left button click executes
+ *   the operation as written in the *target* attribute value
+ * - *target, clickable and type are defined*: left click pops up a dialog with a widget
+ *   of the desired type.
+ * - *target and type defined, clickable not defined*: a context menu provides an
+ *   action to execute a dialog with the desired widget to execute the target;
+ * - *target defined, clickable and type not defined*: a context menu provides an action
+ *   to execute a dialog with a *simple apply button* to execute the command as specified
+ *   in *target*
+ * - *target, clickable and type* not defined: itemContextMenuRequest signal only is
+ *   emitted upon right click
+ * - *clickable defined, target and type not defined*, itemClicked is emitted on left
+ *   button click, itemContextMenuRequest is emitted on right button click.
  *
  *
  */
-class QuSvg : public QuSvgReaderListener
+class QuSvg : public QuSvgConnectionListener
 {
 public:
-    QuSvg();
     QuSvg(QuDomListener *domlis);
     virtual ~QuSvg();
 
-    QuDom quDom() const;
+    QuDom *quDom() const;
 
     bool loadFile(const QString &fileName);
     bool loadSvg(const QByteArray &svg);
@@ -77,10 +118,7 @@ public:
     QString message() const;
     bool hasError() const;
 
-    bool connect(const QString& source, const QString& id, const QString& property);
-
     void init(CumbiaPool *cupool,  const CuControlsFactoryPool &fpool);
-    void init(Cumbia *cumbia, const CuControlsReaderFactoryI &r_fac);
     void init(Cumbia *cumbia, const CuControlsReaderFactoryI &r_fac,
               const CuControlsWriterFactoryI& w_fac);
 
@@ -89,7 +127,7 @@ public:
     void removeDataListener(QuSvgDataListener *l);
     void removeDataListeners(const QString& id);
 
-    QuSvgReadersPool *getReadersPool() const;
+    QuSvgConnectionsPool *getConnectionsPool() const;
 
 private:
     QumbiaSVGPrivate *d;

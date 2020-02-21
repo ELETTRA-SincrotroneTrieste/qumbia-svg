@@ -1,13 +1,13 @@
 #include "qusvgview.h"
 #include "qusvg.h"
+#include "qugraphicssvgitem.h"
 #include "qudom.h"
 
 #include <QSvgRenderer>
 
 #include <QWheelEvent>
 #include <QMouseEvent>
-#include <QGraphicsRectItem>
-#include <QGraphicsSvgItem>
+
 #include <QPaintEvent>
 #include <QtDebug>
 #include <qmath.h>
@@ -47,8 +47,7 @@ QuSvgView::QuSvgView(QWidget *parent)
 
     setScene(new QGraphicsScene(this));
     setTransformationAnchor(AnchorUnderMouse);
-    setDragMode(ScrollHandDrag);
-    setViewportUpdateMode(FullViewportUpdate);
+//    setViewportUpdateMode(FullViewportUpdate);
     //    connect(scene(), SIGNAL(changed(QList<QRectF>)), this, SLOT(sceneChanged(QList<QRectF>)));
 }
 
@@ -110,36 +109,16 @@ void QuSvgView::resetZoom()
     }
 }
 
-void QuSvgView::refresh() {
-    //    QTime t;
-    //    t.start();
-    QStringList changed_item_names;
-    for(int i = 0; i < d->m_ids.size(); i++) {
+void QuSvgView::onItemClicked(QuGraphicsSvgItem *item,
+                              const QPointF& scenePos,
+                              const QPointF& pos) {
+    emit itemClicked(item, scenePos, pos);
+}
 
-        const QString id = QString("circle_%1").arg(i);
-        QDomNode old_ellipse;;
-        QDomElement ellipse(old_ellipse.toElement());
-        changed_item_names << id;
-        if(!ellipse.isNull()) {
-            QString style = QString("fill:#0010ef;"
-                                    "stroke:#00ffed;"
-                                    "stroke-width:1;");
-            ellipse.setAttribute("style", style);
-            old_ellipse.parentNode().replaceChild(ellipse, old_ellipse);
-        }
-
-    }
-    findChild<QSvgRenderer *>()->load(d->m_dom->getDocument().toString().toLatin1());
-    foreach(QString changed_item_name, changed_item_names) {
-        QGraphicsSvgItem *it = d->items_cache[changed_item_name];
-        if(it) {
-            QPointF pos = renderer()->boundsOnElement(changed_item_name).topLeft();
-            it->setPos(pos);
-            //        it->update();
-        }
-    }
-    //    scene()->update(scene()->sceneRect());
-    //     qDebug() << __PRETTY_FUNCTION__ << "refresh took ms" << t.elapsed();
+void QuSvgView::onItemContextMenuRequest(QuGraphicsSvgItem *item,
+                                         const QPointF &scenePos,
+                                         const QPointF &pos) {
+    emit itemContextMenuRequest(item, scenePos, pos);
 }
 
 void QuSvgView::paintEvent(QPaintEvent *event)
@@ -193,52 +172,57 @@ void QuSvgView::onDocumentLoaded(QuDom *dom, const QStringList &ids) {
     QGraphicsScene *s = scene();
     QSvgRenderer *renderer = new QSvgRenderer(dom->getDocument().toString().toLatin1(), this);
     foreach(QString id, ids) {
-        QGraphicsSvgItem *svgItem = new QGraphicsSvgItem();
+        QuGraphicsSvgItem *svgItem = new QuGraphicsSvgItem();
         svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
         svgItem->setSharedRenderer(renderer);
         svgItem->setElementId(id);
-        svgItem->setFlag(QGraphicsItem::ItemIsMovable, true);
 //        svgItem->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
         svgItem->setCacheMode(QGraphicsItem::NoCache);
         svgItem->setObjectName(id);
         s->addItem(svgItem);
         d->items_cache[id] = svgItem;
-        qDebug() << __PRETTY_FUNCTION__ << "adding in cache " << id << svgItem;
+        // item clickable?
+        QuDomElement rootel(dom);
+        QuDomElement el = rootel[id];
+        // set item properties: shape and clickable have dedicated
+        // Q_PROPERTY with set and get methods
+        foreach(QString property, QStringList() << "shape" << "clickable")
+            if(!el.isNull() && !el.a(property).isEmpty())
+                svgItem->setProperty(qstoc(property), el.a(property));
+
         const QRectF &item_r = renderer->boundsOnElement(id);
         const QMatrix& m = renderer->matrixForElement(id);
-        qDebug() << __PRETTY_FUNCTION__ << id << "transformation matrix" << m;
         !m.isIdentity() ? svgItem->setPos(m.mapRect(item_r).topLeft())
                         : svgItem->setPos(item_r.topLeft());
         if(!m.isIdentity()) {
             svgItem->setTransform(QTransform(m));
-            printf("\e[1;31m QTRansform is not itendinti!!!!!\e[0m\n\n");
         }
 
+        connect(svgItem, SIGNAL(clicked(QuGraphicsSvgItem *, QPointF, QPointF)),
+                this, SLOT(onItemClicked(QuGraphicsSvgItem *, QPointF, QPointF)));
+        connect(svgItem, SIGNAL(contextMenuRequest(QuGraphicsSvgItem *, QPointF, QPointF)), this,
+                SLOT(onItemContextMenuRequest(QuGraphicsSvgItem *, QPointF, QPointF)));
     }
 }
 
-void QuSvgView::onAttributeChange(const QString &id,
-                                  const QString &attribute,
-                                  const QString &value, QuDomElement *dom_e) {
-    findChild<QSvgRenderer *>()->load(d->m_dom->getDocument().toString().toLatin1());
+void QuSvgView::onElementChange(const QString &id, QuDomElement *dom_e) {
 
     QGraphicsSvgItem *it = d->items_cache.value(id);
     if(!it)
         it = d->items_cache.value(dom_e->itemId());
-    qDebug() << __PRETTY_FUNCTION__ << "graphics item id" << dom_e->itemId()
-             << d->items_cache.keys() << "item" << it;
     if(it) {
-        QRectF oldBounds = it->boundingRect();
-        QRectF bounds = renderer()->boundsOnElement(id);
+//        QRectF oldBounds = renderer()->boundsOnElement(id);
+        findChild<QSvgRenderer *>()->load(d->m_dom->getDocument().toString().toLatin1());
+        QRectF bounds = renderer()->boundsOnElement(it->elementId());
         QPointF pos = bounds.topLeft();
-        it->update();
         if(pos != it->pos()) {
-            qDebug() << __PRETTY_FUNCTION__ << it->objectName() << "position changed? " << it->pos() << "-->" << pos;
-            it->setPos(pos);
+            it->setPos(pos); // no need for update()
         }
-
+        else {
+            it->update();
+        }
     }
     else {
-
+        perr("QuSvgView.onAttributeChange: could not find item with id %s", qstoc(id));
     }
 }

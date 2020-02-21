@@ -4,7 +4,7 @@
 #include <QtDebug>
 #include <qudomelement.h>
 
-#include "qusvglink.h"
+#include "qusvgreadlink.h"
 
 class QuDomPrivate {
 public:
@@ -13,9 +13,13 @@ public:
     QList<QuDomListener *> dom_listeners;
     QDomElement empty_el;
     QString error;
-    QList<QuSvgLink > links;
+    QList<QuSvgReadLink > read_links;
     bool cache_on_access;
 };
+
+QuDom::~QuDom() {
+    delete d;
+}
 
 QuDom::QuDom() {
     d = new QuDomPrivate;
@@ -23,17 +27,23 @@ QuDom::QuDom() {
 }
 
 QuDom::QuDom(const QuDom &other) {
+    m_init_from(other);
+}
+
+QuDom &QuDom::operator=(const QuDom &other)
+{
+    m_init_from(other);
+    return *this;
+}
+
+void QuDom::m_init_from(const QuDom &other) {
     d = new QuDomPrivate;
     d->domdoc = other.d->domdoc;
     d->id_cache = other.d->id_cache;
     d->dom_listeners = other.d->dom_listeners;
-    d->links = other.d->links;
+    d->read_links = other.d->read_links;
     d->error = other.d->error;
     d->cache_on_access = other.d->cache_on_access;
-}
-
-QuDom::~QuDom() {
-    delete d;
 }
 
 QDomDocument QuDom::getDocument() const {
@@ -79,8 +89,8 @@ QString QuDom::getAttribute(const QDomElement &el, const QString &attribute)
 
 /* 1. Find the elements having the "item" attribute set to a value different from "false"
  *    and fill a map of ids -> QDomElement that will be associated to a QGraphicsSvgItem
- * 2. Look for the "link" nodes and create a QuSvgLink for each of them. QuSvgLink
- *    represents the link configuration: source, target attribute on the parent,
+ * 2. Look for the "read" nodes and create a QuSvgReadLink for each of them. QuSvgReadLink
+ *    represents the read configuration: source, target attribute on the parent,
  *    id of the parent, an optional alias.
  *
  *  NOTE
@@ -102,12 +112,12 @@ void QuDom::parse(const QDomNode &parent) const {
             if(de.attribute("item").compare("false", Qt::CaseInsensitive) != 0)
                 d->id_cache[id] = de;
         }
-        if(!de.isNull() && d->error.isEmpty() && de.tagName() == linkTagName()) {
-            QuSvgLink link(de);
-            if(link.isValid())
-                d->links.append(link);
+        if(!de.isNull() && d->error.isEmpty() && de.tagName() == readerTagName()) {
+            QuSvgReadLink readlink(de);
+            if(readlink.isValid())
+                d->read_links.append(readlink);
             else
-                d->error = QString("QuDom: error building link: %1").arg(link.message());
+                d->error = QString("QuDom: error building read link: %1").arg(readlink.message());
         }
         if(d->error.isEmpty())
             parse(de);
@@ -117,8 +127,7 @@ void QuDom::parse(const QDomNode &parent) const {
 bool QuDom::setItemAttribute(const QString &id, const QString &attnam, const QString &value) {
     QuDomElement e = QuDomElement(findById(id, getDocument().firstChildElement()));
     if(!e.isNull()) {
-        e.a(attnam, value);
-        m_notify_attribute_change(id, attnam, value, &e);
+        e.a(attnam, value); // calls m_notify_element_change on this
     }
     return !e.isNull();
 }
@@ -137,16 +146,24 @@ QDomNode QuDom::m_findTexChild(const QDomNode &parent) {
 
 bool QuDom::setItemText(const QString &id, const QString &text) {
     QDomNode e = findById(id, getDocument().firstChildElement()).toElement();
-    if(!e.isNull() && !e.isText())
+    QuDomElement root;
+    if(!e.isNull() && !e.isText()) {
+        root = e.toElement();
         e = m_findTexChild(e);
+    }
+    else if(e.isText()) {
+        root = e.parentNode().toElement();
+    }
     if(!e.isNull()) {
         e.toText().setNodeValue(text);
+        m_notify_element_change(id, &root);
         // checked dumping the result into a QTextStream + QString
     }
     return !e.isNull();
 }
 
 QString QuDom::itemText(const QString &id) const {
+    Q_UNUSED(id)
     QString text;
 
     return text;
@@ -164,34 +181,33 @@ QList<QuDomListener *> QuDom::getDomListeners() const {
     return d->dom_listeners;
 }
 
-QList<QuSvgLink> QuDom::takeLinkDefs() const {
-    QList<QuSvgLink> links = d->links;
-    d->links.clear();
+QList<QuSvgReadLink> QuDom::takeReadLinkDefs() const {
+    QList<QuSvgReadLink> links = d->read_links;
+    d->read_links.clear();
     return links;
 }
 
 /*!
- * \brief Returns true if the dom contains *<link>* nodes.
- * \return true if the DOM contains *<link>* nodes, false otherwise.
+ * \brief Returns true if the dom contains *<read>* nodes.
+ * \return true if the DOM contains *<read>* nodes, false otherwise.
  */
 bool QuDom::hasLinks() const {
-    return d->links.size() > 0;
+    return d->read_links.size() > 0;
 }
 
 QMap<QString, QDomElement> &QuDom::m_get_id_cache() const {
     return d->id_cache;
 }
 
-void QuDom::m_add_to_cache(const QString &id, QDomElement &dome) {
+void QuDom::m_add_to_cache(const QString &id, const QDomElement &dome) {
     d->id_cache[id] = dome;
 }
 
-void QuDom::m_notify_attribute_change(const QString &id,
-                                      const QString &attnam,
-                                      const QString &attval,
+void QuDom::m_notify_element_change(const QString &id,
                                       QuDomElement *dome) {
-    foreach (QuDomListener *l, d->dom_listeners)
-        l->onAttributeChange(id, attnam, attval, dome);
+    foreach (QuDomListener *l, d->dom_listeners) {
+        l->onElementChange(id, dome);
+    }
 }
 
 /*!
@@ -277,8 +293,8 @@ const QDomElement QuDom::operator[](const std::string & id) const {
     return operator [](id.c_str());
 }
 
-QString QuDom::linkTagName() const {
-    return "link";
+QString QuDom::readerTagName() const {
+    return "read";
 }
 
 QString QuDom::error() const {

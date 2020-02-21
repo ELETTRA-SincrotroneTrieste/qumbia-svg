@@ -9,6 +9,7 @@ class QuSvgDataListener
 {
 public:
     virtual bool onUpdate(const QuSvgResultData& res, QuDom *qudom) = 0;
+    virtual void onError(const QString& msg) = 0;
 };
 
 #endif // QUSVGDATALISTENER_H

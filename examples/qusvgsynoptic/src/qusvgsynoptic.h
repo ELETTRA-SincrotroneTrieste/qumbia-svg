@@ -19,6 +19,7 @@ public:
     // QuSvgDataListener interface
 public:
     bool onUpdate(const QuSvgResultData &res, QuDom *qudom);
+    void onError(const QString &msg);
 };
 
 class QuSvgSynoptic : public QWidget, public QuSvgDataListener
@@ -33,6 +34,8 @@ private slots:
     void applyClicked();
     void onLayerSelectChanged(int index);
     void onLayerVisibilityChange(bool visible);
+    void clearError();
+    void onItemEventHandlerError(const QString &origin, const QString &msg);
 
 private:
     QuSvg *m_qu_svg;
@@ -44,6 +47,7 @@ private:
     // QuSvgDataListener interface
 public:
     bool onUpdate(const QuSvgResultData &res, QuDom *qudom);
+    void onError(const QString &msg);
 };
 
 #endif // QuSvgExample_H

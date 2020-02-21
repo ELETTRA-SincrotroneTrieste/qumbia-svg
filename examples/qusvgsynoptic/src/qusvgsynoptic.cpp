@@ -21,7 +21,10 @@
 #include <qusvgview.h>
 #include <qusvg.h>
 #include <qusvglayerhelper.h>
-#include <qusvgreaderspool.h>
+#include <qusvgconnectionspool.h>
+#include <qusvgitemeventhandler.h>
+#include <qusvgwriteactionprovider.h>
+#include <qusvghelperappactionprovider.h>
 #include <QtDebug>
 #include <QLabel>
 #include <QLineEdit>
@@ -61,6 +64,10 @@ QuSvgSynoptic::QuSvgSynoptic(CumbiaPool *cumbia_pool, QWidget *parent) :
     QGridLayout *lo = new QGridLayout(this);
     QuSvgView *svgview = new QuSvgView(this);
     m_qu_svg = new QuSvg(svgview);
+    QuSvgItemEventHandler *item_event_han = new QuSvgItemEventHandler(svgview);
+    item_event_han->addActionProvider(new QuSvgHelperAppActionProvider(this, m_qu_svg->quDom(), m_qu_svg->getConnectionsPool()));
+    item_event_han->addActionProvider(new QuSvgWriteActionProvider(this, m_qu_svg->quDom(), cu_pool, m_ctrl_factory_pool));
+    connect(item_event_han, SIGNAL(error(QString,QString)), this, SLOT(onItemEventHandlerError(QString, QString)));
     m_qu_svg->init(cu_pool, m_ctrl_factory_pool);
     lo->addWidget(svgview, 0,0, 5, 5 );
 
@@ -101,6 +108,18 @@ QuSvgSynoptic::QuSvgSynoptic(CumbiaPool *cumbia_pool, QWidget *parent) :
     connect(cb, SIGNAL(clicked(bool)), this, SLOT(onLayerVisibilityChange(bool)));
     lo->addWidget(cob, 6, 0, 1, 4);
     lo->addWidget(cb, 6, 4, 1, 1);
+
+    QLineEdit *lerr = new QLineEdit("-", this);
+    lerr->setObjectName("le_error");
+    QPushButton *pbClearErr = new QPushButton("Clear error", this);
+    pbClearErr->setObjectName("clear_error");
+    connect(pbClearErr, SIGNAL(clicked()), this, SLOT(clearError()));
+    lo->addWidget(lerr, 7, 0, 1, 4);
+    lo->addWidget(pbClearErr, 7, 4, 1, 1);
+    lerr->setVisible(false);
+    pbClearErr->setVisible(false);
+
+    resize(800, 1000);
 }
 
 QuSvgSynoptic::~QuSvgSynoptic()
@@ -119,7 +138,7 @@ void QuSvgSynoptic::applyClicked()
     QString id = findChild<QLineEdit *>("le_id")->text();
     QString attn = findChild<QLineEdit *>("le_attnam")->text();
     QString attv = findChild<QLineEdit *>("le_attval")->text();
-    QuDom dom = m_qu_svg->quDom();
+    QuDom *dom = m_qu_svg->quDom();
     QuDomElement dome(dom);
     QuDomElement de = dome[id];
     if(de.isNull()) {
@@ -136,35 +155,75 @@ void QuSvgSynoptic::onLayerSelectChanged(int ) {
     QString layernam = findChild<QComboBox *>()->currentText();
     QuDomElement de(m_qu_svg->quDom());
     QuDomElement layer = de[layernam];
-    qDebug() << __PRETTY_FUNCTION__ << layer.a("visibility");
     findChild<QCheckBox *>()->setChecked(layer.a("visibility") == "visible"
                                       || layer.a("visibility").isEmpty());
 }
 
 void QuSvgSynoptic::onLayerVisibilityChange(bool visible) {
-    QuSvgLayerHelper lh(*m_qu_svg);
+    QuSvgLayerHelper lh(m_qu_svg->quDom(), findChild<QuSvgView *>());
     QObject::connect(&lh, SIGNAL(activeSourcesChanged(QStringList,bool)),
-            m_qu_svg->getReadersPool(), SLOT(activateSources(QStringList,bool)));
+            m_qu_svg->getConnectionsPool(), SLOT(activateSources(QStringList,bool)));
     lh.setLayerVisible(findChild<QComboBox *>()->currentText(), visible);
 }
 
-bool QuSvgSynoptic::onUpdate(const QuSvgResultData &res, QuDom *qudom)
-{
-    printf("QuSvgSynoptic.onUpdate [\e[1;32mDATA\e[0m]: %s %s [\e[1;36mRECIPIENT\e[0m]: "
-        "id: \"\e[0;32m%s\e[0m\" attribute: \"%s/\e[1;36m%s\e[0m\"\n", qstoc(QDateTime::fromMSecsSinceEpoch(
-                     res.data["timestamp_ms"].toLongInt()).toString()),
-            res.data["value"].toString().c_str(),
-         qstoc(res.link.id), qstoc(res.link.attribute), qstoc(res.link.property));
+void QuSvgSynoptic::clearError() {
+    findChild<QLabel *>("label_error")->setText("-");
+}
 
-    printf("\e[1;35m: returning false: automatic processing...\e[0m\n");
+void QuSvgSynoptic::onItemEventHandlerError(const QString &origin, const QString &msg) {
+    QMessageBox::critical(this, "Error from " + origin, QString("Error from %1\n%2")
+                          .arg(origin).arg(msg));
+}
+
+bool QuSvgSynoptic::onUpdate(const QuSvgResultData &res, QuDom *qudom) {
+    if(res.link.id == "flag") {
+        const CuData& d = res.data;
+        const QuDomElement root(qudom);
+        if(d["state_color"].toString( ) == std::string("red")) {
+            root["upper_rect"].a("style/fill", "#00ffff");
+            root["flag"].a("style/fill", "#000fff");
+            root["flag_star"].a("style/fill", "#fffff0");
+            root["lower_rect"].a("style/fill", "#0df009");
+            root["button"].a("style/fill", "#ffffff");
+            root["button"].a("style/stroke", "#f69409");
+            root["button"].a("style/stroke-width", "3");
+            root["flag_circle"].a("style/fill", "#f0f609");
+            qudom->setItemText("democratic_text", "RAINBOW");
+        }
+        else {
+            root["upper_rect"].a("style/fill", "#ff0000"); // orange
+            root["flag"].a("style/fill", "#f69409"); // yellow
+            root["flag_star"].a("style/fill", "#f0f609"); // yellow
+            root["lower_rect"].a("style/fill", "#b718dd"); // violet
+            root["flag_circle"].a("style/fill", "#3ba141"); // green
+            root["button"].a("style/fill", "#ffffff");
+            root["button"].a("style/stroke", "#ff0000");
+            root["button"].a("style/stroke-width", "3");
+            qudom->setItemText("democratic_text", "FLAG");
+        }
+        return true;
+    }
     return false;
+}
+
+void QuSvgSynoptic::onError(const QString &msg) {
+    QLineEdit *le = findChild<QLineEdit *>("le_error");
+    QPushButton *clear_err = findChild<QPushButton *>("clear_error");
+    clear_err->setVisible(true);
+    le->setVisible(true);
+    le->setText(msg);
 }
 
 
 bool QuSvgSynoGlobalListener::onUpdate(const QuSvgResultData &res, QuDom *qudom)
 {
-    printf("\e[1;32mQuSvgSynoGlobalListener::onUpdate: specific global listener received"
-           "id %s node %s data %s\e[0m\n",
-           qstoc(res.link.id), qstoc(res.link.tag_name), res.data.toString().c_str());
     return true;
 }
+
+void QuSvgSynoGlobalListener::onError(const QString &msg) {
+    printf("\e[1;31mQuSvgSynoGlobalListener::onUpdate: error received"
+           "%s\e[0m\n",
+           qstoc(msg));
+}
+
+

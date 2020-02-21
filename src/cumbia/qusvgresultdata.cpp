@@ -8,7 +8,7 @@ class QuSvgResultDataPrivate {
 public:
 };
 
-QuSvgResultData::QuSvgResultData(const CuData &_data, const QuSvgLink &lnk) :
+QuSvgResultData::QuSvgResultData(const CuData &_data, const QuSvgReadLink &lnk) :
     data(_data), link(lnk)
 {
     d = new QuSvgResultDataPrivate();

@@ -3,27 +3,64 @@
 #include <QtDebug>
 #include <QRegularExpression>
 
-QuDomElement::QuDomElement(const QuDom &x) : m_qudom(x) {
+QuDomElement::QuDomElement(QuDom *x) : m_qudom(x) {
 }
 
-QuDomElement::QuDomElement(const QDomElement &dome)
-{
+QuDomElement::QuDomElement(const QDomElement &dome) : m_qudom(nullptr) {
     m_dome = dome;
+}
+
+QuDomElement::QuDomElement(QuDom *x, const QDomElement &e) : m_qudom(x) {
+    m_dome = e;
+}
+
+QuDomElement::QuDomElement(const QuDomElement &other) : m_qudom(other.m_qudom) {
+    m_dome = other.m_dome;
+}
+
+QuDomElement::QuDomElement() : m_qudom(nullptr) {
+
+}
+
+QuDomElement &QuDomElement::operator=(const QuDomElement &o) {
+    m_dome = o.m_dome;
+    m_qudom = o.m_qudom;
+    return *this;
 }
 
 bool QuDomElement::isNull() const {
     return m_dome.isNull();
 }
 
-QuDomElement& QuDomElement::findById(const QString& id, const QDomElement &parent) {
-    QDomElement root;
-    parent.isNull() ?  root = m_qudom.getDocument().firstChildElement()
+QuDomElement QuDomElement::findById(const QString& id, const QuDomElement &parent) const {
+    QuDom* dom = parent.m_qudom;
+    QuDomElement root;
+    parent.isNull() ?  root = QuDomElement(dom, m_qudom->getDocument().firstChildElement())
             : root = parent;
     if(root.attribute("id") == id)
-        m_dome = root;
+        return root;
     else
-        m_dome = m_recursiveFind(id, root);
-    return *this;
+        return m_recursiveFind(id, root);
+}
+
+/*!
+ * \brief Get the list of child nodes with the given tag name
+ * \param tagnam the name of the tag
+ * \return list of child nodes with the given tag, as QDomNodeList
+ */
+QDomNodeList QuDomElement::children(const QString& tagnam) const {
+    return m_dome.elementsByTagName(tagnam);
+}
+
+/*!
+ * \brief Find the first <tagnam> child found
+ * \return the first <tagnam> QDomElement found, or a null QDomElement
+ */
+QDomElement QuDomElement::firstChild(const QString& tagnam) {
+    QDomNodeList nl = m_dome.elementsByTagName(tagnam);
+    for(int i = 0; i < nl.size(); i++)
+        return nl.at(i).toElement();
+    return QDomElement();
 }
 
 /*!
@@ -39,30 +76,35 @@ QString QuDomElement::itemId() const {
     QDomElement e = m_dome;
     item_name = e.attribute("item");
     while(item_name.isEmpty() && !e.isNull()) {
-        if(e.hasAttribute("id") && e.hasAttribute("item") && e.attribute("item").compare("false", Qt::CaseInsensitive) != 0) {
+        if(e.hasAttribute("id") &&
+                e.hasAttribute("item") &&
+                e.attribute("item").compare("false", Qt::CaseInsensitive) != 0) {
             item_name = e.attribute("item");
-        } else
+        } else {
             e = e.parentNode().toElement();
+        }
     }
-    if(!item_name.isEmpty())
+    if(!item_name.isEmpty()) {
         return e.attribute("id");
+    }
     return QString();
 }
 
-QDomElement QuDomElement::m_recursiveFind(const QString &id, const QDomElement &parent)
+QuDomElement QuDomElement::m_recursiveFind(const QString &id, const QuDomElement &parent) const
 {
-    QDomNodeList nl = parent.childNodes();
+    QuDom* dom = parent.m_qudom;  // preserve dom across calls
+    QDomNodeList nl = parent.element().childNodes();
     for(int i = 0; i < nl.size(); i++) {
-        QDomElement child = nl.at(i).toElement();
-        if(!child.isNull() && child.attribute("id") == id)
+        QuDomElement child = QuDomElement(dom, nl.at(i).toElement());
+        if(!child.isNull() && child.element().attribute("id") == id)
             return child;
-        if(child.hasChildNodes()) {
-            QDomElement e = m_recursiveFind(id, child);
+        if(child.element().hasChildNodes()) {
+            QuDomElement e = m_recursiveFind(id, child);
             if(!e.isNull())
                 return e;
         }
     }
-    return QDomElement();
+    return QuDomElement(dom); // has dom, but isNull is true
 }
 
 /*!
@@ -86,30 +128,39 @@ QDomElement QuDomElement::m_recursiveFind(const QString &id, const QDomElement &
  *
  *
  */
-QuDomElement &QuDomElement::operator [](const QString& id_path) {
-    QMap<QString, QDomElement>& idcache = m_qudom.m_get_id_cache();
-    QString id;
-    id_path.contains("/") ? id = id_path.section('/', 0, 0) : id = id_path;
-    if(idcache.contains(id)) {
-        m_dome = idcache[id];
-        return *this;
+QuDomElement QuDomElement::operator [](const QString& id_path) {
+    QuDomElement e = m_find_el(id_path);
+    if(!e.isNull() && m_qudom->cacheOnAccessEnabled()) {
+        m_qudom->m_add_to_cache(e.element().attribute("id"), e.element());
     }
-    findById(id, m_dome);
-    if(id_path.contains('/') && !m_dome.isNull()) {
-        return operator [](id_path.section('/', 1, id_path.count('/')));
-    }
-    if(!m_dome.isNull() && m_qudom.cacheOnAccessEnabled()) {
-        m_qudom.m_add_to_cache(id, m_dome);
-    }
-    return *this;
+    return e;
 }
 
-QuDomElement &QuDomElement::operator [](const std::string& id) {
+QuDomElement QuDomElement::operator [](const std::string& id) {
     return operator [](QString::fromStdString(id));
 }
 
-QuDomElement &QuDomElement::operator [](const char *id) {
+QuDomElement QuDomElement::operator [](const char *id) {
     return operator [](QString(id));
+}
+
+QuDomElement QuDomElement::operator [](const QString &id_path) const {
+   return m_find_el(id_path);
+}
+
+QuDomElement QuDomElement::m_find_el(const QString& id_path) const {
+    QMap<QString, QDomElement>& idcache = m_qudom->m_get_id_cache();
+    QString id;
+    id_path.contains("/") ? id = id_path.section('/', 0, 0) : id = id_path;
+    if(idcache.contains(id)) {
+        return QuDomElement(m_qudom, idcache[id]);
+    }
+    const QuDomElement my_el(m_qudom, m_dome);
+    QuDomElement e = findById(id, my_el);
+    if(id_path.contains('/') && !e.isNull()) {
+        return m_find_el(id_path.section('/', 1, id_path.count('/')));
+    }
+    return e;
 }
 
 /*!
@@ -156,10 +207,13 @@ void QuDomElement::setAttribute(const QString &name, const QString &value)
 {
     QString v, nam(name);
     name.count("/") == 1 ? v = toDeclarationList(nam, value) : v = value;
-    if(!v.isEmpty()) {
+    if(!v.isEmpty() && !m_dome.isNull()) {
         m_dome.setAttribute(nam, v);
-        m_qudom.m_notify_attribute_change(m_dome.attribute("id"), nam, v, this);
+        m_qudom->m_notify_element_change(m_dome.attribute("id"), this);
     }
+    else
+        perr("QuDomElement.setAttribute: cannot set attribute \"%s\" on an invalid element",
+             qstoc(name));
 }
 
 /*!
@@ -248,7 +302,3 @@ QString QuDomElement::a(const QString &name) const {
 void QuDomElement::a(const QString &name, const QString &value) {
     setAttribute(name, value);
 }
-
-
-
-

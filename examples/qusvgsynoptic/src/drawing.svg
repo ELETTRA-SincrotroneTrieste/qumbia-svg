@@ -4,11 +4,12 @@
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
-   id="mysvg"
-   version="1.1"
-   viewBox="0 0 210 297"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   width="210mm"
    height="297mm"
-   width="210mm">
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="mysvg">
   <svg:defs
      id="defs2" />
   <svg:metadata
@@ -26,113 +27,184 @@
   <svg:g
      id="daduck_layer">
     <svg:g
-       item="rectangle_group"
-       id="rectangle_group">
+       id="flag_group"
+       item="true">
       <svg:rect
-         style="fill:#00ff00;fill-rule:nonzero;stroke:#007cff;stroke-width:3.39729857;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rettangolo"
-         width="127.17413"
-         height="53.787224"
+         y="16.730942"
          x="43.138882"
-         y="16.730942">
-        <link
-           hint="state_color"
+         height="53.787224"
+         width="126"
+         id="flag"
+         style="fill:#00ff00;fill-rule:nonzero">
+        <read
+           attribute="style/fill"
            src="$1-&gt;State"
-           attribute="style/fill" />
+           hint="state_color" />
       </svg:rect>
-      <svg:text
-         id="text6205"
-         y="51.245438"
-         x="70.177216"
-         style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         xml:space="default">
-        <svg:tspan
-           style="stroke-width:0.26458332"
-           id="tspan6201"
-           y="51.245438"
-           x="69.090614">DAFUQQUZZANG</svg:tspan>
-        <link
-           src="$1/double_scalar" />
-      </svg:text>
-      <svg:ellipse
-         ry="7.9375005"
-         rx="8.3273783"
-         cy="29.77083"
-         cx="91.458336"
-         id="path6048"
-         style="opacity:1;fill:#ff86d5;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <svg:rect
+         y="3.0934055"
+         x="43.439999"
+         height="10"
+         width="126"
+         id="upper_rect"
+         style="opacity:1;fill:#59e2f2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.01197362;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <svg:rect
+         y="74.325691"
+         x="43.444958"
+         height="10"
+         width="126"
+         id="lower_rect"
+         style="opacity:1;fill:#e3f259;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.00799012;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <svg:circle
+         r="20"
+         style="opacity:1;fill:#ffffff"
+         id="flag_circle"
+         cx="80"
+         cy="44" />
+      <svg:path
+         d="M 91.652876,58.264278 80.97276,52.973873 70.982551,58.832051 72.225769,46.971294 63.347016,38.839526 74.795483,36.79958 79.298321,25.915693 85.130645,36.515694 96.792304,37.92085 88.948412,46.511957 Z"
+         id="flag_star"
+         style="opacity:1;fill:#c959f2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.24705672;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <svg:use
+         height="100%"
+         width="100%"
+         transform="matrix(0.48117523,0,0,0.40407806,91.461259,15.192248)"
+         id="use6381"
+         xlink:href="#flag_star"
+         y="0"
+         x="0" />
+      <svg:use
+         height="100%"
+         width="100%"
+         transform="rotate(45.851308,114.56131,58.816949)"
+         id="use6430"
+         xlink:href="#use6381"
+         y="0"
+         x="0" />
+      <svg:use
+         height="100%"
+         width="100%"
+         transform="translate(-19.867062,-4.7781541)"
+         id="use6451"
+         xlink:href="#use6430"
+         y="0"
+         x="0" />
+      <svg:use
+         height="100%"
+         width="100%"
+         transform="translate(-14.585944,9.0533446)"
+         id="use6453"
+         xlink:href="#use6451"
+         y="0"
+         x="0" />
     </svg:g>
     <svg:g
-       item="concentrico"
-       id="duecerchi">
+       id="duecerchi"
+       item="concentrico">
       <svg:ellipse
-         style="fill:#00ff00;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         ry="52.022255"
+         rx="50.803047"
+         cy="166.21149"
+         cx="65.037598"
          id="ellipse"
-         cx="101.5425"
-         cy="163.81288"
-         rx="75.217262"
-         ry="68.413696" />
+         style="fill:#00ff00;stroke:#007cff;stroke-width:1.43330681;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <svg:g
-         style="filter:url(#filter4831)"
-         id="gr2">
+         id="gr2"
+         style="filter:url(#filter4831)">
         <svg:ellipse
-           style="fill:#0000ff;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="cerchio_blu"
-           cx="123.59821"
-           cy="170.75595"
+           ry="28.726189"
            rx="31.372023"
-           ry="28.726189">
-          <link
-             attribute="style/fill"
-             src="test/device/1/double_scalar" />
+           cy="166.33974"
+           cx="66.473923"
+           id="cerchio_blu"
+           style="fill:#0000ff;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+          <read
+             src="test/device/1/double_scalar"
+             attribute="style/fill" />
         </svg:ellipse>
         <svg:path
-           transform="matrix(0.84726008,0,0,0.81259995,14.727372,27.695396)"
-           d="m 136.07143,185.11905 -13.67464,-3.88756 -10.95483,9.06092 -0.52841,-14.20667 -12.002683,-7.61869 13.348063,-4.89265 3.53677,-13.76953 8.77796,11.18285 14.18853,-0.89135 -7.92298,11.80403 z"
+           style="fill:#ffe6d5;stroke:#007cff;stroke-width:1.6594981;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="stellina"
-           style="fill:#ffe6d5;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+           d="m 78.939924,177.21519 -11.585976,-3.15904 -9.28159,7.36291 -0.447701,-11.54434 -10.169394,-6.19095 11.309281,-3.97577 2.996564,-11.18912 7.437215,9.08719 12.021375,-0.72431 -6.712825,9.59195 z" />
       </svg:g>
     </svg:g>
     <svg:path
-       item="true"
-       d="m 52.160713,278.85714 -14.130625,-2.54289 -10.10564,10.19887 -1.948169,-14.22482 -12.822514,-6.45941 12.92659,-6.24853 2.180891,-14.19101 9.937241,10.36302 14.170379,-2.31111 -6.785038,12.65322 z"
+       style="fill:#00ff00;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="stella"
-       style="fill:#00ff00;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       d="m 52.160713,278.85714 -14.130625,-2.54289 -10.10564,10.19887 -1.948169,-14.22482 -12.822514,-6.45941 12.92659,-6.24853 2.180891,-14.19101 9.937241,10.36302 14.170379,-2.31111 -6.785038,12.65322 z"
+       item="true" />
   </svg:g>
-  <link
+  <read
      src="$1/boolean_spectrum_ro" />
+  <rect
+     fill="#C00"
+     height="331"
+     width="331"
+     y="217.01051"
+     x="127.3528" />
+  <path
+     fill="#ffd600"
+     d="m165.49 15.47c30.28 10.787 58.307 27.796 81.948 49.566 22.675 21.132 41.915 47.019 51.072 76.93 6.2062 19.233 4.9292 40.017 0.82663 59.543-4.0982 18.189-12.101 35.528-23.755 50.119 13.217 12.923 26.307 25.974 39.558 38.863-1.7648 6.603-4.4693 13.351-9.8987 17.802-4.5399 3.9187-10.352 5.8133-16.072 7.2378-12.941-13.445-25.948-26.823-38.896-40.261-16.129 11.019-35.594 16.827-55.031 17.685-24.481 1.0821-48.954-6.8092-68.929-20.826-10.771-7.4027-20.48-16.254-29.387-25.794-1.5255 1.5006-3.1903 2.847-4.9022 4.1295 0.42452 3.2013 0.88448 6.3985 1.3259 9.6005-3.3426 0.19229-6.6797 1.0096-9.4884 2.8931-8.6657 5.4918-14.683 14.017-20.834 22.02-7.6271 9.9016-14.482 20.892-25.111 27.906-6.4414 3.9792-15.973 2.2974-19.918-4.3912-4.1259-6.5622-1.7458-15.032 2.6981-20.789 10.861-15.963 30.253-22.786 42.394-37.492 3.1577-3.9512 5.5457-8.5309 6.7303-13.461 3.101 0.19817 6.2023 0.39974 9.3044 0.60175 2.6274-2.6649 5.2677-5.3163 7.8851-7.9898 2.9183-0.0754 5.8923 0.23651 8.7736-0.32607 3.0076-2.6527 5.4052-5.9141 8.1214-8.8522 2.9751 0.8335 4.6657 3.6241 6.8187 5.617 13.307 12.12 28.525 22.682 45.869 28.068 22.179 7.1054 46.889 4.8481 67.694-5.4908-41.672-42.905-83.205-85.947-124.82-128.91-9.3317 9.8253-18.627 19.688-28.092 29.385-11.559-11.792-23.231-23.473-34.849-35.207 21.898-21.92 44.042-43.594 66.061-65.393 19.037 5.1825 38.049 10.456 57.103 15.577-13.021 11.821-26.257 23.403-39.323 35.173 43.419 42.566 86.622 85.358 130.11 127.86 10.498-12.773 16.407-29.037 17.21-45.504 1.4809-21.788-3.5608-43.463-10.743-63.901-10.152-26.973-29.562-49.179-50.658-68.282-13.185-11.72-26.774-23.002-40.801-33.701z"
+     id="sickle_hammer" />
   <svg:g
      id="duckrect_layer">
     <svg:g
-       item="true"
-       id="duckrect">
+       id="duckrect"
+       item="true">
       <svg:rect
-         style="opacity:1;fill:#ff86d5;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:3.94742584;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rect8471"
-         width="71.687309"
-         height="37.920742"
+         y="217.01051"
          x="127.3528"
-         y="217.01051" />
+         height="37.920742"
+         width="71.687309"
+         id="rect8471"
+         style="opacity:1;fill:#ff86d5;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:3.94742584;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <svg:text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         x="143.70886"
+         id="ducktext"
          y="237.69617"
-         id="ducktext"><svg:tspan
-           item="true"
-           x="141.20506"
-           y="237.69617"
+         x="143.70886"
+         style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         xml:space="preserve"><svg:tspan
+           style="stroke-width:0.26458332"
            id="tspan9054"
-           style="stroke-width:0.26458332">DUCK!</svg:tspan><link
-           options="properties-only:false;"
-           src="$1/long_scalar" /></svg:text>
+           y="237.69617"
+           x="141.20506">DUCK!</svg:tspan><read
+           src="$1/long_scalar"
+           options="properties-only:false;" /></svg:text>
       <svg:ellipse
-         ry="5.2632909"
-         rx="6.0151896"
-         cy="243.61519"
-         cx="185.21771"
+         style="opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="cerchiogiallo"
-         style="opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         cx="185.21771"
+         cy="243.61519"
+         rx="6.0151896"
+         ry="5.2632909" />
     </svg:g>
+  </svg:g>
+  <svg:g
+     transform="translate(1.257409,-2.2633362)"
+     id="g_pushButton"
+     item="true"
+     clickable="true"
+     shape="ellipse">
+    <svg:rect
+       y="90.881454"
+       x="44.305885"
+       height="17.587444"
+       width="123.99251"
+       id="button"
+       style="opacity:1;fill:#b718dd;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:2.03119802;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+      <write
+         target="test/device/1-&gt;SwitchStates" />
+    </svg:rect>
+    <svg:text
+       transform="scale(0.88877884,1.1251393)"
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:11.9344759px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.29836187"
+       x="50.848854"
+       y="90.72522"
+       id="democratic_text"><svg:tspan
+         x="50.848854"
+         y="92.039032"
+         id="tspan1662"
+         style="stroke-width:0.29836187">FLAG</svg:tspan></svg:text>
   </svg:g>
 </svg:svg>

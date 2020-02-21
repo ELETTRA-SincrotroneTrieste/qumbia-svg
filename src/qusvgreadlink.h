@@ -1,5 +1,5 @@
-#ifndef QUSVGLINK_H
-#define QUSVGLINK_H
+#ifndef QUSVG_READ_LINK_H
+#define QUSVG_READ_LINK_H
 
 #include <QString>
 #include <QMap>
@@ -8,9 +8,9 @@ class QDomElement;
 class QDomNode;
 
 /*!
- * \brief The QuSvgLink class describes sources and targets for a link
+ * \brief The QuSvgLink class describes sources of readers
  */
-class QuSvgLink
+class QuSvgReadLink
 {
 public:
     /*!
@@ -26,15 +26,15 @@ public:
                          //! manually
                          RootObjectiveType };
 
-    QuSvgLink();
+    QuSvgReadLink();
 
     /*!
      * \brief inspect a QDomElement and infer the configuration of a QuSvgLink
      * \param e Qt QDomElement
      */
-    QuSvgLink(const QDomElement &e);
+    QuSvgReadLink(const QDomElement &e);
 
-    bool operator == (const QuSvgLink& other) const;
+    bool operator == (const QuSvgReadLink& other) const;
 
     bool isValid() const;
 
@@ -42,7 +42,7 @@ public:
 
     ObjectiveType type() const;
 
-    //! The source to connect to: e.g. test/device/1/double_scalar or epics:waveform1
+    //! The source to connect to for reading: e.g. test/device/1/double_scalar or epics:waveform1
     QString src;
     //! The attribute in the *parent node* that will be modified when the
     //! result from src changes
@@ -87,6 +87,9 @@ public:
     //! Example: "options=properties-only:true
     QMap<QString, QString> options;
 
+    //! Used by QuSvgReader, indicates whether the source is active or paused
+    bool inactive;
+
 private:
     QString m_error;
 
@@ -95,6 +98,4 @@ private:
     int m_parent_count(const QDomNode &e) const;
 };
 
-uint qHash(const QuSvgLink& tag, uint seed);
-
-#endif // LINK_H
+#endif // QUSVG_READ_LINK_H

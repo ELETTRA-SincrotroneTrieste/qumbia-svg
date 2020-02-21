@@ -2,8 +2,10 @@
 #define QUSVGLAYERHELPER_H
 
 #include <QObject>
+#include <QStringList>
 
-class QuSvg;
+class QuDom;
+class QuSvgView;
 class QDomNode;
 class QuSvgLayerHelperPrivate;
 
@@ -11,7 +13,7 @@ class QuSvgLayerHelper : public QObject
 {
     Q_OBJECT
 public:
-    explicit QuSvgLayerHelper(const QuSvg& qusvg);
+    explicit QuSvgLayerHelper(QuDom *dom, QuSvgView *view);
 
     ~QuSvgLayerHelper();
 
@@ -22,12 +24,12 @@ public slots:
 
 
 signals:
-    void activeSourcesChanged(const QStringList& srcs, bool active);
+    void activeSourcesChanged(const QStringList& ids, bool active);
 
 private:
     QuSvgLayerHelperPrivate *d;
 
-    QStringList m_findSrcs(const QDomNode &parent);
+    QStringList m_findSrcIds(const QDomNode &parent);
 
 };
 

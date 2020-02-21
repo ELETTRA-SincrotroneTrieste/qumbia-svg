@@ -30,29 +30,40 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        src/cumbia/qusvgconnectionspool.cpp \
         src/cumbia/qusvgresultdata.cpp \
         src/cumbia/qusvgresultdatainterpreter.cpp \
+        src/qugraphicssvgitem.cpp \
         src/qusvglayerhelper.cpp \
-        src/qusvglink.cpp \
-        src/cumbia/qusvgreaderspool.cpp \
         src/cumbia/qusvgreader.cpp \
+        src/cumbia/qusvgwriter.cpp \
         src/qudom.cpp \
         src/qudomelement.cpp \
         src/qusvg.cpp \
-        src/qusvgview.cpp
+        src/qusvgreadlink.cpp \
+        src/qusvgview.cpp \
+        src/events/qusvgwriteactionprovider.cpp \
+        src/events/qusvgitemeventhandler.cpp \
+        src/events/qusvghelperappactionprovider.cpp
 
 HEADERS += \
+    src/cumbia/qusvgconnectionspool.h \
     src/cumbia/qusvgdatalistener.h \
+    src/cumbia/qusvgreplacewildcardhelperinterface.h \
     src/cumbia/qusvgresultdata.h \
     src/cumbia/qusvgresultdatainterpreter.h \
+    src/qugraphicssvgitem.h \
     src/qusvglayerhelper.h \
-    src/qusvglink.h \
-    src/cumbia/qusvgreaderspool.h \
         src/cumbia/qusvgreader.h \
+        src/cumbia/qusvgwriter.h \
         src/qudom.h \
         src/qudomelement.h \
         src/qusvg.h \
-        src/qusvgview.h
+    src/qusvgreadlink.h \
+        src/qusvgview.h \
+    src/events/qusvghelperappactionprovider.h \
+    src/events/qusvgitemeventhandler.h \
+    src/events/qusvgwriteactionprovider.h
 
 DISTFILES += \
     Doxyfile
@@ -95,10 +106,10 @@ CONFIG += create_pc create_prl no_install_prl
     QMAKE_PKGCONFIG_VERSION = $${VERSION}
     QMAKE_PKGCONFIG_DESTDIR = pkgconfig
 
-INCLUDEPATH += src src/cumbia
+INCLUDEPATH += src src/cumbia src/events
 
 # remove ourselves from -l (.pri)
 LIBS -= -l$${qumbia_svg_LIB}
 
-RESOURCES += \
-    qumbia-svg.qrc
+# RESOURCES += \
+#    qumbia-svg.qrc
