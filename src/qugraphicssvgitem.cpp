@@ -7,7 +7,7 @@
 class QuGraphicsSvgItemPrivate {
 public:
     bool clickable;
-    bool pressed;
+    bool pressed, hover;
     QuGraphicsSvgItem::Shape shape;
 };
 
@@ -17,6 +17,7 @@ QuGraphicsSvgItem::QuGraphicsSvgItem()
     d = new QuGraphicsSvgItemPrivate;
     d->clickable = false;
     d->pressed = false;
+    d->hover = false;
     d->shape = Undefined;
 }
 
@@ -26,6 +27,8 @@ bool QuGraphicsSvgItem::clickable() const {
 
 void QuGraphicsSvgItem::setClickable(const QString& c) {
     d->clickable = (c.compare("true", Qt::CaseInsensitive) == 0);
+    if(d->shape == Undefined)
+        d->shape = ShapeRect;
     setAcceptHoverEvents(d->clickable);
 }
 
@@ -81,7 +84,7 @@ void QuGraphicsSvgItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e) {
 void QuGraphicsSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
     if(d->clickable) {
-        d->pressed = true;
+        d->hover = true;
         update();
     }
     else
@@ -90,8 +93,8 @@ void QuGraphicsSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 
 void QuGraphicsSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 {
-    if(d->pressed) {
-        d->pressed = false;
+    if(d->hover) {
+        d->hover = false;
         update();
     }
     else
@@ -101,10 +104,11 @@ void QuGraphicsSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 void QuGraphicsSvgItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QGraphicsSvgItem::paint(painter, option, widget);
-    if(d->pressed) {
+    if(d->pressed || d->hover) {
         QPen pen = painter->pen();
         QColor c = pen.color().lighter();
-        c.setAlpha(120);
+        if(d->hover && !d->pressed) c.setAlpha(80);
+        else if(d->pressed) c.setAlpha(105);
         pen.setColor(c);
         painter->setPen(pen);
         painter->setBrush(QBrush(c));

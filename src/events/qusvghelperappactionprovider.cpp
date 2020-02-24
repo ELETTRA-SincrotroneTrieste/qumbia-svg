@@ -63,63 +63,96 @@ bool QuSvgHelperAppActionProvider::onContextAction(QuGraphicsSvgItem *it, const 
     QuDomElement e(root[it->elementId()]);
     if(!e.isNull()) {
         QString src;
-        // look for link element under e
-        QDomElement link_e = e.firstChild("read");
-        if(link_e.isNull()) // try "write"
-            link_e = e.firstChild("write");
-        if(!link_e.isNull()) {
-            QString lnk_id = link_e.parentNode().toElement().attribute("id");
-            CuContext *ctx = nullptr;
-            QuSvgReader *reader = d->conn_pool->findReaderById(lnk_id);
-            if(reader) {
-                src = reader->source();
-                ctx = reader->getContext();
-            }
-
-            if(src.isEmpty() && d->replace_wildcards_i) {
-                src = link_e.attribute("src");
-                if(src.isEmpty())
-                    src = link_e.attribute("target");
-                if(!src.isEmpty()) {
-                    const QString input_src(src);
-                    src = d->replace_wildcards_i->replaceWildcards(input_src);
-                    if(!src.isEmpty())
-                        ctx = d->replace_wildcards_i->getContext();
-                    else
-                        d->errmsg = QString("QuSvgHelperAppActionProvider.onContextAction: "
-                             "QuSvgReplaceWildcardHelperInterface.replaceWildcards "
-                             "returned an empty string for input \"%1\"").arg(input_src);
+        CuContext *ctx = nullptr;
+        if(!e.a("helper").isEmpty()) {
+            src = e.a("helper");
+        }
+        else {
+            // look for link element under e
+            QDomElement link_e = e.firstChild("read");
+            if(link_e.isNull()) // try "write"
+                link_e = e.firstChild("write");
+            if(!link_e.isNull()) {
+                QString lnk_id = link_e.parentNode().toElement().attribute("id");
+                QuSvgReader *reader = d->conn_pool->findReaderById(lnk_id);
+                if(reader) {
+                    src = reader->source();
+                    ctx = reader->getContext();
                 }
-                else
-                    d->errmsg = QString("QuSvgHelperAppActionProvider.onContextAction: neither \"src\" "
-                         "nor \"target\" attributes found for %1 under %2 id %3").
-                         arg(link_e.tagName()).arg(e.element().tagName())
-                                        .arg(e.element().attribute("id"));
-            }
+
+                if(src.isEmpty() && d->replace_wildcards_i) {
+                    src = link_e.attribute("src");
+                    if(src.isEmpty())
+                        src = link_e.attribute("target");
+                    if(!src.isEmpty()) {
+                        const QString input_src(src);
+                        src = d->replace_wildcards_i->replaceWildcards(input_src);
+                        if(!src.isEmpty())
+                            ctx = d->replace_wildcards_i->getContext();
+                        else
+                            d->errmsg = QString("QuSvgHelperAppActionProvider.onContextAction: "
+                                                "QuSvgReplaceWildcardHelperInterface.replaceWildcards "
+                                                "returned an empty string for input \"%1\"").arg(input_src);
+                    }
+                    else
+                        d->errmsg = QString("QuSvgHelperAppActionProvider.onContextAction: neither \"src\" "
+                                            "nor \"target\" attributes found for %1 under %2 id %3").
+                                arg(link_e.tagName()).arg(e.element().tagName())
+                                .arg(e.element().attribute("id"));
+                }
+            } // !link_e.isNull()
             if(src.isEmpty() || !ctx) {
                 d->errmsg = QString("QuSvgHelperAppActionProvider.onContextAction: no reader found for "
-                     "<read> with id \"%1\". For writers, a QuSvgReplaceWildcardHelperInterface "
-                     "implementation is required to process wildcards in targets")
+                                    "<read> with id \"%1\". For writers, a QuSvgReplaceWildcardHelperInterface "
+                                    "implementation is required to process wildcards in targets")
                         .arg(lnk_id);
+            } // no "helper" attribute defined
+        }
+        if(!src.isEmpty()) { // tango source
+            CuPluginLoader pl;
+            const char* wstd_menu_a_ctions_plugin_name = "widgets-std-context-menu-actions.so";
+            QObject *plugin_o;
+            CuContextMenuActionsPlugin_I *wstd_menu_a_ctions_plugin = nullptr;
+            wstd_menu_a_ctions_plugin =
+                    pl.get<CuContextMenuActionsPlugin_I>(wstd_menu_a_ctions_plugin_name, &plugin_o);
+            if(wstd_menu_a_ctions_plugin && ctx) {
+                wstd_menu_a_ctions_plugin->setup(nullptr, ctx);
+                bool success = QMetaObject::invokeMethod(plugin_o,
+                                                         "onHelperAActionTriggered",
+                                                         Q_ARG(QString, src));
+                if(!success)
+                    d->errmsg = QString("QuSvgHelperAppActionProvider.onContextAction: failed to invoke onHelperAActionTriggered method on %1")
+                            .arg(plugin_o->objectName());
             }
-            else { // tango source
-                CuPluginLoader pl;
-                const char* wstd_menu_a_ctions_plugin_name = "widgets-std-context-menu-actions.so";
-                QObject *plugin_o;
-                CuContextMenuActionsPlugin_I *wstd_menu_a_ctions_plugin = nullptr;
-                wstd_menu_a_ctions_plugin =
-                        pl.get<CuContextMenuActionsPlugin_I>(wstd_menu_a_ctions_plugin_name, &plugin_o);
-                if(wstd_menu_a_ctions_plugin) {
-                    wstd_menu_a_ctions_plugin->setup(nullptr, ctx);
-                    bool success = QMetaObject::invokeMethod(plugin_o,
-                                                             "onHelperAActionTriggered",
-                                                             Q_ARG(QString, src));
-                    if(!success)
-                        d->errmsg = QString("QuSvgHelperAppActionProvider.onContextAction: failed to invoke onHelperAActionTriggered method on %1")
-                             .arg(plugin_o->objectName());
+            else {
+//                const char* extensions_plugin_name = "libactions-extension-plugin.so";
+//                pl.get<
+//                if(!pluginFilePath.isEmpty()) {
+//                    QPluginLoader pluginLoader(pluginFilePath);
+//                    QObject *plugin = pluginLoader.instance();
+//                    if(plugin) {
+//                        QuActionExtensionPluginInterface *action_ex = qobject_cast<QuActionExtensionPluginInterface *>(plugin);
+//                        if(action_ex) {
+//                            QuActionExtensionFactoryI *ae_fac = action_ex->getExtensionFactory();
+//                            QuActionExtensionI *ale = ae_fac->create("CuApplicationLauncherExtension", nullptr);
+//                            CuData cmdline("command", "xclock -analog -twentyfour");
+//                            ale->execute(cmdline);
+//                        }
+//                    }
+//                }
                 }
-            } // !src.isEmpty
-        } // !link_e.isNull
+                if(app_launcher) {
+                    std::string dev = prop.substr(0, prop.find(":helperApplication"));
+                    if(dev.length()  > 0)
+                        app += std::string(" ") + dev;
+                    CuData in("command", app);
+                    app_launcher->execute(in);
+                }
+                else
+                    perr("WidgetStdContextMenuActions::onDataReady: no CuApplicationLauncherExtension found in "
+                         "extension factory");
+            }
+        } // !src.isEmpty
     }
     return false;
 }

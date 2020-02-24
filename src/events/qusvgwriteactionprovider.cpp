@@ -12,6 +12,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QDialog>
+#include <QLabel>
 #include <QHBoxLayout>
 #include <cumacros.h>
 #include <QtDebug>
@@ -67,9 +68,10 @@ QuSvgWriteActionProvider::~QuSvgWriteActionProvider()
     delete d;
 }
 
-void QuSvgWriteActionProvider::exec_dialog(const QString& type, const QString& target) {
+void QuSvgWriteActionProvider::exec_dialog(const QString& type, const QString& target, const QPointF &pos) {
     QDialog *dlg = m_makeDialog(nullptr, type, target);
     if(dlg) {
+        dlg->move(pos.toPoint());
         dlg->exec();
         delete dlg;
     }
@@ -81,21 +83,23 @@ QDialog *QuSvgWriteActionProvider::m_makeDialog(QWidget *parent,
 {
     QDialog *dlg = new QDialog(parent);
     dlg->setWindowTitle(target);
+    QLabel *lab = new QLabel(target, dlg);
     QHBoxLayout *hlo = new QHBoxLayout(dlg);
+    hlo->addWidget(lab);
     if(type == "quapplynumeric") {
         QuApplyNumeric *w;
-        d->cumbia != nullptr ? w = new QuApplyNumeric(parent, d->cumbia, *(d->wf))
-                :  w = new QuApplyNumeric(parent, d->cu_pool, d->fpoo);
+        d->cumbia != nullptr ? w = new QuApplyNumeric(dlg, d->cumbia, *(d->wf))
+                :  w = new QuApplyNumeric(dlg, d->cu_pool, d->fpoo);
         hlo->addWidget(w);
         w->setTarget(target);
     }
     else if(type == "qulineedit") {
         QuButton *b;
         QuLineEdit *le;
-        d->cumbia != nullptr ? b = new QuButton(parent,  d->cumbia, *(d->wf))
-                : b = new QuButton(parent, d->cu_pool, d->fpoo);
-        d->cumbia != nullptr ? le = new QuLineEdit(parent,  d->cumbia, *(d->wf))
-                : le = new QuLineEdit(parent, d->cu_pool, d->fpoo);
+        d->cumbia != nullptr ? b = new QuButton(dlg,  d->cumbia, *(d->wf))
+                : b = new QuButton(dlg, d->cu_pool, d->fpoo);
+        d->cumbia != nullptr ? le = new QuLineEdit(dlg,  d->cumbia, *(d->wf))
+                : le = new QuLineEdit(dlg, d->cu_pool, d->fpoo);
         b->setText("APPLY");
         b->setTarget(QString("%1(%2)").arg(target).arg(le->text()));
         hlo->addWidget(le);
@@ -103,15 +107,15 @@ QDialog *QuSvgWriteActionProvider::m_makeDialog(QWidget *parent,
     }
     else if(type == "quinputoutput") {
         QuInputOutput* w;
-        d->cumbia != nullptr ?  w = new QuInputOutput(parent,  d->cumbia, *(d->rf), *(d->wf))
-                : w = new QuInputOutput(parent,  d->cu_pool, d->fpoo);
+        d->cumbia != nullptr ?  w = new QuInputOutput(dlg,  d->cumbia, *(d->rf), *(d->wf))
+                : w = new QuInputOutput(dlg,  d->cu_pool, d->fpoo);
         w->setSource(target);
         hlo->addWidget(w);
     }
     else if(type == "qubutton") {
         QuButton* w;
-        d->cumbia != nullptr ? w = new QuButton(parent,  d->cumbia, *(d->wf))
-                : w = new QuButton(parent,  d->cu_pool, d->fpoo);
+        d->cumbia != nullptr ? w = new QuButton(dlg,  d->cumbia, *(d->wf))
+                : w = new QuButton(dlg,  d->cu_pool, d->fpoo);
         w->setTarget(target);
         hlo->addWidget(w);
     }
@@ -131,7 +135,7 @@ bool QuSvgWriteActionProvider::onClicked(QuGraphicsSvgItem *it) {
     QString target, type;
     QuWriter *w = nullptr;
     m_pre_process(it, target, type);
-    if(type == "button") {
+    if(type == "qubutton") {
         if(d->cu_pool != nullptr)
             w = new QuWriter(nullptr, d->cu_pool, d->fpoo);
         else if(d->cumbia != nullptr)
@@ -145,14 +149,24 @@ bool QuSvgWriteActionProvider::onClicked(QuGraphicsSvgItem *it) {
         }
     }
     else if(!type.isEmpty())
-        exec_dialog(target, type);
+        exec_dialog(type, target, QCursor::pos());
     return !target.isEmpty() && !type.isEmpty();
+}
+
+bool QuSvgWriteActionProvider::onContextAction(QuGraphicsSvgItem *it, const QString &action_name) {
+    QString target, type;
+    m_pre_process(it, target, type);
+    qDebug() << __PRETTY_FUNCTION__ << "target " << target << "type  "  << type;
+    if(target == action_name) {
+        exec_dialog(type, target, QCursor::pos());
+    }
+    return !type.isEmpty() && target == action_name;
 }
 
 bool QuSvgWriteActionProvider::handlesEventType(QuGraphicsSvgItem *it, QuSvgActionProviderInterface::EventType et) const {
     QString target, type;
     m_pre_process(it, target, type);
-    if(et == QuSvgActionProviderInterface::ClickEvent && type == "button" && !target.isEmpty())
+    if(et == QuSvgActionProviderInterface::ClickEvent && !target.isEmpty())
         return true;
     if(et == QuSvgActionProviderInterface::ContextualEvent && !target.isEmpty())
         return true;
@@ -167,15 +181,6 @@ QString QuSvgWriteActionProvider::message() const {
     return d->msg;
 }
 
-bool QuSvgWriteActionProvider::onContextAction(QuGraphicsSvgItem *it, const QString &action_name) {
-    QString target, type;
-    m_pre_process(it, target, type);
-    if(target == action_name) {
-        exec_dialog(type, target);
-    }
-    return !type.isEmpty() && target == action_name;
-}
-
 void QuSvgWriteActionProvider::m_pre_process(QuGraphicsSvgItem *item,
                                              QString& target,
                                              QString& type) const {
@@ -185,10 +190,10 @@ void QuSvgWriteActionProvider::m_pre_process(QuGraphicsSvgItem *item,
         // look for link element under e
         QDomElement link_e = e.firstChild("write");
         target = link_e.attribute("target");
-        if(!target.isEmpty() && !e.a("type").isEmpty())
-            type = e.a("type").toLower();
+        if(!target.isEmpty() && !link_e.attribute("type").isEmpty())
+            type = link_e.attribute("type").toLower();
         else if(!target.isEmpty())
-            type = "button";
+            type = "qubutton";
     }
 }
 

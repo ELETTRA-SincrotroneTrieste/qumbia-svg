@@ -36,7 +36,7 @@ public:
     ~QuSvgWriteActionProvider();
 
 private slots:
-    void exec_dialog(const QString &type, const QString &target);
+    void exec_dialog(const QString &type, const QString &target, const QPointF& pos);
 
 
 private:
