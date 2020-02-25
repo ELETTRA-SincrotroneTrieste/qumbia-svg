@@ -36,7 +36,6 @@ SOURCES += \
         src/qugraphicssvgitem.cpp \
         src/qusvglayerhelper.cpp \
         src/cumbia/qusvgreader.cpp \
-        src/cumbia/qusvgwriter.cpp \
         src/qudom.cpp \
         src/qudomelement.cpp \
         src/qusvg.cpp \
@@ -55,7 +54,6 @@ HEADERS += \
     src/qugraphicssvgitem.h \
     src/qusvglayerhelper.h \
         src/cumbia/qusvgreader.h \
-        src/cumbia/qusvgwriter.h \
         src/qudom.h \
         src/qudomelement.h \
         src/qusvg.h \

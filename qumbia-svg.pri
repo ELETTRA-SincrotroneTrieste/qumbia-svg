@@ -36,6 +36,10 @@ isEmpty(INSTALL_ROOT) {
 #
 #
 
+
+MOC_DIR=moc
+OBJECTS_DIR=objs
+
 unix:!android-g++ {
     CONFIG += link_pkgconfig
     PKGCONFIG += cumbia cumbia-qtcontrols
