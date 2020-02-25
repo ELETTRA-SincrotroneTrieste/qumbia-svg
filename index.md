@@ -51,6 +51,8 @@ You can either edit qumbia-svg.pri to change the *INSTALL_ROOT* installation pre
 
 > qmake INSTALL_ROOT=/usr/local/qumbia-svg
 
+#### Default prefix
+
 The default prefix is */usr/local/cumbia-libs* (includes in */usr/local/cumbia-libs/include/qumbia-svg/*, libs in */usr/local/cumbia-libs/lib/* and so forth)
 
 
