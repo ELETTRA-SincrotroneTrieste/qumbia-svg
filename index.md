@@ -55,6 +55,9 @@ You can either edit qumbia-svg.pri to change the *INSTALL_ROOT* installation pre
 
 The default prefix is */usr/local/cumbia-libs* (includes in */usr/local/cumbia-libs/include/qumbia-svg/*, libs in */usr/local/cumbia-libs/lib/* and so forth)
 
+### Important advice
+
+Please make sure the installation prefix is the same as that used for the *cumbia* library. This ensures proper library interoperability.
 
 ### Are you ready?
  
