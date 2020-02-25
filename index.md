@@ -28,6 +28,11 @@ or change a text value on the engine)
 The library relies on *PKGCONFIG* to find the needed dependencies, that are
 - cumbia
 - cumbia-qtcontrols
+Please make sure that the PKG_CONFIG_PATH variable include the cumbia installation prefix, for instance:
+
+> echo $PKG_CONFIG_PATH 
+/usr/local/epics/base-7.0.2/lib/pkgconfig:/usr/local/tango-9.3.3/lib64/pkgconfig:/usr/local/omniorb-4.2.3/lib/pkgconfig:/usr/local/zeromq-4.1.7/lib/pkgconfig:/usr/local/qwt-6.1.4/lib/pkgconfig:*/usr/local/cumbia-libs/lib/pkgconfig*
+
 
 On the Qt side, these are the required modules:
 - widgets
@@ -46,8 +51,7 @@ You can either edit qumbia-svg.pri to change the *INSTALL_ROOT* installation pre
 
 > qmake INSTALL_ROOT=/usr/local/qumbia-svg
 
-The default prefix is */usr/local/cumbia-libs*
-
+The default prefix is */usr/local/cumbia-libs* (includes in */usr/local/cumbia-libs/include/qumbia-svg/*, libs in */usr/local/cumbia-libs/lib/* and so forth)
 
 
 ### Are you ready?
