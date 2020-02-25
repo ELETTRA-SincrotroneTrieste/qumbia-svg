@@ -21,6 +21,33 @@ or change a text value on the engine)
 
 
 
+## Installation
+
+### Dependencies
+
+The library relies on *PKGCONFIG* to find the needed dependencies, that are
+- cumbia
+- cumbia-qtcontrols
+
+On the Qt side, these are the required modules:
+- widgets
+- xml
+- svg
+- opengl
+
+### Download build and install
+
+> git clone https://github.com/ELETTRA-SincrotroneTrieste/qumbia-svg.git
+> cd qumbia-svg
+> qmake && make && make install
+
+### Options
+You can either edit qumbia-svg.pri to change the *INSTALL_ROOT* installation prefix or pass the *INSTALL_ROOT=path/to/qumbia-svg* to qmake:
+
+> qmake INSTALL_ROOT=/usr/local/qumbia-svg
+
+The default prefix is */usr/local/cumbia-libs*
+
 
 
 ### Are you ready?
