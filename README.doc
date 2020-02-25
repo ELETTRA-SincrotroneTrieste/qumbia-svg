@@ -1,0 +1,8 @@
+After installation / doc regeneration, copy doc/html into qumbia-svg-gh-pages copy of the *gh-pages* branch, for example:
+
+
+cp -a doc/html/ ../qumbia-svg-gh-pages
+
+
+if a copy of the gh-pages branch resides on the qumbia-svg-gh-pages directory in this directory's parent
+
