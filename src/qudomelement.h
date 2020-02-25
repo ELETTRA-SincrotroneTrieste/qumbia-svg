@@ -32,7 +32,7 @@ public:
     void a(const QString& name, const QString& value);
 
     QuDomElement findById(const QString &id, const QuDomElement &parent) const;
-    QDomElement firstChild(const QString& tagnam);
+    QDomElement firstChild(const QString& tagnam) const;
     QDomNodeList children(const QString& tagnam) const;
 
     QString itemId() const;

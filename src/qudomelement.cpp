@@ -56,7 +56,7 @@ QDomNodeList QuDomElement::children(const QString& tagnam) const {
  * \brief Find the first <tagnam> child found
  * \return the first <tagnam> QDomElement found, or a null QDomElement
  */
-QDomElement QuDomElement::firstChild(const QString& tagnam) {
+QDomElement QuDomElement::firstChild(const QString& tagnam) const {
     QDomNodeList nl = m_dome.elementsByTagName(tagnam);
     for(int i = 0; i < nl.size(); i++)
         return nl.at(i).toElement();

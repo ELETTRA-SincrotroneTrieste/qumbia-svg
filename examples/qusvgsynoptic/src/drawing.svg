@@ -129,6 +129,7 @@
       </svg:g>
     </svg:g>
     <svg:path
+       helper="cumbia client"
        style="fill:#00ff00;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="stella"
        d="m 52.160713,278.85714 -14.130625,-2.54289 -10.10564,10.19887 -1.948169,-14.22482 -12.822514,-6.45941 12.92659,-6.24853 2.180891,-14.19101 9.937241,10.36302 14.170379,-2.31111 -6.785038,12.65322 z"
@@ -150,7 +151,6 @@
      id="duckrect_layer">
     <svg:g
        id="duckrect"
-        clickable="true"
        item="true">
       <svg:rect
          y="217.01051"
@@ -159,8 +159,6 @@
          width="71.687309"
          id="rect8471"
          style="opacity:1;fill:#ff86d5;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:3.94742584;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      
-      
       <svg:text
          id="ducktext"
          y="237.69617"
@@ -172,10 +170,9 @@
            y="237.69617"
            x="141.20506">DUCK!</svg:tspan><read
            src="$1/long_scalar"
-           options="properties-only:false;"></read>
-          <write
+           options="properties-only:false;"><write
              type="quapplynumeric"
-             target="test/device/1/double_scalar" /></svg:text>
+             attribute="test/device/1/double_scalar" /></read></svg:text>
       <svg:ellipse
          style="opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="cerchiogiallo"

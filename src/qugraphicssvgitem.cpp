@@ -58,6 +58,7 @@ QuGraphicsSvgItem::Shape QuGraphicsSvgItem::getShape() const {
 }
 
 void QuGraphicsSvgItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    qDebug() << __PRETTY_FUNCTION__ ;
     if(d->clickable) {
         d->pressed = true;
         update();
@@ -67,6 +68,7 @@ void QuGraphicsSvgItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void QuGraphicsSvgItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
+    qDebug() << __PRETTY_FUNCTION__ ;
     if(d->pressed && e->button() == Qt::LeftButton) {
         d->pressed = false;
         update();
@@ -78,11 +80,15 @@ void QuGraphicsSvgItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
 }
 
 void QuGraphicsSvgItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e) {
+    qDebug() << __PRETTY_FUNCTION__ ;
     emit contextMenuRequest(this, e->screenPos(), e->pos());
+    d->pressed = false;
+    update();
 }
 
 void QuGraphicsSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
+    qDebug() << __PRETTY_FUNCTION__ ;
     if(d->clickable) {
         d->hover = true;
         update();
@@ -93,6 +99,7 @@ void QuGraphicsSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 
 void QuGraphicsSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 {
+    qDebug() << __PRETTY_FUNCTION__ ;
     if(d->hover) {
         d->hover = false;
         update();

@@ -12,6 +12,7 @@ class Cumbia;
 class CuControlsReaderFactoryI;
 class QuSvgConnectionsPool;
 class QuSvgReplaceWildcardHelperInterface;
+class QuDomElement;
 
 class QuSvgHelperAppActionProviderPrivate;
 
@@ -40,6 +41,10 @@ public:
 private:
 
     QuSvgHelperAppActionProviderPrivate *d;
+
+    bool m_start_helper_from_reader();
+    bool m_start_helper_from_cmd(const QString& cmd);
+    bool m_get_src_and_ctx(const QuDomElement &itemel) const;
 };
 
 #endif // QUSVGHELPERAPPACTIONPROVIDER_H
