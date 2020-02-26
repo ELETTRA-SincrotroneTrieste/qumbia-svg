@@ -1,13 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="60,5,149,32"/>
-<area shape="rect" id="node2" href="$classQuSvgReader.html" title="QuSvgReader is a reader used by the cumbia&#45;svg module." alt="" coords="304,5,408,32"/>
-<area shape="rect" id="node3" href="$classQuSvgWriter.html" title="QuSvgWriter is a reader that uses QObject to display values." alt="" coords="308,56,404,83"/>
-<area shape="rect" id="node4" title=" " alt="" coords="48,56,161,83"/>
-<area shape="rect" id="node5" title=" " alt="" coords="69,183,140,209"/>
-<area shape="rect" id="node6" href="$classQuSvgConnectionsPool.html" title=" " alt="" coords="275,107,437,133"/>
-<area shape="rect" id="node7" href="$classQuSvgHelperAppActionProvider.html" title=" " alt="" coords="252,309,460,336"/>
-<area shape="rect" id="node8" href="$classQuSvgItemEventHandler.html" title=" " alt="" coords="273,157,439,184"/>
-<area shape="rect" id="node9" href="$classQuSvgLayerHelper.html" title=" " alt="" coords="290,208,422,235"/>
-<area shape="rect" id="node10" href="$classQuSvgWriteActionProvider.html" title=" " alt="" coords="267,259,445,285"/>
-<area shape="rect" id="node11" href="$classQuSvgActionProviderInterface.html" title=" " alt="" coords="5,284,204,311"/>
+<area shape="rect" id="node1" title=" " alt="" coords="69,107,140,133"/>
+<area shape="rect" id="node2" href="$classQuSvgConnectionsPool.html" title=" " alt="" coords="275,107,437,133"/>
+<area shape="rect" id="node3" href="$classQuSvgHelperAppActionProvider.html" title=" " alt="" coords="252,56,460,83"/>
+<area shape="rect" id="node4" href="$classQuSvgItemEventHandler.html" title=" " alt="" coords="273,157,439,184"/>
+<area shape="rect" id="node5" href="$classQuSvgLayerHelper.html" title=" " alt="" coords="290,208,422,235"/>
+<area shape="rect" id="node6" href="$classQuSvgWriteActionProvider.html" title=" " alt="" coords="267,5,445,32"/>
+<area shape="rect" id="node7" href="$classQuSvgActionProviderInterface.html" title=" " alt="" coords="5,31,204,57"/>
 </map>
