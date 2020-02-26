@@ -40,15 +40,36 @@ class QuGraphicsSvgItem;
  * \subsection cumbia_connect Connect to sources
  * Each property of a svg object can be *connected* to a cumbia *source*.
  * The connection can be directly defined in the *svg* file, by introducing a
- * *<link>* element as *direct child* of the target element.
- * The *<link>* element will contain the following attributes
+ * *<read>* element as *direct child* of the target element.
+ * The *<read>* element will contain the following attributes
  * - *src* (compulsory): specifies the name of the source of data
  * - *attribute*: specifies the *target attribute* in the *parent* that will be changed
  *   upon new data from *src*.
+ *
+ * \image html svg_read_src.png "Fig. 1 - Readers definition in the svg file"
+ * \image latex svg_read_src.png "Fig. 1 - Readers definition in the svg file"  width=12cm
+ *
+ * \image html svg_read.png "Fig. 2 - SVG items connected to Tango sources"
+ * \image latex svg_read.png "Fig. 2 - SVG items connected to Tango sources"  width=12cm
+ *
+ *
  * If *attribute* is missing, then it must be clear from the context what is the
  * target of the data update *in the parent*, for example, the parent is a *<text>*
  * node.
- * Please see also QuSvgLink::isValid
+ *
+ * For example, in the svg source snippet below
+ *
+ * \image html svg_text_read_src.png "Sources connected to <text> nodes"
+ * \image latex svg_text_read_src.png "Sources connected to <text> nodes"  width=12cm
+ *
+ * it is easy for *cumbia-svg* to understand that the value of *long_scalar* will
+ * update the text node child of <svg:text> with id *ducktext*.
+ *
+ * In a similar way, under the *<read>* node, the *hint=state_color*
+ * linked to the *style/fill* target attribute in Fig. 1 will update
+ * the *fill color* of the parent *<rect>*.
+ *
+ * Please see also QuSvgReadLink::isValid
  *
  * \subsubsection src_names Source names
  * Source names must be conform to the syntax understood by the available engines,

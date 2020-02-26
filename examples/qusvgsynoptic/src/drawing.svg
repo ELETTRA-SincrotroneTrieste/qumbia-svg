@@ -158,7 +158,7 @@
          height="37.920742"
          width="71.687309"
          id="rect8471"
-         style="opacity:1;fill:#ff86d5;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:3.94742584;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="fill:#ff86d5;stroke:#007cff" />
       <svg:text
          id="ducktext"
          y="237.69617"
@@ -168,11 +168,10 @@
            style="stroke-width:0.26458332"
            id="tspan9054"
            y="237.69617"
-           x="141.20506">DUCK!</svg:tspan><read
-           src="$1/long_scalar"
-           options="properties-only:false;"><write
-             type="quapplynumeric"
-             attribute="test/device/1/double_scalar" /></read></svg:text>
+           x="141.20506">DUCK!</svg:tspan>
+           <read src="$1/long_scalar" options="properties-only:false;">
+            </read>
+      </svg:text>
       <svg:ellipse
          style="opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#007cff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="cerchiogiallo"
