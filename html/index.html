@@ -69,7 +69,32 @@ Readers definition in the *svg* file</div></div>
 <img src="svg_read.png" alt=""/>
 <div class="caption">
 SVG items connected to Tango sources</div></div>
- <p>If <em>attribute</em> is missing, then it must be clear from the context what is the target of the data update <em>in the parent</em>, for example, the parent is a *&lt;text&gt;* node. Please see also <a class="el" href="classQuSvgReadLink.html#a5e946c76ed9465d5f948eb91f6373919" title="QuSvgReadLink::isValid returns true if the information stored is enough.">QuSvgReadLink::isValid</a></p>
+ <p>If <em>attribute</em> is missing, then it must be clear from the context what is the target of the data update <em>in the parent</em>, for example, the parent is a *&lt;text&gt;* node.</p>
+<p>For example, in the svg source snippet below</p>
+<div class="fragment"><div class="line">&lt;svg:g</div>
+<div class="line">   <span class="keywordtype">id</span>=<span class="stringliteral">&quot;duckrect&quot;</span></div>
+<div class="line">   item=<span class="stringliteral">&quot;true&quot;</span>&gt;</div>
+<div class="line">  &lt;svg:rect</div>
+<div class="line">     y=<span class="stringliteral">&quot;217.01051&quot;</span></div>
+<div class="line">     x=<span class="stringliteral">&quot;127.3528&quot;</span></div>
+<div class="line">     height=<span class="stringliteral">&quot;37.920742&quot;</span></div>
+<div class="line">     width=<span class="stringliteral">&quot;71.687309&quot;</span></div>
+<div class="line">     <span class="keywordtype">id</span>=<span class="stringliteral">&quot;rect8471&quot;</span></div>
+<div class="line">     style=<span class="stringliteral">&quot;fill:#ff86d5;stroke:#007cff&quot;</span> /&gt;</div>
+<div class="line">  &lt;svg:text</div>
+<div class="line">     <span class="keywordtype">id</span>=<span class="stringliteral">&quot;ducktext&quot;</span></div>
+<div class="line">     y=<span class="stringliteral">&quot;237.69617&quot;</span></div>
+<div class="line">     x=<span class="stringliteral">&quot;143.70886&quot;</span></div>
+<div class="line">     style=<span class="stringliteral">&quot;font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332&quot;</span></div>
+<div class="line">     xml:space=<span class="stringliteral">&quot;preserve&quot;</span>&gt;&lt;svg:tspan</div>
+<div class="line">       style=<span class="stringliteral">&quot;stroke-width:0.26458332&quot;</span></div>
+<div class="line">       <span class="keywordtype">id</span>=<span class="stringliteral">&quot;tspan9054&quot;</span></div>
+<div class="line">       y=<span class="stringliteral">&quot;237.69617&quot;</span></div>
+<div class="line">       x=<span class="stringliteral">&quot;141.20506&quot;</span>&gt;DUCK!&lt;/svg:tspan&gt;</div>
+<div class="line">       &lt;read src=<span class="stringliteral">&quot;$1/long_scalar&quot;</span> options=<span class="stringliteral">&quot;properties-only:false;&quot;</span>&gt;</div>
+<div class="line">        &lt;/read&gt;</div>
+<div class="line">  &lt;/svg:text&gt;</div>
+</div><!-- fragment --><p>Please see also <a class="el" href="classQuSvgReadLink.html#a5e946c76ed9465d5f948eb91f6373919" title="QuSvgReadLink::isValid returns true if the information stored is enough.">QuSvgReadLink::isValid</a></p>
 <h3><a class="anchor" id="src_names"></a>
 Source names</h3>
 <p>Source names must be conform to the syntax understood by the available engines, e.g. Tango, EPICS, random</p>
@@ -101,7 +126,7 @@ events.</h3>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Feb 26 2020 16:47:44 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Feb 26 2020 16:52:28 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.17
 </small></address>
