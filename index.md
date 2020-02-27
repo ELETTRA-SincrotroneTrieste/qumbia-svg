@@ -10,7 +10,7 @@ QuGraphicsSvgItem represents the "*item*" node and its children on a
 <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
 
 Reading the ensuing sections in this page is recommended in order to have an overview of the module. You may want to skip 
-to the <a href="html/index.html" title="qumbia-svg doc">documentation main page</a> instead.
+to the <a href="html/index.html" title="qumbia-svg doc">documentation main page</a> instead and start programming with *qumbia-svg*.
 
 ### Accessing items and attributes
 Items, that map the *nodes* defined in the *svg* DOM document, can be
