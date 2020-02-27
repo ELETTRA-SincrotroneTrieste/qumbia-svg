@@ -76,8 +76,7 @@ Connect to sources</h2>
 </table>
 <p><em>attribute</em> can be omitted if it is clear from the context what is the target of the data update <em>in the parent</em>. For example, the parent is a *&lt;text&gt;* node.</p>
 <p>In the svg source snippet below</p>
-<h2>source connected to a ** node </h2>
-<div class="image">
+<p>source connected to a <em>text</em> node --------------------------------&mdash;| </p><div class="image">
 <img src="svg_read_src.png" alt="svg_read_src.png"/>
 </div>
    <p>it is easy for <em>cumbia-svg</em> to understand that the value of <em>long_scalar</em> will update the text node child of &lt;svg:text&gt; with id <em>ducktext</em>.</p>
@@ -90,7 +89,7 @@ Source names</h3>
 Data update</h2>
 <p>When possible, the value of the source is directly updated: a number displayed on a text label or the color of a state. In the other cases (an item position change after a change in a value or a circle radius change proportional to another quantity) custom mappings and transformations can be defined.</p>
 <h2><a class="anchor" id="target_and_events"></a>
-Targets names and &lt;em&gt;item events&lt;/em&gt;</h2>
+Target names and item events</h2>
 <h3><a class="anchor" id="targets"></a>
 Targets</h3>
 <p>Target names must be conform to the syntax understood by the available engines, e.g. Tango, EPICS, random. Writings without arguments, like those triggered by a <em>push button</em>, can be done through a <em>clickable item</em>. Those involving input values are performed by dedicated dialogs, either executed from a contextual menu or a simple click. Items with a <em>target</em> attribute defined and the <em>clickable</em> attribute set to <em>true</em> will start a write operation after a left button click event. Items with a <em>target</em> attribute defined and <em>without</em> a clickable attribute will make a write operation available through a contextual menu. In the latter case, if an <em>action</em> string attribute is defined, its value will be set as text in the contextual menu action associated. The <em>type</em> attribute defines the type of desired <em>writer</em> used in the pop up dialog. Its value can be one of (case insensitive):</p><ul>
@@ -114,7 +113,7 @@ events.</h3>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 27 2020 12:03:18 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Feb 27 2020 12:04:28 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>
