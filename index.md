@@ -9,6 +9,8 @@ the Qt <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</
 QuGraphicsSvgItem represents the "*item*" node and its children on a
 <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
 
+Click <a href="html/index.html" title="qumbia-svg doc">here</a> to access the documentation main page.
+
 ### Accessing items and attributes
 Items, that map the *nodes* defined in the *svg* DOM document, can be
 accessed in a very simple fashion by means of their *id* within the *square brackets* operator
