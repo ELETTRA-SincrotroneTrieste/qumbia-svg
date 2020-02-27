@@ -68,7 +68,10 @@ Fig 1. Items after changing style/fill property</div></div>
 Classes</h3>
 <p><a class="el" href="classQuDom.html" title="The QuDom class loads and represents the DOM of the svg source.">QuDom</a>, <a class="el" href="classQuDomElement.html">QuDomElement</a></p>
 <h2><a class="anchor" id="cumbia_connect"></a>
-Connect to sources</h2>
+Connect to the Tango and Epics (and more...) control system software</h2>
+<p>SVG elements in the drawing can be <em>connected</em> to values obtained from the available <em>cumbia</em> engines and their properties changed accordingly. In several cases, the connections defined and the type of attributes in the SVG elements allow for automatic changes in the representation of the object within the drawing. In more complex ones, the programmer will map values from the engines to values of the <em>attributes</em> in the SVG DOM document.</p>
+<h3><a class="anchor" id="cumbia_connect_details"></a>
+Setting up connections in the svg file</h3>
 <p>Each property of a svg object can be <em>connected</em> to a cumbia <em>source</em>. The connection can be directly defined in the <em>svg</em> file, by introducing a *&lt;read&gt;* element as <em>direct child</em> of the target element. The *&lt;read&gt;* element will contain the following attributes</p><ul>
 <li><em>src</em> (compulsory): specifies the name of the source of data</li>
 <li><em>attribute</em>: specifies the <em>target attribute</em> in the <em>parent</em> that will be changed upon new data from <em>src</em>.</li>
@@ -134,7 +137,7 @@ events.</h3>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 27 2020 16:13:42 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Feb 27 2020 16:15:30 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>

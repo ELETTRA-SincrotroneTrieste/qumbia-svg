@@ -25,7 +25,7 @@ root["lil_star"].a("style/fill", "#ff0000"); // red
 ![Fig 1. Items after changing style/fill property](screenshots/svg_circle_attributes_access.png "Fig 1. Items after changing style/fill property")
 
 
-### Connect with the Tango and Epics (and more...) control system software
+### Connect to the Tango and Epics (and more...) control system software
 SVG elements in the drawing can be *connected* to values obtained from the available *cumbia* engines and their properties changed accordingly.
 In several cases, the connections defined and the type of attributes in the SVG elements allow for automatic changes in the representation of 
 the object within the drawing. In more complex ones, the programmer will map values from the engines to values of the *attributes* in the SVG
