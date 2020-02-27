@@ -16,11 +16,13 @@ defined in the QuDom and QuDomElement classes. Slash ('/') separate *ids* can be
 specified to traverse the DOM more efficiently using a hierarchical path.
 
 ```cpp
-const QuDomElement root(qudom);
-root["rect"].a("style/fill", "#000fff");
-root["button"].a("style/stroke", "#f69409");
-root["button"].a("style/stroke-width", "3");
+const QuDom* qudom = m_qusvg->quDom(); // m_qusvg is a reference to QuSvg
+const QuDomElement root(*qudom);
+root["ellipse/blue_circle"].a("style/fill", "#ffffff"); // white
+root["lil_star"].a("style/fill", "#ff0000"); // red
 ```
+
+\image html svg_circle_attributes_access.png  "Fig 1. Items after changing style/fill property"
 
 ### Connect with the Tango and Epics (and more...) control system software
 SVG elements in the drawing can be *connected* to values obtained from the available *cumbia* engines and their properties changed accordingly.
