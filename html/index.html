@@ -57,7 +57,14 @@ Display content</h2>
 <h3><a class="anchor" id="main_classes"></a>
 Classes</h3>
 <p><a class="el" href="classQuSvg.html">QuSvg</a> (main class), <a class="el" href="classQuDom.html" title="The QuDom class loads and represents the DOM of the svg source.">QuDom</a> (DOM representation), <a class="el" href="classQuDomElement.html">QuDomElement</a> (QDomElement wrapper with improved search and access functionality), <a class="el" href="classQuGraphicsSvgItem.html">QuGraphicsSvgItem</a> (extends QGraphicsSvgItem), <a class="el" href="classQuSvgView.html">QuSvgView</a> (<a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsView</a> extension that creates items, manages zoom operations, signals click and context menu events).</p>
-<h2><a class="anchor" id="cumbia_connect"></a>
+<h2><a class="anchor" id="accessing_items"></a>
+Accessing items and attributes</h2>
+<p>Items, that map the <em>nodes</em> defined in the <em>svg</em> DOM document, can be accessed in a very simple fashion by means of their <em>id</em> within the <em>square brackets</em> operator defined in the <a class="el" href="classQuDom.html" title="The QuDom class loads and represents the DOM of the svg source.">QuDom</a> and <a class="el" href="classQuDomElement.html">QuDomElement</a> classes. Slash ('/') separate <em>ids</em> can be specified to traverse the DOM more efficiently through a hierarchical path.</p>
+<div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code" href="classQuDom.html">QuDom</a>* qudom = m_qusvg-&gt;quDom(); <span class="comment">// m_qusvg is a reference to QuSvg</span></div><div class="line"><span class="keyword">const</span> <a class="code" href="classQuDomElement.html">QuDomElement</a> root(*qudom);</div><div class="line">root[<span class="stringliteral">&quot;ellipse/blue_circle&quot;</span>].a(<span class="stringliteral">&quot;style/fill&quot;</span>, <span class="stringliteral">&quot;#ffffff&quot;</span>); <span class="comment">// white</span></div><div class="line">root[<span class="stringliteral">&quot;lil_star&quot;</span>].a(<span class="stringliteral">&quot;style/fill&quot;</span>, <span class="stringliteral">&quot;#ff0000&quot;</span>); <span class="comment">// red</span></div></div><!-- fragment --><div class="image">
+<img src="svg_circle_attributes_access.png" alt="svg_circle_attributes_access.png"/>
+<div class="caption">
+Fig 1. Items after changing style/fill property</div></div>
+ <h2><a class="anchor" id="cumbia_connect"></a>
 Connect to sources</h2>
 <p>Each property of a svg object can be <em>connected</em> to a cumbia <em>source</em>. The connection can be directly defined in the <em>svg</em> file, by introducing a *&lt;read&gt;* element as <em>direct child</em> of the target element. The *&lt;read&gt;* element will contain the following attributes</p><ul>
 <li><em>src</em> (compulsory): specifies the name of the source of data</li>
@@ -124,7 +131,7 @@ events.</h3>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 27 2020 16:08:00 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Feb 27 2020 16:10:32 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>

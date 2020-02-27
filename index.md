@@ -9,14 +9,7 @@ the Qt <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</
 QuGraphicsSvgItem represents the "*item*" node and its children on a
 <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
 
-##### Classes
-QuSvg (main class), QuDom (DOM representation), QuDomElement (QDomElement wrapper with
-improved search and access functionality), QuGraphicsSvgItem (extends QGraphicsSvgItem),
-QuSvgView (<a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsView</a>
-extension that creates items, manages zoom operations, signals click and context
-menu events).
-
-### Accessing item properties
+### Accessing items and attributes
 Items, that map the *nodes* defined in the *svg* DOM document, can be
 accessed in a very simple fashion by means of their *id* within the *square brackets* operator
 defined in the QuDom and QuDomElement classes. Slash ('/') separate *ids* can be
