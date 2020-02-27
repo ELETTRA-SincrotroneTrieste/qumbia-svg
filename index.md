@@ -10,8 +10,8 @@ In several cases, the connections defined and the type of attributes in the SVG 
 the object within the drawing. In more complex ones, the programmer will map values from the engines to values of the *attributes* in the SVG
 DOM document.
 
-|                                                                                    |                                                   |
-![rect elements changing their colors according to a Tango state](html/svg_demo.gif) | ![svg code snippet](html/svg_read_src.png) |
+| rect elements changing their colors according to a Tango state  | svg code to declare an item with a reader                     |
+| ![rect elements changing their colors according to a Tango state](html/svg_demo.gif) | ![svg code snippet](html/svg_read_src.png) |
 
 
 ### Helper application support
