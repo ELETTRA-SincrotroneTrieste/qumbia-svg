@@ -76,6 +76,11 @@ Please make sure that the PKG_CONFIG_PATH variable include the cumbia installati
 > echo $PKG_CONFIG_PATH 
 > /usr/local/epics/base-7.0.2/lib/pkgconfig:/usr/local/tango-9.3.3/lib64/pkgconfig:/usr/local/omniorb-4.2.3/lib/pkgconfig:/usr/local/zeromq-4.1.7/lib/pkgconfig:/usr/local/qwt-6.1.4/lib/pkgconfig:*/usr/local/cumbia-libs/lib/pkgconfig*
 
+Unaware of the specific engines installed, the module relies on *cumbia-qtcontrols factories* to connect to the available ones. 
+Nonetheless, the necessary modules must be installed to let applications connect to the control systems (for example: *cumbia-tango and qumbia-tango-controls* are needed 
+for Tango, *cumbia-epics and qumbia-epics-controls* for EPICS, *qumbia-random* for test purposes, and so forth).
+
+Please refer to the main <a href="https://elettra-sincrotronetrieste.github.io/cumbia-libs/">cumbia documentation</a> for further information about *modules and plugins*.
 
 On the Qt side, these are the required modules:
 - widgets
