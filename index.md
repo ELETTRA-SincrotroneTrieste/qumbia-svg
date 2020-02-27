@@ -22,7 +22,7 @@ root["ellipse/blue_circle"].a("style/fill", "#ffffff"); // white
 root["lil_star"].a("style/fill", "#ff0000"); // red
 ```
 
-![Fig 1. Items after changing style/fill property](html/svg_circle_attributes_access.png)
+![Fig 1. Items after changing style/fill property](screenshots/svg_circle_attributes_access.png)
 
 
 ### Connect with the Tango and Epics (and more...) control system software
@@ -32,7 +32,7 @@ the object within the drawing. In more complex ones, the programmer will map val
 DOM document.
 
 | rect elements changing their colors according to a Tango state  | svg code to declare an item with a reader                     |
-| ![rect elements changing their colors according to a Tango state](html/svg_demo.gif) | ![svg code snippet](html/svg_read_src.png) |
+| ![rect elements changing their colors according to a Tango state](screenshots/svg_demo.gif) | ![svg code snippet](screenshots/svg_read_src.png) |
 
 
 ### Helper application support
