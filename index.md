@@ -21,7 +21,7 @@ Events on an item are notified by Qt *signals*. This includes clicks (left butto
 menus will by default make available *helper applications* (if defined) and pop up dialogs to perform slightly more complex writings (for example, write a scalar number 
 or change a text value on the engine)
 
-![<rect> elements changing their colors according to a Tango state](html/svg_demo.gif)
+![rect elements changing their colors according to a Tango state](html/svg_demo.gif)
 
 ## Installation
 
