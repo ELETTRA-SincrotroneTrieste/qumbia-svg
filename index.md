@@ -2,7 +2,25 @@
 
 ### Use Qt SVG module to show and animate SVG drawings
 The <a href="https://doc.qt.io/qt-5/qtsvg-module.html">Qt SVG C++ module</a> provides functionality for handling SVG images. The *cumbia* engines and
-infrastructures can be used to animate any SVG element, grouped in user defined QGraphicsSVGItem objects.
+infrastructures can be used to change any SVG element.
+An *svg* node with the *item* attribute defined and not set to *false* is
+rendered in a dedicated QuGraphicsSvgItem, an extension of
+the Qt <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</a>.
+QuGraphicsSvgItem represents the "*item*" node and its children on a
+<a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
+
+### Accessing item properties
+Items, that map the *nodes* defined in the *svg* DOM document, can be
+accessed in a very simple fashion by means of their *id* within the *square brackets* operator
+defined in the QuDom and QuDomElement classes. Slash ('/') separate *ids* can be
+specified to traverse the DOM more efficiently using a hierarchical path.
+
+```cpp
+const QuDomElement root(qudom);
+root["rect"].a("style/fill", "#000fff");
+root["button"].a("style/stroke", "#f69409");
+root["button"].a("style/stroke-width", "3");
+```
 
 ### Connect with the Tango and Epics (and more...) control system software
 SVG elements in the drawing can be *connected* to values obtained from the available *cumbia* engines and their properties changed accordingly.
