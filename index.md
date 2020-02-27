@@ -9,6 +9,13 @@ the Qt <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</
 QuGraphicsSvgItem represents the "*item*" node and its children on a
 <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
 
+##### Classes
+QuSvg (main class), QuDom (DOM representation), QuDomElement (QDomElement wrapper with
+improved search and access functionality), QuGraphicsSvgItem (extends QGraphicsSvgItem),
+QuSvgView (<a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsView</a>
+extension that creates items, manages zoom operations, signals click and context
+menu events).
+
 ### Accessing item properties
 Items, that map the *nodes* defined in the *svg* DOM document, can be
 accessed in a very simple fashion by means of their *id* within the *square brackets* operator
@@ -24,6 +31,8 @@ root["lil_star"].a("style/fill", "#ff0000"); // red
 
 ![Fig 1. Items after changing style/fill property](screenshots/svg_circle_attributes_access.png)
 
+##### Classes
+QuDom, QuDomElement
 
 ### Connect with the Tango and Epics (and more...) control system software
 SVG elements in the drawing can be *connected* to values obtained from the available *cumbia* engines and their properties changed accordingly.
@@ -34,6 +43,8 @@ DOM document.
 | rect elements changing their colors according to a Tango state  | svg code to declare an item with a reader                     |
 | ![rect elements changing their colors according to a Tango state](screenshots/svg_demo.gif) | ![svg code snippet](screenshots/svg_read_src.png) |
 
+##### Classes
+QuSvgConnectionsPool (readers pool), QuSvgReader (cumbia reader implementation for this module), QuSvgWriteActionProvider
 
 ### Helper application support
 Helper applications can be defined by the *helper* attribute in any item. As an alternative, they can be deduced from the source connected to the element, if 
