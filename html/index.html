@@ -76,10 +76,16 @@ Connect to sources</h2>
 </table>
 <p><em>attribute</em> can be omitted if it is clear from the context what is the target of the data update <em>in the parent</em>. For example, the parent is a *&lt;text&gt;* node.</p>
 <p>In the svg source snippet below</p>
-<p>source connected to a <em>text</em> node --------------------------------&mdash;| </p><div class="image">
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">source connected to a <em>text</em> node   </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><div class="image">
 <img src="svg_read_src.png" alt="svg_read_src.png"/>
 </div>
-   <p>it is easy for <em>cumbia-svg</em> to understand that the value of <em>long_scalar</em> will update the text node child of &lt;svg:text&gt; with id <em>ducktext</em>.</p>
+      </td></tr>
+</table>
+<p>it is easy for <em>cumbia-svg</em> to understand that the value of <em>long_scalar</em> will update the text node child of &lt;svg:text&gt; with id <em>ducktext</em>.</p>
 <p>In a similar way, under the *&lt;read&gt;* node, the <em>hint=state_color</em> linked to the <em>style/fill</em> target attribute in Fig. 1 will update the <em>fill color</em> of the parent *&lt;rect&gt;*.</p>
 <p>Please see also <a class="el" href="classQuSvgReadLink.html#a5e946c76ed9465d5f948eb91f6373919" title="QuSvgReadLink::isValid returns true if the information stored is enough.">QuSvgReadLink::isValid</a></p>
 <h3><a class="anchor" id="src_names"></a>
@@ -113,7 +119,7 @@ events.</h3>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 27 2020 12:04:28 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Feb 27 2020 12:05:20 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>
