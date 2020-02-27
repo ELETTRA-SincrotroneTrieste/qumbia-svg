@@ -13,7 +13,7 @@ QuGraphicsSvgItem represents the "*item*" node and its children on a
 Items, that map the *nodes* defined in the *svg* DOM document, can be
 accessed in a very simple fashion by means of their *id* within the *square brackets* operator
 defined in the QuDom and QuDomElement classes. Slash ('/') separate *ids* can be
-specified to traverse the DOM more efficiently using a hierarchical path.
+specified to traverse the DOM more efficiently through a hierarchical path.
 
 ```cpp
 const QuDom* qudom = m_qusvg->quDom(); // m_qusvg is a reference to QuSvg
