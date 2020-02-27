@@ -107,11 +107,14 @@ class QuGraphicsSvgItem;
  * linked to the *style/fill* target attribute in Fig. 1 will update
  * the *fill color* of the parent *<rect>*.
  *
- * Please see also QuSvgReadLink::isValid
+ * \subsubsection cumbia_connect_classes  Classes
+ * QuSvgConnectionsPool (readers pool), QuSvgReader (cumbia reader
+ * implementation for this module), QuSvgWriteActionProvider
  *
  * \subsubsection src_names Source names
  * Source names must be conform to the syntax understood by the available engines,
- * e.g. Tango, EPICS, random
+ * e.g. Tango, EPICS, random: *test/device/1/double_scalar, $1->State,
+ * $2/long_scalar, epics:waveform1*
  *
  * \subsection data_update Data update
  * When possible, the value of the source is directly updated: a number displayed on
@@ -119,7 +122,10 @@ class QuGraphicsSvgItem;
  * after a change in a value or a circle radius change proportional to another quantity)
  * custom mappings and transformations can be defined.
  *
- * \subsection target_and_events Target names and item events
+ * \subsection target_and_events Write operations: target names and item events
+ * Clicks can target simple *write operations*, while contextual
+ * menus can pop up dialogs specialised in performing more complex writings
+ * (for example, write a scalar number or change a text value on the engine).
  *
  * \subsubsection targets Targets
  * Target names must be conform to the syntax understood by the available engines,
@@ -161,7 +167,33 @@ class QuGraphicsSvgItem;
  * - *clickable defined, target and type not defined*, itemClicked is emitted on left
  *   button click, itemContextMenuRequest is emitted on right button click.
  *
+ * \subsubsection item_events_classes Classes
+ * QuSvgItemHandler, QuSvgHelperApplicationProvider, QuSvgWriteActionProvider
  *
+ *
+ * \subsection helper_app Helper application support
+ * Helper applications can be defined by the *helper* attribute in any item.
+ * As an alternative, they can be deduced from the source connected to the element, if
+ * a single one is defined (and if the engine in use supports this feature, e.g. Tango does).
+ *
+ * \subsubsection helper_app_classes Classes
+ * QuSvgHelperApplicationProvider, QuSvgReplaceWildcardHelperInterface
+ *
+ * \subsection _layers_ Layers
+ * The library supports the svg *layer* nodes. The class QuSvgLayerHelper can be used
+ * to test and change *layer visibility*. The class also notifies when *sources*
+ * (readers) are hidden or shown again, so that the QuSvgConnectionsPool can pause the
+ * readings linked to hidden elements. The *qusvgsynoptic* example shows how layers can
+ * be managed with the QuSvgLayerHelper.
+
+ * \subsubsection Classes
+ * QuSvgLayerHelper, QuSvgView, QuSvg
+ *
+ * \subsection _examples_ Examples
+ * The module distribution includes two examples, that can be found under the
+ * *examples/* directory:
+ * - simple_qusvg, shows a simple scenario where item attributes can be modified on the fly
+ * - qusvgsynoptic: a small application that reads some values from the Tango engine and changes some items in the view
  */
 class QuSvg : public QuSvgConnectionListener
 {
