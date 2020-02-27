@@ -60,6 +60,7 @@ Connect to sources</h2>
 <p>Each property of a svg object can be <em>connected</em> to a cumbia <em>source</em>. The connection can be directly defined in the <em>svg</em> file, by introducing a *&lt;read&gt;* element as <em>direct child</em> of the target element. The *&lt;read&gt;* element will contain the following attributes</p><ul>
 <li><em>src</em> (compulsory): specifies the name of the source of data</li>
 <li><em>attribute</em>: specifies the <em>target attribute</em> in the <em>parent</em> that will be changed upon new data from <em>src</em>.</li>
+<li><em>hint</em> suggest <em>cumbia-svg</em> which key to use to fetch the value from the <em>data bundle</em>. In the example below, <em>state_color</em> is used to extract the color that will be used to change the <em>fill</em> property of the <em>style</em> attribute of the parent *&lt;rect&gt;*.</li>
 </ul>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -67,22 +68,12 @@ Connect to sources</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><div class="image">
 <img src="svg_demo.gif" alt="svg_demo.gif"/>
-<div class="caption">
-rect elements changing their colors according to a Tango state</div></div>
-  </td><td class="markdownTableBodyNone"><div class="image">
+</div>
+     </td><td class="markdownTableBodyNone"><div class="image">
 <img src="svg_read_src.png" alt="svg_read_src.png"/>
-<div class="caption">
-svg code snippet</div></div>
-   </td></tr>
+</div>
+      </td></tr>
 </table>
-<div class="image">
-<img src="svg_read_src.png" alt="svg_read_src.png"/>
-<div class="caption">
-Fig. 1 - Readers definition in the svg file</div></div>
-<div class="image">
-<img src="svg_demo.gif" alt="svg_demo.gif"/>
-<div class="caption">
-Fig. 2 - SVG items connected to Tango sources</div></div>
 <p>If <em>attribute</em> is missing, then it must be clear from the context what is the target of the data update <em>in the parent</em>, for example, the parent is a *&lt;text&gt;* node.</p>
 <p>For example, in the svg source snippet below</p>
 <div class="image">
@@ -123,7 +114,7 @@ events.</h3>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 27 2020 11:55:35 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Feb 27 2020 12:01:03 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>
