@@ -23,6 +23,8 @@ root["lil_star"].a("style/fill", "#ff0000"); // red
 ```
 
 \image html svg_circle_attributes_access.png  "Fig 1. Items after changing style/fill property"
+\image latex svg_circle_attributes_access.png  "Fig 1. Items after changing style/fill property" width=12cm
+
 
 ### Connect with the Tango and Epics (and more...) control system software
 SVG elements in the drawing can be *connected* to values obtained from the available *cumbia* engines and their properties changed accordingly.
