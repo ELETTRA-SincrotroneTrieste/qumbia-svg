@@ -10,6 +10,8 @@ In several cases, the connections defined and the type of attributes in the SVG 
 the object within the drawing. In more complex ones, the programmer will map values from the engines to values of the *attributes* in the SVG
 DOM document.
 
+|                                                                                    |                                                   |
+![rect elements changing their colors according to a Tango state](html/svg_demo.gif) | ![svg code snippet](html/svg_read_src.png) |
 
 
 ### Helper application support
@@ -20,8 +22,6 @@ a single one is defined (and if the engine in use supports this feature, e.g. Ta
 Events on an item are notified by Qt *signals*. This includes clicks (left button and contextual menu events). Clicks can target a *write operation*, while contextual
 menus will by default make available *helper applications* (if defined) and pop up dialogs to perform slightly more complex writings (for example, write a scalar number 
 or change a text value on the engine)
-
-![rect elements changing their colors according to a Tango state](html/svg_demo.gif)
 
 ## Installation
 
