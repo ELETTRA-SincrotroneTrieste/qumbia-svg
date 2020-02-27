@@ -29,7 +29,7 @@ root["ellipse/blue_circle"].a("style/fill", "#ffffff"); // white
 root["lil_star"].a("style/fill", "#ff0000"); // red
 ```
 
-![Fig 1. Items after changing style/fill property](screenshots/svg_circle_attributes_access.png)
+![Fig 1. Items after changing style/fill property](screenshots/svg_circle_attributes_access.png "Fig 1. Items after changing style/fill property")
 
 ##### Classes
 QuDom, QuDomElement
