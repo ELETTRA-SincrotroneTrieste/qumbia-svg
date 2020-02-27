@@ -149,17 +149,21 @@ QuDomElement QuDomElement::operator [](const QString &id_path) const {
 }
 
 QuDomElement QuDomElement::m_find_el(const QString& id_path) const {
+    qDebug () << __PRETTY_FUNCTION__ << id_path;
     QMap<QString, QDomElement>& idcache = m_qudom->m_get_id_cache();
     QString id;
     id_path.contains("/") ? id = id_path.section('/', 0, 0) : id = id_path;
     if(idcache.contains(id)) {
+        qDebug() << __PRETTY_FUNCTION__ << "cache hit for id " << id;
         return QuDomElement(m_qudom, idcache[id]);
     }
     const QuDomElement my_el(m_qudom, m_dome);
     QuDomElement e = findById(id, my_el);
     if(id_path.contains('/') && !e.isNull()) {
+        qDebug() << __PRETTY_FUNCTION__ << "recursive find" << id_path.section('/', 1, id_path.count('/'));
         return m_find_el(id_path.section('/', 1, id_path.count('/')));
     }
+    qDebug() << __PRETTY_FUNCTION__ << "returning " << e.element().tagName() << e.element().attribute("id");
     return e;
 }
 

@@ -45,22 +45,24 @@ class QuGraphicsSvgItem;
  * - *src* (compulsory): specifies the name of the source of data
  * - *attribute*: specifies the *target attribute* in the *parent* that will be changed
  *   upon new data from *src*.
+ * - *hint* suggest *cumbia-svg* which key to use to fetch the value from the *data bundle*.
+ *   In the example below, *state_color* is used to extract the color that will be used
+ *   to change the *fill* property of the *style* attribute of the parent *<rect>*.
  *
- * \image html svg_read_src.png "Fig. 1 - Readers definition in the svg file"
- * \image latex svg_read_src.png "Fig. 1 - Readers definition in the svg file"  width=12cm
- *
- * \image html svg_read.png "Fig. 2 - SVG items connected to Tango sources"
- * \image latex svg_read.png "Fig. 2 - SVG items connected to Tango sources"  width=12cm
+ * rect elements changing their colors according to a Tango state  | svg code to declare an item with a reader
+ * ------------------------------------------------------------------|------------------------------------------------------
+ * ![](svg_demo.gif) | ![](svg_read_src.png)
  *
  *
- * If *attribute* is missing, then it must be clear from the context what is the
- * target of the data update *in the parent*, for example, the parent is a *<text>*
+ * *attribute* can be omitted if it is clear from the context what is the
+ * target of the data update *in the parent*. For example, the parent is a *<text>*
  * node.
  *
- * For example, in the svg source snippet below
+ * In the svg source snippet below
  *
- * \image html svg_text_read_src.png "Sources connected to <text> nodes"
- * \image latex svg_text_read_src.png "Sources connected to <text> nodes"  width=12cm
+ * |source connected to a *text* node | text label |
+ * |----------------------------------|------------|
+ * |![](svg_text_read_src.png)        | ![](svg_text.gif) |
  *
  * it is easy for *cumbia-svg* to understand that the value of *long_scalar* will
  * update the text node child of <svg:text> with id *ducktext*.
@@ -81,7 +83,7 @@ class QuGraphicsSvgItem;
  * after a change in a value or a circle radius change proportional to another quantity)
  * custom mappings and transformations can be defined.
  *
- * \subsection target_and_events Targets names and *item events*
+ * \subsection target_and_events Target names and item events
  *
  * \subsubsection targets Targets
  * Target names must be conform to the syntax understood by the available engines,
