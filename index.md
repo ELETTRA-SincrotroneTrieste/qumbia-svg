@@ -54,12 +54,30 @@ a single one is defined (and if the engine in use supports this feature, e.g. Ta
 QuSvgHelperApplicationProvider, QuSvgReplaceWildcardHelperInterface
 
 ### Item event handling
-Events on an item are notified by Qt *signals*. This includes clicks (left button and contextual menu events). Clicks can target a *write operation*, while contextual
-menus will by default make available *helper applications* (if defined) and pop up dialogs to perform slightly more complex writings (for example, write a scalar number 
-or change a text value on the engine)
+Events on an item are notified by Qt *signals* emitted by the QuSvgView. This includes clicks
+(left button and contextual menu events). Contextual
+menus will by default provide access to *helper applications* (if defined) and
+write operations.
+Additional actions can be added to contextual menus.
+
+#### Write operations
+Clicks can target simple *write operations*, while contextual
+menus can pop up dialogs specialised in performing more complex writings
+(for example, write a scalar number or change a text value on the engine).
 
 ##### Classes
 QuSvgItemHandler, QuSvgHelperApplicationProvider, QuSvgWriteActionProvider
+
+
+### Layers
+The library supports the svg *layer* nodes. The class QuSvgLayerHelper can be used
+to test and change *layer visibility*. The class also notifies when *sources*
+(readers) are hidden or shown again, so that the QuSvgConnectionsPool can pause the
+readings linked to hidden elements. The *qusvgsynoptic* example shows how layers can
+be managed with the QuSvgLayerHelper.
+
+#### Classes
+QuSvgLayerHelper, QuSvgView
 
 ## Installation
 
