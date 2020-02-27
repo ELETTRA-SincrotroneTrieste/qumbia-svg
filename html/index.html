@@ -105,15 +105,18 @@ Setting up connections in the svg file</h3>
 </table>
 <p>it is easy for <em>cumbia-svg</em> to understand that the value of <em>long_scalar</em> will update the text node child of &lt;svg:text&gt; with id <em>ducktext</em>.</p>
 <p>In a similar way, under the *&lt;read&gt;* node, the <em>hint=state_color</em> linked to the <em>style/fill</em> target attribute in Fig. 1 will update the <em>fill color</em> of the parent *&lt;rect&gt;*.</p>
-<p>Please see also <a class="el" href="classQuSvgReadLink.html#a5e946c76ed9465d5f948eb91f6373919" title="QuSvgReadLink::isValid returns true if the information stored is enough.">QuSvgReadLink::isValid</a></p>
+<h3><a class="anchor" id="cumbia_connect_classes"></a>
+Classes</h3>
+<p><a class="el" href="classQuSvgConnectionsPool.html">QuSvgConnectionsPool</a> (readers pool), <a class="el" href="classQuSvgReader.html" title="QuSvgReader is a reader used by the cumbia-svg module.">QuSvgReader</a> (cumbia reader implementation for this module), <a class="el" href="classQuSvgWriteActionProvider.html">QuSvgWriteActionProvider</a></p>
 <h3><a class="anchor" id="src_names"></a>
 Source names</h3>
-<p>Source names must be conform to the syntax understood by the available engines, e.g. Tango, EPICS, random</p>
+<p>Source names must be conform to the syntax understood by the available engines, e.g. Tango, EPICS, random: <em>test/device/1/double_scalar, $1-&gt;State, $2/long_scalar, epics:waveform1</em></p>
 <h2><a class="anchor" id="data_update"></a>
 Data update</h2>
 <p>When possible, the value of the source is directly updated: a number displayed on a text label or the color of a state. In the other cases (an item position change after a change in a value or a circle radius change proportional to another quantity) custom mappings and transformations can be defined.</p>
 <h2><a class="anchor" id="target_and_events"></a>
-Target names and item events</h2>
+Write operations: target names and item events</h2>
+<p>Clicks can target simple <em>write operations</em>, while contextual menus can pop up dialogs specialised in performing more complex writings (for example, write a scalar number or change a text value on the engine).</p>
 <h3><a class="anchor" id="targets"></a>
 Targets</h3>
 <p>Target names must be conform to the syntax understood by the available engines, e.g. Tango, EPICS, random. Writings without arguments, like those triggered by a <em>push button</em>, can be done through a <em>clickable item</em>. Those involving input values are performed by dedicated dialogs, either executed from a contextual menu or a simple click. Items with a <em>target</em> attribute defined and the <em>clickable</em> attribute set to <em>true</em> will start a write operation after a left button click event. Items with a <em>target</em> attribute defined and <em>without</em> a clickable attribute will make a write operation available through a contextual menu. In the latter case, if an <em>action</em> string attribute is defined, its value will be set as text in the contextual menu action associated. The <em>type</em> attribute defines the type of desired <em>writer</em> used in the pop up dialog. Its value can be one of (case insensitive):</p><ul>
@@ -131,13 +134,34 @@ events.</h3>
 <li><em>target and type defined, clickable not defined</em>: a context menu provides an action to execute a dialog with the desired widget to execute the target;</li>
 <li><em>target defined, clickable and type not defined</em>: a context menu provides an action to execute a dialog with a <em>simple apply button</em> to execute the command as specified in <em>target</em></li>
 <li><em>target, clickable and type</em> not defined: itemContextMenuRequest signal only is emitted upon right click</li>
-<li><em>clickable defined, target and type not defined</em>, itemClicked is emitted on left button click, itemContextMenuRequest is emitted on right button click. </li>
+<li><em>clickable defined, target and type not defined</em>, itemClicked is emitted on left button click, itemContextMenuRequest is emitted on right button click.</li>
+</ul>
+<h3><a class="anchor" id="item_events_classes"></a>
+Classes</h3>
+<p>QuSvgItemHandler, QuSvgHelperApplicationProvider, <a class="el" href="classQuSvgWriteActionProvider.html">QuSvgWriteActionProvider</a></p>
+<h2><a class="anchor" id="helper_app"></a>
+Helper application support</h2>
+<p>Helper applications can be defined by the <em>helper</em> attribute in any item. As an alternative, they can be deduced from the source connected to the element, if a single one is defined (and if the engine in use supports this feature, e.g. Tango does).</p>
+<h3><a class="anchor" id="helper_app_classes"></a>
+Classes</h3>
+<p>QuSvgHelperApplicationProvider, <a class="el" href="classQuSvgReplaceWildcardHelperInterface.html">QuSvgReplaceWildcardHelperInterface</a></p>
+<h2><a class="anchor" id=""></a>
+</h2>
+<p>The library supports the svg <em>layer</em> nodes. The class <a class="el" href="classQuSvgLayerHelper.html">QuSvgLayerHelper</a> can be used to test and change <em>layer visibility</em>. The class also notifies when <em>sources</em> (readers) are hidden or shown again, so that the <a class="el" href="classQuSvgConnectionsPool.html">QuSvgConnectionsPool</a> can pause the readings linked to hidden elements. The <em>qusvgsynoptic</em> example shows how layers can be managed with the <a class="el" href="classQuSvgLayerHelper.html">QuSvgLayerHelper</a>.</p>
+<h3><a class="anchor" id="Classes"></a>
+Classes</h3>
+<p><a class="el" href="classQuSvgLayerHelper.html">QuSvgLayerHelper</a>, <a class="el" href="classQuSvgView.html">QuSvgView</a>, <a class="el" href="classQuSvg.html">QuSvg</a></p>
+<h2><a class="anchor" id=""></a>
+</h2>
+<p>The module distribution includes two examples, that can be found under the <em>examples/</em> directory:</p><ul>
+<li>simple_qusvg, shows a simple scenario where item attributes can be modified on the fly</li>
+<li>qusvgsynoptic: a small application that reads some values from the Tango engine and changes some items in the view </li>
 </ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 27 2020 16:19:05 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Feb 27 2020 16:48:50 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>

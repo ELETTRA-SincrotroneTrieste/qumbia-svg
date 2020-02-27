@@ -34,15 +34,11 @@ DOM document.
 | rect elements changing their colors according to a Tango state  | svg code to declare an item with a reader                     |
 | ![rect elements changing their colors according to a Tango state](screenshots/svg_demo.gif) | ![svg code snippet](screenshots/svg_read_src.png) |
 
-##### Classes
-QuSvgConnectionsPool (readers pool), QuSvgReader (cumbia reader implementation for this module), QuSvgWriteActionProvider
 
 ### Helper application support
 Helper applications can be defined by the *helper* attribute in any item. As an alternative, they can be deduced from the source connected to the element, if 
 a single one is defined (and if the engine in use supports this feature, e.g. Tango does).
 
-##### Classes
-QuSvgHelperApplicationProvider, QuSvgReplaceWildcardHelperInterface
 
 ### Item event handling
 Events on an item are notified by Qt *signals* emitted by the QuSvgView. This includes clicks
@@ -111,4 +107,11 @@ Please make sure the installation prefix is the same as that used for the *cumbi
 ### Are you ready?
  
 Start reading the <a href="html/index.html">cumbia svg library documentation</a>.
+
+## Examples
+
+The module distribution includes two examples, that can be found under the *examples/* directory:
+- simple_qusvg, shows a simple scenario where item attributes can be modified on the fly
+- qusvgsynoptic: a small application that reads some values from the Tango engine and changes some items in the view
+
 
