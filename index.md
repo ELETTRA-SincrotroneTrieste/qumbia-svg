@@ -107,14 +107,15 @@ The default prefix is */usr/local/cumbia-libs* (includes in */usr/local/cumbia-l
 
 Please make sure the installation prefix is the same as that used for the *cumbia* library. This ensures proper library interoperability.
 
-### Are you ready?
- 
-Start reading the <a href="html/index.html">cumbia svg library documentation</a>.
-
 ## Examples
 
 The module distribution includes two examples, that can be found under the *examples/* directory:
 - simple_qusvg, shows a simple scenario where item attributes can be modified on the fly
 - qusvgsynoptic: a small application that reads some values from the Tango engine and changes some items in the view
+
+### Are you ready?
+ 
+Start reading the <a href="html/index.html">cumbia svg library documentation</a>.
+
 
 
