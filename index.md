@@ -54,9 +54,6 @@ Clicks can target simple *write operations*, while contextual
 menus can pop up dialogs specialised in performing more complex writings
 (for example, write a scalar number or change a text value on the engine).
 
-##### Classes
-QuSvgItemHandler, QuSvgHelperApplicationProvider, QuSvgWriteActionProvider
-
 
 ### Layers
 The library supports the svg *layer* nodes. The class QuSvgLayerHelper can be used
@@ -65,8 +62,6 @@ to test and change *layer visibility*. The class also notifies when *sources*
 readings linked to hidden elements. The *qusvgsynoptic* example shows how layers can
 be managed with the QuSvgLayerHelper.
 
-#### Classes
-QuSvgLayerHelper, QuSvgView
 
 ## Installation
 
