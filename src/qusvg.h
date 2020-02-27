@@ -20,13 +20,16 @@ class QuGraphicsSvgItem;
  * \section qusvg_title cumbia Qt Svg integration module
  * The qumbia-svg module connects Qt Svg objects to cumbia.
  *
- * A SVG file as well as a document as string can be loaded. Elements containing the
- * *item* attribute set to anything different than "false" are mapped to QGraphicsSvgItem objects that populate
- * a QGraphicsScene. Child elements of the *item* are rendered by the same
- * <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</a>.
- *
+ * The <a href="https://doc.qt.io/qt-5/qtsvg-module.html">Qt SVG C++ module</a> provides functionality for handling SVG images. The *cumbia* engines and
+ * infrastructures can be used to change any SVG element.
+ * An *svg* node with the *item* attribute defined and not set to *false* is
+ * rendered in a dedicated QuGraphicsSvgItem, an extension of
+ * the Qt <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</a>.
+ * QuGraphicsSvgItem represents the "*item*" node and its children on a
+ * <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
  * The <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a> class
  * provides a surface for managing a large number of 2D graphical items.
+ *
  *
  * \subsection load_svg Loading documents
  * SVG documents are loaded from files or directly from strings by the loadFile and
@@ -37,7 +40,40 @@ class QuGraphicsSvgItem;
  * QumbiaSvg. QuSvgView is a QGraphicsView that will display one QGraphicsSvgItem for
  * each element in the svg document with the *item* attribute defined and not set to "false".
  *
- * \subsection cumbia_connect Connect to sources
+ *
+ * \subsubsection main_classes Classes
+ * QuSvg (main class), QuDom (DOM representation), QuDomElement (QDomElement wrapper with
+ * improved search and access functionality), QuGraphicsSvgItem (extends QGraphicsSvgItem),
+ * QuSvgView (<a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsView</a>
+ * extension that creates items, manages zoom operations, signals click and context
+ * menu events).
+ *
+ * \subsection accessing_items  Accessing items and attributes
+ * Items, that map the *nodes* defined in the *svg* DOM document, can be
+ * accessed in a very simple fashion by means of their *id* within the *square brackets* operator
+ * defined in the QuDom and QuDomElement classes. Slash ('/') separate *ids* can be
+ * specified to traverse the DOM more efficiently through a hierarchical path.
+
+ * \code
+    const QuDom* qudom = m_qusvg->quDom(); // m_qusvg is a reference to QuSvg
+    const QuDomElement root(*qudom);
+    root["ellipse/blue_circle"].a("style/fill", "#ffffff"); // white
+    root["lil_star"].a("style/fill", "#ff0000"); // red
+ * \endcode
+ *
+  * \image html screenshots/svg_circle_attributes_access.png "Fig 1. Items after changing style/fill property"
+  * \image latex screenshots/svg_circle_attributes_access.png "Fig 1. Items after changing style/fill property" width=12cm
+ *
+ * \subsubsection access_item_classes Classes
+ * QuDom, QuDomElement
+ *
+ * \subsection cumbia_connect Connect to the Tango and Epics (and more...) control system software
+ * SVG elements in the drawing can be *connected* to values obtained from the available *cumbia* engines and their properties changed accordingly.
+ * In several cases, the connections defined and the type of attributes in the SVG elements allow for automatic changes in the representation of
+ * the object within the drawing. In more complex ones, the programmer will map values from the engines to values of the *attributes* in the SVG
+ * DOM document.
+ *
+ * \subsubsection cumbia_connect_details Setting up connections in the svg file
  * Each property of a svg object can be *connected* to a cumbia *source*.
  * The connection can be directly defined in the *svg* file, by introducing a
  * *<read>* element as *direct child* of the target element.
