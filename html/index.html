@@ -47,14 +47,16 @@ $(function() {
 <div class="textblock"><h1><a class="anchor" id="qusvg_title"></a>
 cumbia Qt Svg integration module</h1>
 <p>The qumbia-svg module connects Qt Svg objects to cumbia.</p>
-<p>A SVG file as well as a document as string can be loaded. Elements containing the <em>item</em> attribute set to anything different than "false" are mapped to QGraphicsSvgItem objects that populate a QGraphicsScene. Child elements of the <em>item</em> are rendered by the same <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</a>.</p>
-<p>The <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a> class provides a surface for managing a large number of 2D graphical items.</p>
+<p>The <a href="https://doc.qt.io/qt-5/qtsvg-module.html">Qt SVG C++ module</a> provides functionality for handling SVG images. The <em>cumbia</em> engines and infrastructures can be used to change any SVG element. An <em>svg</em> node with the <em>item</em> attribute defined and not set to <em>false</em> is rendered in a dedicated <a class="el" href="classQuGraphicsSvgItem.html">QuGraphicsSvgItem</a>, an extension of the Qt <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</a>. <a class="el" href="classQuGraphicsSvgItem.html">QuGraphicsSvgItem</a> represents the "*item*" node and its children on a <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>. The <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a> class provides a surface for managing a large number of 2D graphical items.</p>
 <h2><a class="anchor" id="load_svg"></a>
 Loading documents</h2>
 <p>SVG documents are loaded from files or directly from strings by the loadFile and loadSvg functions respectively.</p>
 <h2><a class="anchor" id="display_content"></a>
 Display content</h2>
 <p>Svg content is displayed by <a class="el" href="classQuSvgView.html">QuSvgView</a>, whose constructor takes an instance of QumbiaSvg. <a class="el" href="classQuSvgView.html">QuSvgView</a> is a QGraphicsView that will display one QGraphicsSvgItem for each element in the svg document with the <em>item</em> attribute defined and not set to "false".</p>
+<h3><a class="anchor" id="main_classes"></a>
+Classes</h3>
+<p><a class="el" href="classQuSvg.html">QuSvg</a> (main class), <a class="el" href="classQuDom.html" title="The QuDom class loads and represents the DOM of the svg source.">QuDom</a> (DOM representation), <a class="el" href="classQuDomElement.html">QuDomElement</a> (QDomElement wrapper with improved search and access functionality), <a class="el" href="classQuGraphicsSvgItem.html">QuGraphicsSvgItem</a> (extends QGraphicsSvgItem), <a class="el" href="classQuSvgView.html">QuSvgView</a> (<a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsView</a> extension that creates items, manages zoom operations, signals click and context menu events).</p>
 <h2><a class="anchor" id="cumbia_connect"></a>
 Connect to sources</h2>
 <p>Each property of a svg object can be <em>connected</em> to a cumbia <em>source</em>. The connection can be directly defined in the <em>svg</em> file, by introducing a *&lt;read&gt;* element as <em>direct child</em> of the target element. The *&lt;read&gt;* element will contain the following attributes</p><ul>
@@ -122,7 +124,7 @@ events.</h3>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 27 2020 15:57:38 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Feb 27 2020 16:08:00 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>
