@@ -22,7 +22,7 @@ root["ellipse/blue_circle"].a("style/fill", "#ffffff"); // white
 root["lil_star"].a("style/fill", "#ff0000"); // red
 ```
 
-![Fig 1. Items after changing style/fill property](svg_circle_attributes_access.png)
+![Fig 1. Items after changing style/fill property](html/svg_circle_attributes_access.png)
 
 
 ### Connect with the Tango and Epics (and more...) control system software
