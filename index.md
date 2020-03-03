@@ -11,6 +11,12 @@ QuGraphicsSvgItem represents the "*item*" node and its children on a
 
 Reading the ensuing sections in this page is recommended in order to have an overview of the module. You may want to skip 
 to the <a href="html/index.html" title="qumbia-svg doc">documentation main page</a> instead and start programming with *qumbia-svg*.
+A tutorial to write a cumbia svg application is available <a href="html/tutorial_write_app.html">here</a>.
+
+### Create the drawing
+An external *svg* editor is used for the drawing. For example <a href="https://inkscape.org/">inkscape</a>.
+Remember that Qt SVG supports only the *static features of SVG Tiny 1.2*. When using *inkscape*, the
+*plain svg* format option may be necessary when saving the document.
 
 ### Accessing items and attributes
 Items, that map the *nodes* defined in the *svg* DOM document, can be
