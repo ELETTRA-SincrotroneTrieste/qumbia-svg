@@ -2,12 +2,19 @@
 
 ### Use Qt SVG module to show and animate SVG drawings
 The <a href="https://doc.qt.io/qt-5/qtsvg-module.html">Qt SVG C++ module</a> provides functionality for handling SVG images. The *cumbia* engines and
-infrastructures can be used to change any SVG element.
-An *svg* node with the *item* attribute defined and not set to *false* is
-rendered in a dedicated QuGraphicsSvgItem, an extension of
-the Qt <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</a>.
-QuGraphicsSvgItem represents the "*item*" node and its children on a
+infrastructures can be used to change any SVG element. *Svg nodes* in the *xml* document are mapped into QuGraphicsSvgItem instances on a 
 <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
+QuGraphicsSvgItem is an extension of the Qt <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</a>.
+
+There are two modes to map *svg nodes* into QGraphicsSvgItem instances, according to the desired level of optimization in terms
+of number of items in the <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
+
+In the *explicit mode*, an *svg* node with the *item* attribute defined and not set to *false* is
+rendered in a dedicated QuGraphicsSvgItem. This choice promotes grouping child nodes into the parent's node QuGraphicsSvgItem.
+QuGraphicsSvgItem represents the "*item*" node and its children on a <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
+
+In the *implicit mode*, every *svg* node is mapped into a QuGraphicsSvgItem, except those elements with the attribute *item* set to "false".
+This promotes all the *svg nodes* being mapped to their respective QuGraphicsSvgItem instances on the scene.
 
 Reading the ensuing sections in this page is recommended in order to have an overview of the module. You may want to skip 
 to the <a href="html/index.html" title="qumbia-svg doc">documentation main page</a> instead and start programming with *qumbia-svg*.
