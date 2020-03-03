@@ -56,6 +56,10 @@ $(function() {
   <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#a2e9931b29a46738429533b259d441474">getDomListeners</a>() const</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classQuDom.html#a9f308e2305d4f3a2be863645db228115">hasLinks</a>() const</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#a55d758acbaa2bc2edf3ed8616db7646a">itemAttribute</a>(const QString &amp;id, const QString &amp;attnam)</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82">ItemCreationMode</a> enum name</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#a53190a59c2b51b9756db9b97e852d917">itemCreationMode</a>() const</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82ac9b6797d74212cc73deee44a2e731aeb">ItemCreationModeExplicit</a> enum value</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82a4020bc50dc834f8cf87ef17e36960be0">ItemCreationModeImplicit</a> enum value</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classQuDom.html#ac47139521b01696533450d6528f17987">itemText</a>(const QString &amp;id) const</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#a9a262cb4a8c822e08f772091af9ef4bc">operator=</a>(const QuDom &amp;)</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classQuDom.html#a1299a45603ef18e93488068e275b9681">operator[]</a>(const char *id)</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
@@ -72,14 +76,15 @@ $(function() {
   <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#aba40c7442e3ca66291926cc8937f7667">setCacheOnAccessEnabled</a>(bool enabled)</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classQuDom.html#a7084620d13ebb735ef892118b628d2e8">setContent</a>(const QByteArray &amp;svg)</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#ac752a4af1a58fa5702dfba100a621364">setItemAttribute</a>(const QString &amp;id, const QString &amp;attnam, const QString &amp;attval)</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classQuDom.html#a4857aea14ba32509887a676862da8beb">setItemText</a>(const QString &amp;id, const QString &amp;text)</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#aada204e9e4e46710bc6a0579966d19c6">tagMatch</a>(const QString &amp;tag, const QString &amp;other) const</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classQuDom.html#ad7cd6eaf84185bca023b2f845bac462e">takeReadLinkDefs</a>() const</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#a558279e2829ba18027b94b7124317b34">~QuDom</a>()</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classQuDom.html#ae937c1c13a2be52698442b2c152e2c73">setItemCreationMode</a>(ItemCreationMode mode)</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#a4857aea14ba32509887a676862da8beb">setItemText</a>(const QString &amp;id, const QString &amp;text)</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classQuDom.html#aada204e9e4e46710bc6a0579966d19c6">tagMatch</a>(const QString &amp;tag, const QString &amp;other) const</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classQuDom.html#ad7cd6eaf84185bca023b2f845bac462e">takeReadLinkDefs</a>() const</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classQuDom.html#a558279e2829ba18027b94b7124317b34">~QuDom</a>()</td><td class="entry"><a class="el" href="classQuDom.html">QuDom</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 27 2020 17:07:44 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 3 2020 10:39:39 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>

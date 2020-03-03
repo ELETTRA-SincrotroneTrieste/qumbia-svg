@@ -41,6 +41,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classQuDom-members.html">List of all members</a>  </div>
@@ -54,6 +55,13 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="qudom_8h_source.html">qudom.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a672c5177de6d5e45e25adaf5215d0f82"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82">ItemCreationMode</a> { <a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82ac9b6797d74212cc73deee44a2e731aeb">ItemCreationModeExplicit</a> = 0, 
+<a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82a4020bc50dc834f8cf87ef17e36960be0">ItemCreationModeImplicit</a>
+ }</td></tr>
+<tr class="separator:a672c5177de6d5e45e25adaf5215d0f82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad3c8fd0f56fef15a9ed9248ac4f743a6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuDom.html#ad3c8fd0f56fef15a9ed9248ac4f743a6">QuDom</a> ()</td></tr>
@@ -116,6 +124,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aba40c7442e3ca66291926cc8937f7667"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1a4cb41af7eff67e58b94f3e2f41b22"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuDom.html#aa1a4cb41af7eff67e58b94f3e2f41b22">cacheOnAccessEnabled</a> () const</td></tr>
 <tr class="separator:aa1a4cb41af7eff67e58b94f3e2f41b22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae937c1c13a2be52698442b2c152e2c73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuDom.html#ae937c1c13a2be52698442b2c152e2c73">setItemCreationMode</a> (<a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82">ItemCreationMode</a> mode)</td></tr>
+<tr class="separator:ae937c1c13a2be52698442b2c152e2c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53190a59c2b51b9756db9b97e852d917"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82">ItemCreationMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuDom.html#a53190a59c2b51b9756db9b97e852d917">itemCreationMode</a> () const</td></tr>
+<tr class="separator:a53190a59c2b51b9756db9b97e852d917"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -126,7 +138,26 @@ Friends</h2></td></tr>
 <div class="textblock"><p>The <a class="el" href="classQuDom.html" title="The QuDom class loads and represents the DOM of the svg source.">QuDom</a> class loads and represents the DOM of the svg source. </p>
 <p>Create the DOM calling setContent. This is usually accomplished either by the <a class="el" href="classQuSvg.html#aa8fd80acff6134b8ab472331af933f58">QuSvg::loadFile</a> or <a class="el" href="classQuSvg.html#ad2b15e081205e55cefd2fc55eb28ce7a">QuSvg::loadSvg</a> methods.</p>
 <p>A QDomElement can be searched with the findById method or using the overloaded operator [] that takes a string as argument and returns the QDomElement with the specified <em>id</em> attribute or a null QDomElement if there is no match. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a672c5177de6d5e45e25adaf5215d0f82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a672c5177de6d5e45e25adaf5215d0f82">&#9670;&nbsp;</a></span>ItemCreationMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82">QuDom::ItemCreationMode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a672c5177de6d5e45e25adaf5215d0f82ac9b6797d74212cc73deee44a2e731aeb"></a>ItemCreationModeExplicit&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a672c5177de6d5e45e25adaf5215d0f82a4020bc50dc834f8cf87ef17e36960be0"></a>ItemCreationModeImplicit&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad3c8fd0f56fef15a9ed9248ac4f743a6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad3c8fd0f56fef15a9ed9248ac4f743a6">&#9670;&nbsp;</a></span>QuDom() <span class="overload">[1/2]</span></h2>
 
@@ -141,6 +172,8 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82ac9b6797d74212cc73deee44a2e731aeb">ItemCreationModeExplicit</a>.</p>
 
 </div>
 </div>
@@ -399,6 +432,23 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="a53190a59c2b51b9756db9b97e852d917"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53190a59c2b51b9756db9b97e852d917">&#9670;&nbsp;</a></span>itemCreationMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82">QuDom::ItemCreationMode</a> QuDom::itemCreationMode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac47139521b01696533450d6528f17987"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac47139521b01696533450d6528f17987">&#9670;&nbsp;</a></span>itemText()</h2>
 
@@ -573,7 +623,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">References <a class="el" href="classQuSvgReadLink.html#a5e946c76ed9465d5f948eb91f6373919">QuSvgReadLink::isValid()</a>, <a class="el" href="classQuSvgReadLink.html#a61a8341bd02656428903171123d5555c">QuSvgReadLink::message()</a>, and <a class="el" href="classQuDom.html#a5dd305b847598b854cc4039f5df8abf4">readerTagName()</a>.</p>
+<p class="reference">References <a class="el" href="classQuSvgReadLink.html#a5e946c76ed9465d5f948eb91f6373919">QuSvgReadLink::isValid()</a>, <a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82ac9b6797d74212cc73deee44a2e731aeb">ItemCreationModeExplicit</a>, <a class="el" href="classQuSvgReadLink.html#a61a8341bd02656428903171123d5555c">QuSvgReadLink::message()</a>, and <a class="el" href="classQuDom.html#a5dd305b847598b854cc4039f5df8abf4">readerTagName()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="classQuDom.html#a7084620d13ebb735ef892118b628d2e8">setContent()</a>.</p>
 
@@ -680,6 +730,24 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="reference">References <a class="el" href="classQuDomElement.html#a07b4635d22079df37d558ec9a6f262c0">QuDomElement::a()</a>, <a class="el" href="classQuDom.html#ac37bad2bda9e38130ca7333d1bee0143">findById()</a>, <a class="el" href="classQuDom.html#a566137e65c44c551da5b65cc58069cf9">getDocument()</a>, <a class="el" href="classQuDomElement.html#a3341846101e798ed0538abec55be8747">QuDomElement::isNull()</a>, and <a class="el" href="classQuDom.html#a7ac2321881ab1c8062c979c0f5794249">QuDomElement</a>.</p>
+
+</div>
+</div>
+<a id="ae937c1c13a2be52698442b2c152e2c73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae937c1c13a2be52698442b2c152e2c73">&#9670;&nbsp;</a></span>setItemCreationMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QuDom::setItemCreationMode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classQuDom.html#a672c5177de6d5e45e25adaf5215d0f82">QuDom::ItemCreationMode</a>&#160;</td>
+          <td class="paramname"><em>mode</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -792,7 +860,7 @@ Friends</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 27 2020 17:07:44 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 3 2020 10:39:39 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>
