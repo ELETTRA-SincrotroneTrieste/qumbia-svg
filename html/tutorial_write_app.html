@@ -44,11 +44,25 @@ $(function() {
 <div class="title">Write a cumbia-svg application </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"></div></div><!-- PageDoc -->
+<div class="textblock"><h2>Create the drawing</h2>
+<p>You shall use an SVG editor to make the drawing. The svg file can then be parsed by the application. Compiling the svg file into a Qt resource is an option. In that case, the following steps are necessary</p>
+<h3>Create a new cumbia project</h3>
+<blockquote class="doxtable">
+<p>cumbia new project </p>
+</blockquote>
+<p>Fill the form and create the project structure.</p>
+<h3>Add the resource to the .pro file</h3>
+<p>From the <em>Qt creator</em>, add a new file to the project, of type <em>Qt Resource File</em>. Then, add the <em>svg</em> source to the resource file. The <em>qrc</em> and the <em>svg</em> files should appear under the <em>Resources</em> tree in your project. Clicking on the <em>svg</em> file, the <em>Qt creator</em> should display the drawing.</p>
+<h3>Configure the project to use <em>cumbia-svg</em></h3>
+<p>Open the Qt *.pro* project file. If the skeleton has been created with the <em>cumbia new project</em> wizard, a couple of <em>include</em> lines should be found at the top of the file:</p>
+<div class="fragment"><div class="line">include (/usr/local/cumbia-libs/include/qumbia-epics-controls/qumbia-epics-controls.pri)</div><div class="line">include (/usr/local/cumbia-libs/include/qumbia-tango-controls/qumbia-tango-controls.pri)</div></div><!-- fragment --><p>In this example, support for <em>Tango</em> and <em>EPICS</em> control systems is included.</p>
+<p>Make sure that the <em>QT</em> lines contains the <em>xml</em> and <em>opengl</em> support:</p>
+<div class="fragment"><div class="line">QT +=  xml opengl</div></div><!-- fragment --><p>As a final step, in order to use the <em>cumbia svg</em> module, we will rely on <em>pkgconfig</em> to locate and load the <em>qumbia-svg</em> dependency:</p>
+<div class="fragment"><div class="line">CONFIG+=link_pkgconfig</div><div class="line">packagesExist(qumbia-svg) {</div><div class="line">  PKGCONFIG += qumbia-svg</div><div class="line">    message(&quot;qusvgexample: found module qumbia-svg &quot;)</div><div class="line">} else {</div><div class="line">    error(&quot;qusvgexample: module qumbia-svg is required - check PKG_CONFIG_PATH&quot;)</div><div class="line">}</div></div><!-- fragment --> </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 3 2020 11:29:38 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 3 2020 11:45:22 for qumbia-svg by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>
