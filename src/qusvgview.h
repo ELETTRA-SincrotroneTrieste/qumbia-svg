@@ -70,6 +70,7 @@ private:
     QuSvgViewPrivate *d;
 
     // QuDomListener interface
+    void m_createItem(QString id);
 public:
     void onDocumentLoaded(QuDom *dom, const QStringList &ids);
     void onElementChange(const QString &id, QuDomElement* dom_e);

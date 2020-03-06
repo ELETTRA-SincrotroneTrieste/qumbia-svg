@@ -36,7 +36,8 @@ public:
     QImage m_image;
     QStringList m_ids;
     QMap<QString, QString> svg_cache;
-    QMap<QString, QGraphicsSvgItem *> items_cache;
+    QMap<QString, QuGraphicsSvgItem *> items_cache;
+    QSvgRenderer *renderer;
 };
 
 QuSvgView::QuSvgView(QWidget *parent)
@@ -47,8 +48,7 @@ QuSvgView::QuSvgView(QWidget *parent)
 
     setScene(new QGraphicsScene(this));
     setTransformationAnchor(AnchorUnderMouse);
-//    setViewportUpdateMode(FullViewportUpdate);
-    //    connect(scene(), SIGNAL(changed(QList<QRectF>)), this, SLOT(sceneChanged(QList<QRectF>)));
+    setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 }
 
 void QuSvgView::drawBackground(QPainter *p, const QRectF &)
@@ -167,56 +167,63 @@ QSvgRenderer *QuSvgView::renderer() const
     return findChild<QSvgRenderer *>();
 }
 
+void QuSvgView::m_createItem(QString id) {
+    QuGraphicsSvgItem *svgItem = new QuGraphicsSvgItem();
+    svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
+    svgItem->setSharedRenderer(d->renderer);
+    svgItem->setElementId(id);
+//        svgItem->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    svgItem->setCacheMode(QGraphicsItem::NoCache);
+    svgItem->setObjectName(id);
+    svgItem->setToolTip(id);
+    scene()->addItem(svgItem);
+    d->items_cache[id] = svgItem;
+    // item clickable?
+    QuDomElement rootel(d->m_dom);
+    QuDomElement el = rootel[id];
+    // set item properties: shape and clickable have dedicated
+    // Q_PROPERTY with set and get methods
+    foreach(QString property, QStringList() << "shape" << "clickable" << "z")
+        if(!el.isNull() && !el.a(property).isEmpty())
+            svgItem->setProperty(qstoc(property), el.a(property));
+
+    const QRectF &item_r = d->renderer->boundsOnElement(id);
+    const QMatrix& m = d->renderer->matrixForElement(id);
+    !m.isIdentity() ? svgItem->setPos(m.mapRect(item_r).topLeft())
+                    : svgItem->setPos(item_r.topLeft());
+    if(!m.isIdentity()) {
+        svgItem->setTransform(QTransform(m));
+    }
+
+    connect(svgItem, SIGNAL(clicked(QuGraphicsSvgItem *, QPointF, QPointF)),
+            this, SLOT(onItemClicked(QuGraphicsSvgItem *, QPointF, QPointF)));
+    connect(svgItem, SIGNAL(contextMenuRequest(QuGraphicsSvgItem *, QPointF, QPointF)), this,
+            SLOT(onItemContextMenuRequest(QuGraphicsSvgItem *, QPointF, QPointF)));
+}
+
 void QuSvgView::onDocumentLoaded(QuDom *dom, const QStringList &ids) {
     d->m_dom = dom;
-    QGraphicsScene *s = scene();
-    QSvgRenderer *renderer = new QSvgRenderer(dom->getDocument().toString().toLatin1(), this);
+    d->renderer = new QSvgRenderer(d->m_dom->getDocument().toString().toLatin1(), this);
     foreach(QString id, ids) {
-        QuGraphicsSvgItem *svgItem = new QuGraphicsSvgItem();
-        svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
-        svgItem->setSharedRenderer(renderer);
-        svgItem->setElementId(id);
-//        svgItem->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
-        svgItem->setCacheMode(QGraphicsItem::NoCache);
-        svgItem->setObjectName(id);
-        s->addItem(svgItem);
-        d->items_cache[id] = svgItem;
-        // item clickable?
-        QuDomElement rootel(dom);
-        QuDomElement el = rootel[id];
-        // set item properties: shape and clickable have dedicated
-        // Q_PROPERTY with set and get methods
-        foreach(QString property, QStringList() << "shape" << "clickable")
-            if(!el.isNull() && !el.a(property).isEmpty())
-                svgItem->setProperty(qstoc(property), el.a(property));
-
-        const QRectF &item_r = renderer->boundsOnElement(id);
-        const QMatrix& m = renderer->matrixForElement(id);
-        !m.isIdentity() ? svgItem->setPos(m.mapRect(item_r).topLeft())
-                        : svgItem->setPos(item_r.topLeft());
-        if(!m.isIdentity()) {
-            svgItem->setTransform(QTransform(m));
-        }
-
-        connect(svgItem, SIGNAL(clicked(QuGraphicsSvgItem *, QPointF, QPointF)),
-                this, SLOT(onItemClicked(QuGraphicsSvgItem *, QPointF, QPointF)));
-        connect(svgItem, SIGNAL(contextMenuRequest(QuGraphicsSvgItem *, QPointF, QPointF)), this,
-                SLOT(onItemContextMenuRequest(QuGraphicsSvgItem *, QPointF, QPointF)));
+        m_createItem(id);
     }
 }
 
 void QuSvgView::onElementChange(const QString &id, QuDomElement *dom_e) {
-
-    QGraphicsSvgItem *it = d->items_cache.value(id);
-    if(!it)
-        it = d->items_cache.value(dom_e->itemId());
+    QString item_id;
+    d->items_cache.contains(id) ? item_id = id : item_id = dom_e->itemId();
+    QuGraphicsSvgItem *it = d->items_cache.value(item_id);
     if(it) {
-//        QRectF oldBounds = renderer()->boundsOnElement(id);
-        findChild<QSvgRenderer *>()->load(d->m_dom->getDocument().toString().toLatin1());
-        QRectF bounds = renderer()->boundsOnElement(it->elementId());
-        QPointF pos = bounds.topLeft();
-        if(pos != it->pos()) {
-            it->setPos(pos); // no need for update()
+        QRectF oldBounds = renderer()->boundsOnElement(item_id);
+        QSvgRenderer *renderer = findChild<QSvgRenderer *>();
+        renderer->load(d->m_dom->getDocument().toString().toLatin1());
+        // it seems that if the shape of the object changes the bounding rect
+        // the item is not drawn correctly. We are forced to remove and add it
+        // over again.
+        QRectF bounds = renderer->boundsOnElement(item_id);
+        if(bounds != oldBounds) {
+            delete it;
+            m_createItem(item_id); // replaces item_id in cache
         }
         else {
             it->update();

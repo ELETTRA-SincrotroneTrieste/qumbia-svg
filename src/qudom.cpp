@@ -1,6 +1,7 @@
 #include "qudom.h"
 #include <cumacros.h>
 #include <QMap>
+#include <QPair>
 #include <QtDebug>
 #include <qudomelement.h>
 
@@ -10,6 +11,7 @@ class QuDomPrivate {
 public:
     QDomDocument domdoc;
     QMap<QString, QDomElement > id_cache;
+    QMap<QString, QPair<QDomText, QuDomElement> > txt_cache;
     QList<QuDomListener *> dom_listeners;
     QDomElement empty_el;
     QString error;
@@ -145,18 +147,30 @@ QDomNode QuDom::m_findTexChild(const QDomNode &parent) {
 }
 
 bool QuDom::setItemText(const QString &id, const QString &text) {
-    QDomNode e = findById(id, getDocument().firstChildElement()).toElement();
     QuDomElement root;
-    if(!e.isNull() && !e.isText()) {
-        root = e.toElement();
-        e = m_findTexChild(e);
+    QDomNode e;
+    if(d->txt_cache.contains(id)) {
+        QPair<QDomText, QuDomElement> txt_n = d->txt_cache.value(id);
+        root = txt_n.second;
+        e = txt_n.first;
     }
-    else if(e.isText()) {
-        root = e.parentNode().toElement();
+    if(e.isNull()) {
+        e = findById(id, getDocument().firstChildElement()).toElement();
+        if(!e.isNull() && !e.isText()) {
+            root = e.toElement();
+            e = m_findTexChild(e);
+        }
+        else if(e.isText()) {
+            root = e.parentNode().toElement();
+        }
+        if(!e.isNull() && e.isText()) // cache id --> (text, text's parent node)
+            d->txt_cache[id] = QPair<QDomText, QuDomElement>(e.toText(), root);
     }
     if(!e.isNull()) {
-        e.toText().setNodeValue(text);
-        m_notify_element_change(id, &root);
+        if(e.toText().nodeValue() != text) {
+            e.toText().setNodeValue(text);
+            m_notify_element_change(id, &root);
+        }
         // checked dumping the result into a QTextStream + QString
     }
     return !e.isNull();

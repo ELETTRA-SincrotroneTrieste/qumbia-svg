@@ -7,8 +7,8 @@ class QuGraphicsSvgItemPrivate;
 
 class QuGraphicsSvgItem : public QGraphicsSvgItem
 {
-    Q_PROPERTY(QString clickable WRITE setClickable)
-    Q_PROPERTY(QString shape WRITE setShape)
+    Q_PROPERTY(QString clickable READ clickable WRITE setClickable)
+    Q_PROPERTY(QString shape READ getShape WRITE setShape)
     Q_OBJECT
 public:
     enum Shape { Undefined, ShapeText, ShapeRect, ShapeEllipse, ShapePath };

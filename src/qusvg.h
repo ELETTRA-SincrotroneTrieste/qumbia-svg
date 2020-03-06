@@ -61,8 +61,8 @@ class QuGraphicsSvgItem;
     root["lil_star"].a("style/fill", "#ff0000"); // red
  * \endcode
  *
-  * \image html screenshots/svg_circle_attributes_access.png "Fig 1. Items after changing style/fill property"
-  * \image latex screenshots/svg_circle_attributes_access.png "Fig 1. Items after changing style/fill property" width=12cm
+ * \image html screenshots/svg_circle_attributes_access.png "Fig 1. Items after changing style/fill property"
+ * \image latex screenshots/svg_circle_attributes_access.png "Fig 1. Items after changing style/fill property" width=12cm
  *
  * \subsubsection access_item_classes Classes
  * QuDom, QuDomElement
@@ -191,7 +191,7 @@ class QuGraphicsSvgItem;
  *
  * \subsection _examples_ Examples
  * The module distribution includes two examples, that can be found under the
- * *examples/* directory:
+ * <em>examples</em> directory:
  * - simple_qusvg, shows a simple scenario where item attributes can be modified on the fly
  * - qusvgsynoptic: a small application that reads some values from the Tango engine and changes some items in the view
  */

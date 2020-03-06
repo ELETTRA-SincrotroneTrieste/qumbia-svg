@@ -9,6 +9,7 @@ public:
     bool clickable;
     bool pressed, hover;
     QuGraphicsSvgItem::Shape shape;
+    QRectF bounding_rect;
 };
 
 QuGraphicsSvgItem::QuGraphicsSvgItem()

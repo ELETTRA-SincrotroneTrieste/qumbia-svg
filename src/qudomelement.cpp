@@ -149,21 +149,17 @@ QuDomElement QuDomElement::operator [](const QString &id_path) const {
 }
 
 QuDomElement QuDomElement::m_find_el(const QString& id_path) const {
-    qDebug () << __PRETTY_FUNCTION__ << id_path;
     QMap<QString, QDomElement>& idcache = m_qudom->m_get_id_cache();
     QString id;
     id_path.contains("/") ? id = id_path.section('/', 0, 0) : id = id_path;
     if(idcache.contains(id)) {
-        qDebug() << __PRETTY_FUNCTION__ << "cache hit for id " << id;
         return QuDomElement(m_qudom, idcache[id]);
     }
     const QuDomElement my_el(m_qudom, m_dome);
     QuDomElement e = findById(id, my_el);
     if(id_path.contains('/') && !e.isNull()) {
-        qDebug() << __PRETTY_FUNCTION__ << "recursive find" << id_path.section('/', 1, id_path.count('/'));
         return m_find_el(id_path.section('/', 1, id_path.count('/')));
     }
-    qDebug() << __PRETTY_FUNCTION__ << "returning " << e.element().tagName() << e.element().attribute("id");
     return e;
 }
 
@@ -211,13 +207,21 @@ void QuDomElement::setAttribute(const QString &name, const QString &value)
 {
     QString v, nam(name);
     name.count("/") == 1 ? v = toDeclarationList(nam, value) : v = value;
-    if(!v.isEmpty() && !m_dome.isNull()) {
-        m_dome.setAttribute(nam, v);
-        m_qudom->m_notify_element_change(m_dome.attribute("id"), this);
+    if(!v.isEmpty() && !m_dome.isNull() ) {
+        if(m_dome.attribute(nam).compare(v, Qt::CaseInsensitive) != 0) {
+//            printf("\e[1;35mQuDomElement.setAttribute:  need to set attribute %s (nam %s) to %s: \e[1;32mchanged\e[0m\n",
+//                   qstoc(name), qstoc(nam), qstoc(value));
+            m_dome.setAttribute(nam, v);
+            m_qudom->m_notify_element_change(m_dome.attribute("id"), this);
+        }
+//        else
+//            printf("QuDomElement.setAttribute: no need to set attribute %s (nam %s) to %s: unchanged\n",
+//                   qstoc(name), qstoc(nam), qstoc(value));
     }
     else
-        perr("QuDomElement.setAttribute: cannot set attribute \"%s\" on an invalid element",
-             qstoc(name));
+        perr("QuDomElement.setAttribute: cannot set attribute \"%s\" if either the element <%s> "
+             "id \"%s\" or the value [%s] are invalid ", qstoc(name), qstoc(m_dome.tagName()),
+             qstoc(m_dome.attribute("id")), qstoc(value));
 }
 
 /*!
@@ -284,6 +288,9 @@ QString QuDomElement::toDeclarationList(QString& name, const QString &value) {
         else {
             a += QString("%1:%2;").arg(sub).arg(value);
         }
+    }
+    else { // element does not have the attribute yet
+        a = QString("%1:%2").arg(sub).arg(value);
     }
     name = nam;
     return a;
