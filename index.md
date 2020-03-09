@@ -72,9 +72,18 @@ readings linked to hidden elements. The *qusvgsynoptic* example shows how layers
 be managed with the QuSvgLayerHelper.
 
 ### Known issues
+
+#### Text nodes
 <text> nodes are not correctly rendered by <a href="https://doc.qt.io/qt-5/qsvgrenderer.html">QSvgRenderer</a> unless they are *embedded into a group ( <g> ) and 
 followed by a <rect> element large enough to contain the text*. See the dedicated section int the <a href="html/index.html">cumbia svg library documentation</a>
 for more details.
+
+#### Change in item shape, especially when the new size is bigger
+Items which shape is modified so that their bounding rect becomes bigger are not correctly drawn.
+This includes adding or modifying points in *polylines* or *lines* outside their former
+area. The approach adopted by the library to work around this is:
+- test if QSvgRenderer::boundsOnElement changed respect to previous bounding rect
+- if so, replace the old item with a new one
 
 ## Installation
 
