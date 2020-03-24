@@ -3,14 +3,14 @@
 #include <QtDebug>
 #include <QRegularExpression>
 
-QuDomElement::QuDomElement(QuDom *x) : m_qudom(x) {
+QuDomElement::QuDomElement(const QuDom *x) : m_qudom(x) {
 }
 
 QuDomElement::QuDomElement(const QDomElement &dome) : m_qudom(nullptr) {
     m_dome = dome;
 }
 
-QuDomElement::QuDomElement(QuDom *x, const QDomElement &e) : m_qudom(x) {
+QuDomElement::QuDomElement(const QuDom *x, const QDomElement &e) : m_qudom(x) {
     m_dome = e;
 }
 
@@ -33,7 +33,7 @@ bool QuDomElement::isNull() const {
 }
 
 QuDomElement QuDomElement::findById(const QString& id, const QuDomElement &parent) const {
-    QuDom* dom = parent.m_qudom;
+    const  QuDom* dom = parent.m_qudom;
     QuDomElement root;
     parent.isNull() ?  root = QuDomElement(dom, m_qudom->getDocument().firstChildElement())
             : root = parent;
@@ -92,7 +92,7 @@ QString QuDomElement::itemId() const {
 
 QuDomElement QuDomElement::m_recursiveFind(const QString &id, const QuDomElement &parent) const
 {
-    QuDom* dom = parent.m_qudom;  // preserve dom across calls
+    const QuDom* dom = parent.m_qudom;  // preserve dom across calls
     QDomNodeList nl = parent.element().childNodes();
     for(int i = 0; i < nl.size(); i++) {
         QuDomElement child = QuDomElement(dom, nl.at(i).toElement());
@@ -131,7 +131,7 @@ QuDomElement QuDomElement::m_recursiveFind(const QString &id, const QuDomElement
 QuDomElement QuDomElement::operator [](const QString& id_path) {
     QuDomElement e = m_find_el(id_path);
     if(!e.isNull() && m_qudom->cacheOnAccessEnabled()) {
-        m_qudom->m_add_to_cache(e.element().attribute("id"), e.element());
+        const_cast<QuDom *>(m_qudom)->m_add_to_cache(e.element().attribute("id"), e.element());
     }
     return e;
 }
@@ -212,7 +212,11 @@ void QuDomElement::setAttribute(const QString &name, const QString &value)
 //            printf("\e[1;35mQuDomElement.setAttribute:  need to set attribute %s (nam %s) to %s: \e[1;32mchanged\e[0m\n",
 //                   qstoc(name), qstoc(nam), qstoc(value));
             m_dome.setAttribute(nam, v);
-            m_qudom->m_notify_element_change(m_dome.attribute("id"), this);
+            if(m_qudom)
+                const_cast<QuDom *>(m_qudom)->m_notify_element_change(m_dome.attribute("id"), this);
+            else
+                perr("QuDomElement.setAttribute: invalid qudom in element %s id %s: cannot call m_notify_element_change",
+                     qstoc(m_dome.tagName()), qstoc(m_dome.attribute("id")));
         }
 //        else
 //            printf("QuDomElement.setAttribute: no need to set attribute %s (nam %s) to %s: unchanged\n",

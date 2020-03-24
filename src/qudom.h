@@ -43,7 +43,7 @@ public:
 
     QString getAttribute(const QDomElement& el, const QString& attribute);
 
-    QDomElement findById(const QString &id, const QDomElement &parent) const;
+    QuDomElement findById(const QString &id, const QDomElement &parent) const;
 
     QDomElement operator[] (const char *id);
     const QDomElement operator[] (const char *id) const;

@@ -9,12 +9,13 @@
 class QuDomElement
 {
 public:
-    QuDomElement(QuDom *x);
+    QuDomElement(const QuDom *x);
     QuDomElement(const QDomElement& dome);
-    QuDomElement(QuDom *x, const QDomElement& e);
+    QuDomElement(const QuDom *x, const QDomElement& e);
     QuDomElement(const QuDomElement& other);
     QuDomElement();
     QuDomElement& operator=(const QuDomElement&);
+    void setDom(const QuDom* dom);
 
     bool isNull() const;
 
@@ -41,7 +42,7 @@ public:
     QString toDeclarationList(QString &name, const QString &value);
 
 private:
-    QuDom* m_qudom;
+    const QuDom* m_qudom;
     QDomElement m_dome;
     QuDomElement m_recursiveFind(const QString& id, const QuDomElement &parent) const;
     QuDomElement m_find_el(const QString &id_path) const;

@@ -127,8 +127,10 @@ void QuDom::parse(const QDomNode &parent) const {
 }
 
 bool QuDom::setItemAttribute(const QString &id, const QString &attnam, const QString &value) {
-    QuDomElement e = QuDomElement(findById(id, getDocument().firstChildElement()));
+    QuDomElement e = this->findById(id, getDocument().firstChildElement());
     if(!e.isNull()) {
+        printf("QuDom.setItemAttribute: found by id %s attnam %s val %s e tag %s e id %s\n", qstoc(id), qstoc(attnam), qstoc(value),
+               qstoc(e.element().tagName()), qstoc(e.element().attribute("id")));
         e.a(attnam, value); // calls m_notify_element_change on this
     }
     return !e.isNull();
@@ -155,7 +157,7 @@ bool QuDom::setItemText(const QString &id, const QString &text) {
         e = txt_n.first;
     }
     if(e.isNull()) {
-        e = findById(id, getDocument().firstChildElement()).toElement();
+        e = this->findById(id, getDocument().firstChildElement()).element();
         if(!e.isNull() && !e.isText()) {
             root = e.toElement();
             e = m_findTexChild(e);
@@ -166,6 +168,17 @@ bool QuDom::setItemText(const QString &id, const QString &text) {
         if(!e.isNull() && e.isText()) // cache id --> (text, text's parent node)
             d->txt_cache[id] = QPair<QDomText, QuDomElement>(e.toText(), root);
     }
+    /// check THIS stuff
+    /// /
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+
+
     if(!e.isNull()) {
         if(e.toText().nodeValue() != text) {
             e.toText().setNodeValue(text);
@@ -255,20 +268,20 @@ void QuDom::m_notify_element_change(const QString &id,
  * attribute not set to false remain cached, and every other search is done
  * recursively traversing the tree.
  */
-QDomElement QuDom::findById(const QString& id, const QDomElement& parent) const {
+QuDomElement QuDom::findById(const QString& id, const QDomElement& parent) const {
     QDomElement root;
     if(d->id_cache.contains(id))
         root = d->id_cache[id].toElement();
     if(root.isNull())
         root = parent.toElement();
     else // found in cache
-        return root;
+        return QuDomElement(this, root);
     // search among children
-    QuDomElement qde(parent);
+    QuDomElement qde(this, parent);
     QDomElement found = qde.findById(id, root).element();
     if(!found.isNull() && d->cache_on_access)
         d->id_cache[id] = found;
-    return found;
+    return QuDomElement(this, found);
 }
 
 /*!
@@ -284,11 +297,11 @@ QDomElement QuDom::findById(const QString& id, const QDomElement& parent) const 
  *
  */
 QDomElement QuDom::operator[](const char *id) {
-    return findById(id, d->domdoc.firstChildElement());
+    return findById(id, d->domdoc.firstChildElement()).element();
 }
 
 const QDomElement QuDom::operator[](const char *id) const {
-    return findById(id, d->domdoc.firstChildElement());
+    return findById(id, d->domdoc.firstChildElement()).element();
 }
 
 QDomElement QuDom::operator[](const QString &id) {

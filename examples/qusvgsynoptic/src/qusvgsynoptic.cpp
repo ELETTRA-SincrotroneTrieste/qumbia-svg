@@ -176,33 +176,33 @@ void QuSvgSynoptic::onItemEventHandlerError(const QString &origin, const QString
 }
 
 bool QuSvgSynoptic::onUpdate(const QuSvgResultData &res, QuDom *qudom) {
-    if(res.link.id == "rect") {
-        const CuData& d = res.data;
-        const QuDomElement root(qudom);
-        if(d["state_color"].toString( ) == std::string("red")) {
-            root["upper_rect"].a("style/fill", "#00ffff");
-            root["rect"].a("style/fill", "#000fff");
-            root["rect_star"].a("style/fill", "#fffff0");
-            root["lower_rect"].a("style/fill", "#0df009");
-            root["button"].a("style/fill", "#ffffff");
-            root["button"].a("style/stroke", "#f69409");
-            root["button"].a("style/stroke-width", "3");
-            root["rect_circle"].a("style/fill", "#f0f609");
-            qudom->setItemText("states_text", "SWITCH STATES");
-        }
-        else {
-            root["upper_rect"].a("style/fill", "#ff0000"); // orange
-            root["rect"].a("style/fill", "#f69409"); // yellow
-            root["rect_star"].a("style/fill", "#f0f609"); // yellow
-            root["lower_rect"].a("style/fill", "#b718dd"); // violet
-            root["rect_circle"].a("style/fill", "#3ba141"); // green
-            root["button"].a("style/fill", "#ffffff");
-            root["button"].a("style/stroke", "#ff0000");
-            root["button"].a("style/stroke-width", "3");
-            qudom->setItemText("states_text", "SWITCH STATES");
-        }
-        return true;
-    }
+//    if(res.link.id == "rect") {
+//        const CuData& d = res.data;
+//        const QuDomElement root(qudom);
+//        if(d["state_color"].toString( ) == std::string("red")) {
+//            root["upper_rect"].a("style/fill", "#00ffff");
+//            root["rect"].a("style/fill", "#000fff");
+//            root["rect_star"].a("style/fill", "#fffff0");
+//            root["lower_rect"].a("style/fill", "#0df009");
+//            root["button"].a("style/fill", "#ffffff");
+//            root["button"].a("style/stroke", "#f69409");
+//            root["button"].a("style/stroke-width", "3");
+//            root["rect_circle"].a("style/fill", "#f0f609");
+//            qudom->setItemText("states_text", "SWITCH STATES");
+//        }
+//        else {
+//            root["upper_rect"].a("style/fill", "#ff0000"); // orange
+//            root["rect"].a("style/fill", "#f69409"); // yellow
+//            root["rect_star"].a("style/fill", "#f0f609"); // yellow
+//            root["lower_rect"].a("style/fill", "#b718dd"); // violet
+//            root["rect_circle"].a("style/fill", "#3ba141"); // green
+//            root["button"].a("style/fill", "#ffffff");
+//            root["button"].a("style/stroke", "#ff0000");
+//            root["button"].a("style/stroke-width", "3");
+//            qudom->setItemText("states_text", "SWITCH STATES");
+//        }
+//        return true;
+//    }
     return false;
 }
 
