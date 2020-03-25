@@ -74,8 +74,8 @@ be managed with the QuSvgLayerHelper.
 ### Known issues
 
 #### Text nodes
-<text> nodes are not correctly rendered by <a href="https://doc.qt.io/qt-5/qsvgrenderer.html">QSvgRenderer</a> unless they are *embedded into a group ( <g> ) and 
-followed by a <rect> element large enough to contain the text*. See the dedicated section int the <a href="html/index.html">cumbia svg library documentation</a>
+&lt;text&gt; nodes are not correctly rendered by <a href="https://doc.qt.io/qt-5/qsvgrenderer.html">QSvgRenderer</a> unless they are *embedded into a group ( &lt;g&gt; ) and
+followed by a &lt;rect&gt; element large enough to contain the text*. See the dedicated section int the <a href="html/index.html">cumbia svg library documentation</a>
 for more details.
 
 #### Change in item shape, especially when the new size is bigger
