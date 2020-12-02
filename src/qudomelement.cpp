@@ -131,7 +131,8 @@ QuDomElement QuDomElement::m_recursiveFind(const QString &id, const QuDomElement
 QuDomElement QuDomElement::operator [](const QString& id_path) {
     QuDomElement e = m_find_el(id_path);
     if(!e.isNull() && m_qudom->cacheOnAccessEnabled()) {
-        const_cast<QuDom *>(m_qudom)->m_add_to_cache(e.element().attribute("id"), e.element());
+        qDebug() << __PRETTY_FUNCTION__ << "adding to cache from duckin const " << e.element().attribute("id");
+        m_qudom->m_add_to_cache(e.element().attribute("id"), e.element());
     }
     return e;
 }
@@ -213,7 +214,7 @@ void QuDomElement::setAttribute(const QString &name, const QString &value)
 //                   qstoc(name), qstoc(nam), qstoc(value));
             m_dome.setAttribute(nam, v);
             if(m_qudom)
-                const_cast<QuDom *>(m_qudom)->m_notify_element_change(m_dome.attribute("id"), this);
+                m_qudom->m_notify_element_change(m_dome.attribute("id"), this);
             else
                 perr("QuDomElement.setAttribute: invalid qudom in element %s id %s: cannot call m_notify_element_change",
                      qstoc(m_dome.tagName()), qstoc(m_dome.attribute("id")));

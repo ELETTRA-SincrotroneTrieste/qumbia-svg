@@ -194,6 +194,21 @@ class QuGraphicsSvgItem;
  * <em>examples</em> directory:
  * - simple_qusvg, shows a simple scenario where item attributes can be modified on the fly
  * - qusvgsynoptic: a small application that reads some values from the Tango engine and changes some items in the view
+ *
+ * \section known_issues Known Issues
+ *
+ * \subsection &lt;text&gt; nodes
+ * &lt;text&gt;  nodes are not correctly rendered by QSvgRenderer unless they are embedded into a group ( &lt;g&gt;  )
+ * and followed by a &lt;rect&gt;  element large enough to contain the text.
+ * Even better if the &lt;tspan&gt; child element is removed from the text if the result from an *inkscape* plain svg
+ * file is not as expected
+ *
+ * \subsubsection z-value
+ * If items in the drawing overlap, you may consider adding a *z attribute* to the item(s) if not stacked correctly.
+ *
+ * \section first_svg_app Your first svg application
+ *  A <a href="https://elettra-sincrotronetrieste.github.io/qumbia-svg/html/tutorial_write_app.html">tutorial</a>
+ *  helps you write an svg application using cumbia.
  */
 class QuSvg : public QuSvgConnectionListener
 {

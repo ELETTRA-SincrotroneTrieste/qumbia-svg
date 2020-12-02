@@ -191,9 +191,9 @@ void QuSvgView::m_createItem(QString id) {
     const QMatrix& m = d->renderer->matrixForElement(id);
     !m.isIdentity() ? svgItem->setPos(m.mapRect(item_r).topLeft())
                     : svgItem->setPos(item_r.topLeft());
-    if(!m.isIdentity()) {
-        svgItem->setTransform(QTransform(m));
-    }
+//    if(!m.isIdentity()) {
+//        svgItem->setTransform(QTransform(m));
+//    }
 
     connect(svgItem, SIGNAL(clicked(QuGraphicsSvgItem *, QPointF, QPointF)),
             this, SLOT(onItemClicked(QuGraphicsSvgItem *, QPointF, QPointF)));

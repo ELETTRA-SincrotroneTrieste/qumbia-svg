@@ -168,17 +168,6 @@ bool QuDom::setItemText(const QString &id, const QString &text) {
         if(!e.isNull() && e.isText()) // cache id --> (text, text's parent node)
             d->txt_cache[id] = QPair<QDomText, QuDomElement>(e.toText(), root);
     }
-    /// check THIS stuff
-    /// /
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-
-
     if(!e.isNull()) {
         if(e.toText().nodeValue() != text) {
             e.toText().setNodeValue(text);
@@ -226,12 +215,11 @@ QMap<QString, QDomElement> &QuDom::m_get_id_cache() const {
     return d->id_cache;
 }
 
-void QuDom::m_add_to_cache(const QString &id, const QDomElement &dome) {
+void QuDom::m_add_to_cache(const QString &id, const QDomElement &dome) const {
     d->id_cache[id] = dome;
 }
 
-void QuDom::m_notify_element_change(const QString &id,
-                                      QuDomElement *dome) {
+void QuDom::m_notify_element_change(const QString &id, QuDomElement *dome) const {
     foreach (QuDomListener *l, d->dom_listeners) {
         l->onElementChange(id, dome);
     }
@@ -270,8 +258,10 @@ void QuDom::m_notify_element_change(const QString &id,
  */
 QuDomElement QuDom::findById(const QString& id, const QDomElement& parent) const {
     QDomElement root;
-    if(d->id_cache.contains(id))
-        root = d->id_cache[id].toElement();
+    if(d->id_cache.contains(id)) {
+       root = d->id_cache[id].toElement();
+       qDebug() << __PRETTY_FUNCTION__ << "CACHE HHIT" << id;
+    }
     if(root.isNull())
         root = parent.toElement();
     else // found in cache

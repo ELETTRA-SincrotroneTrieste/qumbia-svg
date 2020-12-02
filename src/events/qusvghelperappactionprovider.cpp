@@ -135,7 +135,7 @@ bool QuSvgHelperAppActionProvider::m_start_helper_from_cmd(const QString &cmd)
         QuActionExtensionFactoryI *ae_fac = aepi->getExtensionFactory();
         QuActionExtensionI *ale = ae_fac->create("CuApplicationLauncherExtension", nullptr);
         CuData cmdline("command", cmd.toStdString());
-        ale->execute(cmdline);
+        ale->execute(cmdline, d->ctx);
     }
     else
         d->errmsg = QString("QuSvgHelperAppActionProvider::m_start_helper_from_cmd: "

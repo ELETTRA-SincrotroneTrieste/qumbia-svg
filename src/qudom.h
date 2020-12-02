@@ -80,8 +80,8 @@ private:
     QuDomPrivate *d;
 
     QMap<QString, QDomElement >& m_get_id_cache() const;
-    void m_add_to_cache(const QString& id, const QDomElement &dome);
-    void m_notify_element_change(const QString& id, QuDomElement *dome);
+    void m_add_to_cache(const QString& id, const QDomElement &dome) const;
+    void m_notify_element_change(const QString& id, QuDomElement *dome) const;
     QDomNode m_findTexChild(const QDomNode &parent);
     void m_init_from(const QuDom& other);
 };
