@@ -131,7 +131,7 @@ QuDomElement QuDomElement::m_recursiveFind(const QString &id, const QuDomElement
 QuDomElement QuDomElement::operator [](const QString& id_path) {
     QuDomElement e = m_find_el(id_path);
     if(!e.isNull() && m_qudom->cacheOnAccessEnabled()) {
-        qDebug() << __PRETTY_FUNCTION__ << "adding to cache from duckin const " << e.element().attribute("id");
+//        qDebug() << __PRETTY_FUNCTION__ << "adding to cache from duckin const " << e.element().attribute("id");
         m_qudom->m_add_to_cache(e.element().attribute("id"), e.element());
     }
     return e;
