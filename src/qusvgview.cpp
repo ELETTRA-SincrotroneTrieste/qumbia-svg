@@ -38,6 +38,7 @@ public:
     QMap<QString, QString> svg_cache;
     QMap<QString, QuGraphicsSvgItem *> items_cache;
     QSvgRenderer *renderer;
+    bool mouse_pressed;
 };
 
 QuSvgView::QuSvgView(QWidget *parent)
@@ -45,6 +46,7 @@ QuSvgView::QuSvgView(QWidget *parent)
 {
     d = new QuSvgViewPrivate;
     d->m_renderer = Native;
+    d->mouse_pressed = false;
 
     setScene(new QGraphicsScene(this));
     setTransformationAnchor(AnchorUnderMouse);
@@ -109,18 +111,6 @@ void QuSvgView::resetZoom()
     }
 }
 
-void QuSvgView::onItemClicked(QuGraphicsSvgItem *item,
-                              const QPointF& scenePos,
-                              const QPointF& pos) {
-    emit itemClicked(item, scenePos, pos);
-}
-
-void QuSvgView::onItemContextMenuRequest(QuGraphicsSvgItem *item,
-                                         const QPointF &scenePos,
-                                         const QPointF &pos) {
-    emit itemContextMenuRequest(item, scenePos, pos);
-}
-
 void QuSvgView::paintEvent(QPaintEvent *event)
 {
     //    QTime t;
@@ -141,6 +131,27 @@ void QuSvgView::paintEvent(QPaintEvent *event)
         QGraphicsView::paintEvent(event);
     }
     //    qDebug() << __PRETTY_FUNCTION__ << "repaint took ms" << t.elapsed();
+}
+
+void QuSvgView::mousePressEvent(QMouseEvent *event) {
+    d->mouse_pressed = true;
+    QGraphicsView::mousePressEvent(event);
+}
+
+void QuSvgView::mouseReleaseEvent(QMouseEvent *event) {
+    qDebug() << __PRETTY_FUNCTION__ << event->pos() << items(event->pos());
+    if(d->mouse_pressed && event->button() == Qt::LeftButton) {
+        d->mouse_pressed = false;
+        QList<QGraphicsItem *> items_under = items(event->pos());
+        emit itemClicked(items_under, mapToScene(event->pos()), event->pos());
+    }
+    QGraphicsView::mouseReleaseEvent(event);
+}
+
+void QuSvgView::contextMenuEvent(QContextMenuEvent *event) {
+    qDebug() << __PRETTY_FUNCTION__ << event->pos() << items(event->pos());
+    emit itemContextMenuRequest(items(event->pos()), mapToScene(event->pos()), event->pos());
+    QGraphicsView::contextMenuEvent(event);
 }
 
 void QuSvgView::sceneChanged(const QList<QRectF> &rects)
@@ -175,7 +186,6 @@ void QuSvgView::m_createItem(QString id) {
 //        svgItem->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     svgItem->setCacheMode(QGraphicsItem::NoCache);
     svgItem->setObjectName(id);
-    svgItem->setToolTip(id);
     scene()->addItem(svgItem);
     d->items_cache[id] = svgItem;
     // item clickable?
@@ -194,11 +204,6 @@ void QuSvgView::m_createItem(QString id) {
 //    if(!m.isIdentity()) {
 //        svgItem->setTransform(QTransform(m));
 //    }
-
-    connect(svgItem, SIGNAL(clicked(QuGraphicsSvgItem *, QPointF, QPointF)),
-            this, SLOT(onItemClicked(QuGraphicsSvgItem *, QPointF, QPointF)));
-    connect(svgItem, SIGNAL(contextMenuRequest(QuGraphicsSvgItem *, QPointF, QPointF)), this,
-            SLOT(onItemContextMenuRequest(QuGraphicsSvgItem *, QPointF, QPointF)));
 }
 
 void QuSvgView::onDocumentLoaded(QuDom *dom, const QStringList &ids) {

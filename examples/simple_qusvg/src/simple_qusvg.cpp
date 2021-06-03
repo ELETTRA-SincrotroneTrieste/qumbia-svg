@@ -64,7 +64,7 @@ void SimpleQuSvg::applyClicked()
     QString id = findChild<QLineEdit *>("le_id")->text();
     QString attn = findChild<QLineEdit *>("le_attnam")->text();
     QString attv = findChild<QLineEdit *>("le_attval")->text();
-    QuDom dom = m_qu_svg->quDom();
+    QuDom *dom = m_qu_svg->quDom();
     QuDomElement dome(dom);
     QuDomElement de = dome[id];
     if(de.isNull()) {

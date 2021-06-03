@@ -52,6 +52,7 @@ QStringList QuSvgHelperAppActionProvider::getActionNames(QuGraphicsSvgItem *it) 
 }
 
 bool QuSvgHelperAppActionProvider::onClicked(QuGraphicsSvgItem *it) {
+    qDebug() << __PRETTY_FUNCTION__ << it;
     Q_UNUSED(it)
     d->errmsg.clear();
     return false;
@@ -89,8 +90,8 @@ bool QuSvgHelperAppActionProvider::handlesEventType(QuGraphicsSvgItem *it, QuSvg
     const QuDomElement root(d->qudom);
     // find the target
     QuDomElement e(root[it->elementId()]);
-    bool ok1 = !e.isNull() && !e.a("helper").isEmpty() && et == QuSvgActionProviderInterface::ContextualEvent;
-    return ok1 || m_get_src_and_ctx(e);
+    bool ok1 = !e.isNull() && !e.a("helper").isEmpty();
+    return et == QuSvgActionProviderInterface::ContextualEvent && (ok1 || m_get_src_and_ctx(e));
 }
 
 QString QuSvgHelperAppActionProvider::message() const {

@@ -20,6 +20,7 @@ QuGraphicsSvgItem::QuGraphicsSvgItem()
     d->pressed = false;
     d->hover = false;
     d->shape = Undefined;
+    setAcceptHoverEvents(true);
 }
 
 bool QuGraphicsSvgItem::clickable() const {
@@ -30,7 +31,6 @@ void QuGraphicsSvgItem::setClickable(const QString& c) {
     d->clickable = (c.compare("true", Qt::CaseInsensitive) == 0);
     if(d->shape == Undefined)
         d->shape = ShapeRect;
-    setAcceptHoverEvents(d->clickable);
 }
 
 /*!
@@ -59,7 +59,6 @@ QuGraphicsSvgItem::Shape QuGraphicsSvgItem::getShape() const {
 }
 
 void QuGraphicsSvgItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    qDebug() << __PRETTY_FUNCTION__ ;
     if(d->clickable) {
         d->pressed = true;
         update();
@@ -69,44 +68,34 @@ void QuGraphicsSvgItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void QuGraphicsSvgItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
-    qDebug() << __PRETTY_FUNCTION__ ;
     if(d->pressed && e->button() == Qt::LeftButton) {
         d->pressed = false;
         update();
-        if(isUnderMouse())
-            emit clicked(this, e->screenPos(), e->pos());
     }
     else
         QGraphicsSvgItem::mouseReleaseEvent(e);
 }
 
-void QuGraphicsSvgItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e) {
-    qDebug() << __PRETTY_FUNCTION__ ;
-    emit contextMenuRequest(this, e->screenPos(), e->pos());
-    d->pressed = false;
-    update();
-}
-
 void QuGraphicsSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
-    qDebug() << __PRETTY_FUNCTION__ ;
+    qDebug() << __PRETTY_FUNCTION__ << this;
+    emit itemEntered(this);
     if(d->clickable) {
         d->hover = true;
         update();
     }
-    else
-        QGraphicsSvgItem::hoverEnterEvent(e);
+    QGraphicsSvgItem::hoverEnterEvent(e);
 }
 
 void QuGraphicsSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 {
-    qDebug() << __PRETTY_FUNCTION__ ;
+    emit itemLeft(this);
+    qDebug() << __PRETTY_FUNCTION__ << this;
     if(d->hover) {
         d->hover = false;
         update();
     }
-    else
-        QGraphicsSvgItem::hoverLeaveEvent(e);
+    QGraphicsSvgItem::hoverLeaveEvent(e);
 }
 
 void QuGraphicsSvgItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

@@ -41,25 +41,20 @@ public slots:
     void zoomOut();
     void resetZoom();
 
-    void onItemClicked(QuGraphicsSvgItem *item,
-                       const QPointF& scenePos,
-                       const QPointF& pos);
-    void onItemContextMenuRequest(QuGraphicsSvgItem *item,
-                                  const QPointF& scenePos,
-                                  const QPointF& pos) ;
-
 signals:
     void zoomChanged();
-    void itemClicked(QuGraphicsSvgItem *item,
+    void itemClicked(const QList<QGraphicsItem *>& items,
                      const QPointF& scenePos,
                      const QPointF& pos);
-    void itemContextMenuRequest(QuGraphicsSvgItem *item,
+    void itemContextMenuRequest(const QList<QGraphicsItem *>& items,
                                   const QPointF& scenePos,
                                   const QPointF& pos) ;
-
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 protected slots:
     void sceneChanged(const QList<QRectF>& rects);
@@ -72,8 +67,8 @@ private:
     // QuDomListener interface
     void m_createItem(QString id);
 public:
-    void onDocumentLoaded(QuDom *dom, const QStringList &ids);
-    void onElementChange(const QString &id, QuDomElement* dom_e);
+    void onDocumentLoaded(QuDom *dom, const QStringList &ids) override;
+    void onElementChange(const QString &id, QuDomElement* dom_e) override;
 };
 
 #endif // QUSVGVIEW_H

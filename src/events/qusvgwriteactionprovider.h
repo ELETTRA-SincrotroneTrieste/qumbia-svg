@@ -52,6 +52,8 @@ public:
     QStringList getActionNames(QuGraphicsSvgItem *it) const;
     bool onContextAction(QuGraphicsSvgItem *it, const QString &action_name);
     bool onClicked(QuGraphicsSvgItem *it);
+    bool onEntered(QuGraphicsSvgItem *it);
+    bool onLeft(QuGraphicsSvgItem *it);
     bool handlesEventType(QuGraphicsSvgItem *it, EventType et) const;
     bool hasError() const;
     QString message() const;

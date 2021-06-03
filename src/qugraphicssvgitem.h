@@ -23,13 +23,12 @@ public slots:
     void setShape(const QString& s);
 
 signals:
-    void clicked(QuGraphicsSvgItem *item, const QPointF& scenePos, const QPointF& pos);
-    void contextMenuRequest(QuGraphicsSvgItem *item, const QPointF& scenePos, const QPointF& pos);
+    void itemEntered(QuGraphicsSvgItem *item);
+    void itemLeft(QuGraphicsSvgItem *item);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *e);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
 

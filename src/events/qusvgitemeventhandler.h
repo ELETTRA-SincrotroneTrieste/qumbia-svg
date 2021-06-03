@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QGraphicsItem>
 
 class QuGraphicsSvgItem;
 class QuSvgItemEventHandlerPrivate;
@@ -10,7 +11,7 @@ class QuSvgView;
 
 class QuSvgActionProviderInterface {
 public:
-    enum EventType { ClickEvent, ContextualEvent };
+    enum EventType { ClickEvent, ContextualEvent, EnterEvent, LeaveEvent };
 
     virtual QStringList getActionNames(QuGraphicsSvgItem *it) const = 0;
     virtual bool onClicked(QuGraphicsSvgItem *it) = 0;
@@ -31,8 +32,8 @@ public:
     void addActionProvider(QuSvgActionProviderInterface *ap);
 
 public slots:
-    void processItemClicked(QuGraphicsSvgItem* it);
-    void processOnItemContextMenuRequest(QuGraphicsSvgItem* it);
+    void processItemClicked(const QList<QGraphicsItem *> &items);
+    void processOnItemContextMenuRequest(const QList<QGraphicsItem *>& items);
 
 private slots:
     void actionTriggered();

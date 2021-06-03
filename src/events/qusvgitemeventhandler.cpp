@@ -1,7 +1,10 @@
 #include "qusvgitemeventhandler.h"
+#include "qugraphicssvgitem.h"
 #include "qusvgview.h"
+#include <QGraphicsItem>
 #include <cumacros.h>
 #include <QMenu>
+#include <QtDebug>
 
 class QuSvgItemEventHandlerPrivate {
 public:
@@ -11,10 +14,14 @@ public:
 
 QuSvgItemEventHandler::QuSvgItemEventHandler(QuSvgView *view) : QObject(view) {
     d = new QuSvgItemEventHandlerPrivate;
-    connect(view, SIGNAL(itemClicked(QuGraphicsSvgItem*,QPointF,QPointF)),
-            this, SLOT(processItemClicked(QuGraphicsSvgItem*)));
-    connect(view, SIGNAL(itemContextMenuRequest(QuGraphicsSvgItem*,QPointF,QPointF)),
-            this, SLOT(processOnItemContextMenuRequest(QuGraphicsSvgItem*)));
+    connect(view, SIGNAL(itemClicked(const QList<QGraphicsItem *> &,QPointF,QPointF)),
+            this, SLOT(processItemClicked(const QList<QGraphicsItem *> &)));
+    connect(view, SIGNAL(itemContextMenuRequest(const QList<QGraphicsItem *> &,QPointF,QPointF)),
+            this, SLOT(processOnItemContextMenuRequest(const QList<QGraphicsItem *> &)));
+    connect(view, SIGNAL(itemEntered(QuGraphicsSvgItem *)),
+            this, SLOT(processItemEntered(QuGraphicsSvgItem *)));
+    connect(view, SIGNAL(itemLeft(QuGraphicsSvgItem *)),
+            this, SLOT(processItemLeft(QuGraphicsSvgItem *)));
 }
 
 QuSvgItemEventHandler::~QuSvgItemEventHandler() {
@@ -26,39 +33,51 @@ void QuSvgItemEventHandler::addActionProvider(QuSvgActionProviderInterface *ap) 
     d->action_providers.append(ap);
 }
 
-void QuSvgItemEventHandler::processItemClicked(QuGraphicsSvgItem *it)
-{
-    foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
-        if(ai->handlesEventType(it, QuSvgActionProviderInterface::ClickEvent)) {
-            ai->onClicked(it);
-            if(ai->hasError())
-                emit error(ai->name(), ai->message());
+void QuSvgItemEventHandler::processItemClicked(const QList<QGraphicsItem *> &items) {
+    foreach(QGraphicsItem *git, items) {
+        QuGraphicsSvgItem *it = qobject_cast<QuGraphicsSvgItem *>(git->toGraphicsObject());
+        foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
+            if(ai->handlesEventType(it, QuSvgActionProviderInterface::ClickEvent)) {
+                ai->onClicked(it);
+                if(ai->hasError())
+                    emit error(ai->name(), ai->message());
+            }
         }
     }
 }
 
-void QuSvgItemEventHandler::processOnItemContextMenuRequest(QuGraphicsSvgItem *it)
+void QuSvgItemEventHandler::processOnItemContextMenuRequest(const QList<QGraphicsItem *> &items)
 {
+    qDebug() << __PRETTY_FUNCTION__ << "items" << items.size() << "action providers size" << d->action_providers.size();
     d->items_map.clear();
-    QStringList action_names;
-    foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
-        if(ai->handlesEventType(it, QuSvgActionProviderInterface::ContextualEvent))
-            action_names += ai->getActionNames(it);
-    }
-    if(!action_names.isEmpty()) {
-        QMenu menu(nullptr);
-        foreach(QString a, action_names) {
-            QAction *ac = new QAction(a, &menu);
-            d->items_map.insert(ac, it);
-            connect(ac, SIGNAL(triggered()), this, SLOT(actionTriggered()));
-            menu.addAction(ac);
+    QMenu *menu = nullptr;
+    foreach(QGraphicsItem *git, items) {
+        QuGraphicsSvgItem *it = qobject_cast<QuGraphicsSvgItem *>(git->toGraphicsObject());
+        qDebug() << __PRETTY_FUNCTION__ << "item" << it;
+        QStringList action_names;
+        foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
+            if(ai->handlesEventType(it, QuSvgActionProviderInterface::ContextualEvent)) {
+                if(!menu)
+                    menu = new QMenu(nullptr);
+                action_names += ai->getActionNames(it);
+                foreach(QString a, action_names) {
+                    QAction *ac = new QAction(a, menu);
+                    d->items_map.insert(ac, it);
+                    connect(ac, SIGNAL(triggered()), this, SLOT(actionTriggered()));
+                    menu->addAction(ac);
+                }
+            }
         }
-        menu.exec(QCursor::pos());
+    }
+    if(menu) {
+        menu->exec(QCursor::pos());
         d->items_map.clear();
+        delete menu;
     }
 }
 
 void QuSvgItemEventHandler::actionTriggered() {
+    qDebug() << __PRETTY_FUNCTION__ << "action providers" << d->action_providers.size();
     QAction *a = qobject_cast<QAction *>(sender());
     foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
         ai->onContextAction(d->items_map.value(a), a->text());

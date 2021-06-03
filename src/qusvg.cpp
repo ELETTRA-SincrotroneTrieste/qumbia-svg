@@ -105,7 +105,7 @@ void QuSvg::init(Cumbia *cumbia, const CuControlsReaderFactoryI &r_fac,
  * @see removeDataListener
  */
 void QuSvg::addDataListener(QuSvgDataListener *l) {
-    d->listeners.insertMulti(QString(), l);
+    d->listeners.insert(QString(), l);
 }
 
 /*!
@@ -117,7 +117,7 @@ void QuSvg::addDataListener(QuSvgDataListener *l) {
  * *l* will receive updates only for that specific *id*.
  */
 void QuSvg::addDataListener(const QString& id, QuSvgDataListener *l) {
-    d->listeners.insertMulti(id, l);
+    d->listeners.insert(id, l);
 }
 
 /*!
