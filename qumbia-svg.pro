@@ -8,8 +8,8 @@ include(qumbia-svg.pri)
 
 CONFIG += debug
 
-VERSION_HEX = 0x01000
-VERSION = 1.0.0
+VERSION_HEX = 0x01001
+VERSION = 1.0.1
 
 TARGET = $${qumbia_svg_LIB}
 TEMPLATE = lib
