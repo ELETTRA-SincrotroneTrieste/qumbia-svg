@@ -2,7 +2,8 @@
 #define QUREPLACEWILDCARDHELPERINTERFACE_H
 
 #include <QString>
-#include <cucontext.h>
+
+class CuContextI;
 
 class QuSvgReplaceWildcardHelperInterface
 {
@@ -35,7 +36,7 @@ public:
         }
      * \endcode
      */
-    virtual CuContext *getContext() const = 0;
+    virtual CuContextI *getContextI() const = 0;
 };
 
 #endif // QUREPLACEWILDCARDHELPERINTERFACE_H

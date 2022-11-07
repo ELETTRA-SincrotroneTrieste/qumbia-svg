@@ -26,7 +26,7 @@ public:
     QuDom* qudom;
     QString errmsg;
     QString src;
-    CuContext *ctx;
+    CuContextI *ctx_i;
 };
 
 QuSvgHelperAppActionProvider::QuSvgHelperAppActionProvider(QObject *parent,
@@ -38,7 +38,7 @@ QuSvgHelperAppActionProvider::QuSvgHelperAppActionProvider(QObject *parent,
     d = new QuSvgHelperAppActionProviderPrivate(dom);
     d->conn_pool = c_pool;
     d->replace_wildcards_i = rwci;
-    d->ctx = nullptr;
+    d->ctx_i = nullptr;
 }
 
 QuSvgHelperAppActionProvider::~QuSvgHelperAppActionProvider()
@@ -73,7 +73,7 @@ bool QuSvgHelperAppActionProvider::onContextAction(QuGraphicsSvgItem *it, const 
         else {
             // d->src and d->ctx should have been provided by a previous
             // call to m_get_src_and_ctx from QuSvgHelperAppActionProvider::handlesEventType
-            if(d->src.isEmpty() || !d->ctx) // try to get now
+            if(d->src.isEmpty() || !d->ctx_i) // try to get now
                 m_get_src_and_ctx(e);
             if(d->errmsg.isEmpty())
                 return m_start_helper_from_reader();
@@ -108,15 +108,15 @@ QString QuSvgHelperAppActionProvider::name() const {
 
 bool QuSvgHelperAppActionProvider::m_start_helper_from_reader() {
     d->errmsg.clear();
-    if(!d->src.isEmpty() && d->ctx) { // tango source
+    if(!d->src.isEmpty() && d->ctx_i) { // tango source
         CuPluginLoader pl;
         const char* wstd_menu_a_ctions_plugin_name = "widgets-std-context-menu-actions.so";
         QObject *plugin_o;
         CuContextMenuActionsPlugin_I *wstd_menu_a_ctions_plugin = nullptr;
         wstd_menu_a_ctions_plugin =
                 pl.get<CuContextMenuActionsPlugin_I>(wstd_menu_a_ctions_plugin_name, &plugin_o);
-        if(wstd_menu_a_ctions_plugin && d->ctx) {
-            wstd_menu_a_ctions_plugin->setup(nullptr, d->ctx);
+        if(wstd_menu_a_ctions_plugin && d->ctx_i) {
+            wstd_menu_a_ctions_plugin->setup(nullptr, d->ctx_i);
             if(!QMetaObject::invokeMethod(plugin_o,  "onHelperAActionTriggered", Q_ARG(QString, d->src)))
                 d->errmsg = QString("QuSvgHelperAppActionProvider.m_start_helper_from_reader: failed to invoke onHelperAActionTriggered method on %1")
                         .arg(plugin_o->objectName());
@@ -136,7 +136,7 @@ bool QuSvgHelperAppActionProvider::m_start_helper_from_cmd(const QString &cmd)
         QuActionExtensionFactoryI *ae_fac = aepi->getExtensionFactory();
         QuActionExtensionI *ale = ae_fac->create("CuApplicationLauncherExtension", nullptr);
         CuData cmdline("command", cmd.toStdString());
-        ale->execute(cmdline, d->ctx);
+        ale->execute(cmdline, d->ctx_i);
     }
     else
         d->errmsg = QString("QuSvgHelperAppActionProvider::m_start_helper_from_cmd: "
@@ -153,7 +153,7 @@ bool QuSvgHelperAppActionProvider::m_get_src_and_ctx(const QuDomElement &itemel)
         QuSvgReader *reader = d->conn_pool->findReaderById(lnk_id);
         if(reader) {
             d->src = reader->source();
-            d->ctx = reader->getContext();
+            d->ctx_i = reader;
         }
         else if(d->src.isEmpty() && d->replace_wildcards_i) {
             // try with replace wildcard helper, if available
@@ -162,7 +162,7 @@ bool QuSvgHelperAppActionProvider::m_get_src_and_ctx(const QuDomElement &itemel)
                 input_src = d->src;
                 d->src = d->replace_wildcards_i->replaceWildcards(QString(input_src));
                 if(!d->src.isEmpty())
-                    d->ctx = d->replace_wildcards_i->getContext();
+                    d->ctx_i = d->replace_wildcards_i->getContextI();
                 else
                     d->errmsg = QString("QuSvgHelperAppActionProvider.m_get_src_and_ctx: "
                                         "QuSvgReplaceWildcardHelperInterface.replaceWildcards "
@@ -174,7 +174,7 @@ bool QuSvgHelperAppActionProvider::m_get_src_and_ctx(const QuDomElement &itemel)
                         arg(link_e.tagName()).arg(itemel.element().tagName())
                         .arg(itemel.element().attribute("id"));
         }
-        if(d->src.isEmpty() || !d->ctx) {
+        if(d->src.isEmpty() || !d->ctx_i) {
             d->errmsg = QString("QuSvgHelperAppActionProvider.m_get_src_and_ctx: no reader found for "
                                 "<read> with id \"%1\". For writers, a QuSvgReplaceWildcardHelperInterface "
                                 "implementation is required to process wildcards in targets").arg(lnk_id);
