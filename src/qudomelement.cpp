@@ -210,8 +210,8 @@ void QuDomElement::setAttribute(const QString &name, const QString &value)
     name.count("/") == 1 ? v = toDeclarationList(nam, value) : v = value;
     if(!v.isEmpty() && !m_dome.isNull() ) {
         if(m_dome.attribute(nam).compare(v, Qt::CaseInsensitive) != 0) {
-//            printf("\e[1;35mQuDomElement.setAttribute:  need to set attribute %s (nam %s) to %s: \e[1;32mchanged\e[0m\n",
-//                   qstoc(name), qstoc(nam), qstoc(value));
+//            printf("\e[1;35mQuDomElement.setAttribute (id: %s, tag <%s>):  need to set attribute %s (nam %s) to %s: \e[1;32mchanged\e[0m\n",
+//                  qstoc(m_dome.attribute("id")), qstoc(m_dome.tagName()), qstoc(name), qstoc(nam), qstoc(value));
             m_dome.setAttribute(nam, v);
             if(m_qudom)
                 m_qudom->m_notify_element_change(m_dome.attribute("id"), this);
@@ -220,8 +220,8 @@ void QuDomElement::setAttribute(const QString &name, const QString &value)
                      qstoc(m_dome.tagName()), qstoc(m_dome.attribute("id")));
         }
 //        else
-//            printf("QuDomElement.setAttribute: no need to set attribute %s (nam %s) to %s: unchanged\n",
-//                   qstoc(name), qstoc(nam), qstoc(value));
+//            printf("QuDomElement.setAttribute: (id: %s, tag <%s>): no need to set attribute %s (nam %s) to '%s': unchanged\n",
+//                   qstoc(m_dome.attribute("id")), qstoc(m_dome.tagName()), qstoc(name), qstoc(nam), qstoc(value));
     }
     else
         perr("QuDomElement.setAttribute: cannot set attribute \"%s\" if either the element <%s> "
