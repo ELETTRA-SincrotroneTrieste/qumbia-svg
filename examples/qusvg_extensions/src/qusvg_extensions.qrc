@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>uh.svg</file>
+        <file>drawing.svg</file>
+        <file>uh-plain.svg</file>
+    </qresource>
+</RCC>

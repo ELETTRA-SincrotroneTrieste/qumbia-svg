@@ -8,8 +8,8 @@ include(qumbia-svg.pri)
 
 CONFIG += debug
 
-VERSION_HEX = 0x01001
-VERSION = 1.0.1
+VERSION_HEX = 0x0100100
+VERSION = 1.1.0
 
 TARGET = $${qumbia_svg_LIB}
 TEMPLATE = lib
@@ -34,6 +34,7 @@ SOURCES += \
         src/cumbia/qusvgresultdata.cpp \
         src/cumbia/qusvgresultdatainterpreter.cpp \
         src/qugraphicssvgitem.cpp \
+        src/qugraphicssvgitemxtensionfactory.cpp \
         src/qusvglayerhelper.cpp \
         src/cumbia/qusvgreader.cpp \
         src/qudom.cpp \
@@ -52,6 +53,7 @@ HEADERS += \
     src/cumbia/qusvgresultdata.h \
     src/cumbia/qusvgresultdatainterpreter.h \
     src/qugraphicssvgitem.h \
+    src/qugraphicssvgitemxtensionfactory.h \
     src/qusvglayerhelper.h \
         src/cumbia/qusvgreader.h \
         src/qudom.h \

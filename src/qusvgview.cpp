@@ -2,6 +2,7 @@
 #include "qusvg.h"
 #include "qugraphicssvgitem.h"
 #include "qudom.h"
+#include "qugraphicssvgitemxtensionfactory.h"
 
 #include <QSvgRenderer>
 
@@ -38,6 +39,7 @@ public:
     QMap<QString, QString> svg_cache;
     QMap<QString, QuGraphicsSvgItem *> items_cache;
     QSvgRenderer *renderer;
+    QuGraphicsSvgItemXtensionFactory *xt_factory;
     bool mouse_pressed;
 };
 
@@ -47,6 +49,7 @@ QuSvgView::QuSvgView(QWidget *parent)
     d = new QuSvgViewPrivate;
     d->m_renderer = Native;
     d->mouse_pressed = false;
+    d->xt_factory = new QuGraphicsSvgItemXtensionFactory;
 
     setScene(new QGraphicsScene(this));
     setTransformationAnchor(AnchorUnderMouse);
@@ -91,6 +94,10 @@ void QuSvgView::setHighQualityAntialiasing(bool highQualityAntialiasing)
 qreal QuSvgView::zoomFactor() const
 {
     return transform().m11();
+}
+
+QuGraphicsSvgItemXtensionFactory *QuSvgView::extension_factory() const {
+    return d->xt_factory;
 }
 
 void QuSvgView::zoomIn()
@@ -179,7 +186,9 @@ QSvgRenderer *QuSvgView::renderer() const
 }
 
 void QuSvgView::m_createItem(QString id) {
-    QuGraphicsSvgItem *svgItem = new QuGraphicsSvgItem();
+    QuDomElement rootel(d->m_dom);
+    QuDomElement el = rootel[id];
+    QuGraphicsSvgItem *svgItem = d->xt_factory->create(el);
     svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
     svgItem->setSharedRenderer(d->renderer);
     svgItem->setElementId(id);
@@ -189,8 +198,6 @@ void QuSvgView::m_createItem(QString id) {
     scene()->addItem(svgItem);
     d->items_cache[id] = svgItem;
     // item clickable?
-    QuDomElement rootel(d->m_dom);
-    QuDomElement el = rootel[id];
     // set item properties: shape and clickable have dedicated
     // Q_PROPERTY with set and get methods
     foreach(QString property, QStringList() << "shape" << "clickable" << "z")
@@ -198,7 +205,7 @@ void QuSvgView::m_createItem(QString id) {
             svgItem->setProperty(qstoc(property), el.a(property));
 
     const QRectF &item_r = d->renderer->boundsOnElement(id);
-    const QMatrix& m = d->renderer->matrixForElement(id);
+    const QTransform& m = d->renderer->transformForElement(id);
     !m.isIdentity() ? svgItem->setPos(m.mapRect(item_r).topLeft())
                     : svgItem->setPos(item_r.topLeft());
 //    if(!m.isIdentity()) {

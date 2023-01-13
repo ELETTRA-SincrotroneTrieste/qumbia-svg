@@ -17,6 +17,7 @@ class QuSvgViewPrivate;
 class QuGraphicsSvgItem;
 class QuSvg;
 class QuDom;
+class QuGraphicsSvgItemXtensionFactory;
 
 class QuSvgView : public QGraphicsView, public QuDomListener
 {
@@ -34,6 +35,8 @@ public:
     QSvgRenderer *renderer() const;
 
     qreal zoomFactor() const;
+
+    QuGraphicsSvgItemXtensionFactory *extension_factory() const;
 
 public slots:
     void setHighQualityAntialiasing(bool highQualityAntialiasing);
