@@ -3,7 +3,10 @@ isEmpty(CUMBIA_ROOT) {
 }
 include($${CUMBIA_ROOT}/include/quapps/quapps.pri)
 
-# CONFIG += debug | release
+CONFIG += debug
+
+CONFIG += link_pkgconfig
+PKGCONFIG += qgraphicsplot
 
 QT += xml
 
