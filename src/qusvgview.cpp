@@ -185,11 +185,17 @@ QSvgRenderer *QuSvgView::renderer() const
     return findChild<QSvgRenderer *>();
 }
 
+QuGraphicsSvgItem *QuSvgView::item(const QString &id) const {
+    return d->items_cache.contains(id) ? d->items_cache[id] : nullptr;
+}
+
 void QuSvgView::m_createItem(QString id) {
     QuDomElement rootel(d->m_dom);
     QuDomElement el = rootel[id];
     QuGraphicsSvgItem *svgItem = d->xt_factory->create(el);
-    svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
+
+    svgItem->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+//    svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
     svgItem->setSharedRenderer(d->renderer);
     svgItem->setElementId(id);
 //        svgItem->setCacheMode(QGraphicsItem::DeviceCoordinateCache);

@@ -19,6 +19,13 @@ packagesExist(qumbia-svg) {
     error("qusvgexample: module qumbia-svg is required - check PKG_CONFIG_PATH")
 }
 
+packagesExist(qgraphicsplot) {
+  PKGCONFIG += qgraphicsplot
+    message("qusvgexample: found module qgraphicsplot ")
+} else {
+    error("qusvgexample: module qgraphicsplot is required - check PKG_CONFIG_PATH")
+}
+
 # RESOURCES +=
 
 SOURCES += src/main.cpp \

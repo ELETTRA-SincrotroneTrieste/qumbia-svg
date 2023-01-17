@@ -8,6 +8,8 @@
 #include <cucontrolsfactorypool.h>
 class CumbiaPool;
 class QuSvg;
+class SceneCurve;
+class QuSvgView;
 // cumbia
 
 namespace Ui {
@@ -22,6 +24,8 @@ public:
     explicit Qusvg_extensions(CumbiaPool *cu_p, QWidget *parent = 0);
     ~Qusvg_extensions();
 
+protected slots:
+    void updatePlots();
 private:
     Ui::Qusvg_extensions *ui;
 
@@ -32,6 +36,12 @@ private:
     // cumbia
 
     QuSvg* m_qu_svg;
+    QuSvgView *svgview ;
+    QList<SceneCurve *> curves;
+    double x1, y1, x2, y2;
+    int mCnt;
+    int nCurves;
+    int mBufsiz;
 };
 
 #endif // Qusvg_extensions_H

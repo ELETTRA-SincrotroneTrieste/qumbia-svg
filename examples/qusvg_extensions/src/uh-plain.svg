@@ -5998,24 +5998,12 @@
        fill="url(#AH)"
        id="path2350"
        style="stroke-width:1.33333" />
-    <rect
-       style="fill:none;stroke:#000000;stroke-width:0.584"
-       id="miniplot1"
-       width="39.90115"
-       height="37.061592"
-       x="482.2738"
-       y="87.937645"
-       inkscape:label="Mini Plot 1"
-       type="plot"
-       item="true">
-      <title
-         id="title39093">Mini Plot 1</title>
-    </rect>
+
     <rect
        style="display:inline;fill:none;stroke:#000000;stroke-width:0.497124"
        id="plot1"
        width="383.44711"
-       height="54.430038"
+       height="154.430038"
        x="784.02954"
        y="100.02956"
        inkscape:label="Main Plot"
