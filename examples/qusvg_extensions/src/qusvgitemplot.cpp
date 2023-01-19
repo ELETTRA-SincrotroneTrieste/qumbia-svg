@@ -25,7 +25,6 @@ QuSvgItemPlot::QuSvgItemPlot()
     d->plot = new QGraphicsPlotItem(this);
     d->plot->setOriginPosPercentage(d->plot->xScaleItem(), 0.0);
     d->plot->setOriginPosPercentage(d->plot->yScaleItem(), 0.0);
-    d->plot->setYAxisLabelsOutsideCanvas(true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
