@@ -19,6 +19,7 @@
 #include <scenecurve.h>
 #include <curveitem.h>
 #include <linepainter.h>
+#include <markeritem.h>
 
 #include "qusvgitemplot.h"
 
@@ -88,6 +89,11 @@ Qusvg_extensions::Qusvg_extensions(CumbiaPool *cumbia_pool, QWidget *parent) :
     ip->plot()->yScaleItem()->setLowerBound(0.0);
     ip->plot()->yScaleItem()->setUpperBound(1.0);
     ip->plot()->yScaleItem()->setTickStepLen(0.5);
+
+    ip->plot()->setMouseZoomEnabled(true);
+
+    MarkerItem* marker = new MarkerItem(ip->plot());
+    ip->plot()->installMouseEventListener(marker);
 
     mCnt = 0;
     x1 = 0.0;

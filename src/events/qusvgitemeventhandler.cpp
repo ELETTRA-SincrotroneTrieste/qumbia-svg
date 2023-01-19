@@ -36,11 +36,13 @@ void QuSvgItemEventHandler::addActionProvider(QuSvgActionProviderInterface *ap) 
 void QuSvgItemEventHandler::processItemClicked(const QList<QGraphicsItem *> &items) {
     foreach(QGraphicsItem *git, items) {
         QuGraphicsSvgItem *it = qobject_cast<QuGraphicsSvgItem *>(git->toGraphicsObject());
-        foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
-            if(ai->handlesEventType(it, QuSvgActionProviderInterface::ClickEvent)) {
-                ai->onClicked(it);
-                if(ai->hasError())
-                    emit error(ai->name(), ai->message());
+        if(it) {
+            foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
+                if(ai->handlesEventType(it, QuSvgActionProviderInterface::ClickEvent)) {
+                    ai->onClicked(it);
+                    if(ai->hasError())
+                        emit error(ai->name(), ai->message());
+                }
             }
         }
     }
@@ -53,18 +55,19 @@ void QuSvgItemEventHandler::processOnItemContextMenuRequest(const QList<QGraphic
     QMenu *menu = nullptr;
     foreach(QGraphicsItem *git, items) {
         QuGraphicsSvgItem *it = qobject_cast<QuGraphicsSvgItem *>(git->toGraphicsObject());
-        qDebug() << __PRETTY_FUNCTION__ << "item" << it;
-        QStringList action_names;
-        foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
-            if(ai->handlesEventType(it, QuSvgActionProviderInterface::ContextualEvent)) {
-                if(!menu)
-                    menu = new QMenu(nullptr);
-                action_names += ai->getActionNames(it);
-                foreach(QString a, action_names) {
-                    QAction *ac = new QAction(a, menu);
-                    d->items_map.insert(ac, it);
-                    connect(ac, SIGNAL(triggered()), this, SLOT(actionTriggered()));
-                    menu->addAction(ac);
+        if(it) {
+            QStringList action_names;
+            foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
+                if(ai->handlesEventType(it, QuSvgActionProviderInterface::ContextualEvent)) {
+                    if(!menu)
+                        menu = new QMenu(nullptr);
+                    action_names += ai->getActionNames(it);
+                    foreach(QString a, action_names) {
+                        QAction *ac = new QAction(a, menu);
+                        d->items_map.insert(ac, it);
+                        connect(ac, SIGNAL(triggered()), this, SLOT(actionTriggered()));
+                        menu->addAction(ac);
+                    }
                 }
             }
         }
