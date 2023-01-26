@@ -90,6 +90,14 @@ Qusvg_extensions::Qusvg_extensions(CumbiaPool *cumbia_pool, QWidget *parent) :
     ip->plot()->yScaleItem()->setUpperBound(1.0);
     ip->plot()->yScaleItem()->setTickStepLen(0.5);
 
+    QColor bgc(Qt::lightGray);
+    bgc.setAlpha(180);
+    ip->plot()->setBackgroundColor(bgc);
+    ip->plot()->xScaleItem()->setGridEnabled(false);
+    ip->plot()->yScaleItem()->setGridEnabled(false);
+    ip->plot()->setXScaleEnabled(false);
+    ip->plot()->setYScaleEnabled(false);
+
     ip->plot()->setMouseZoomEnabled(true);
 
     MarkerItem* marker = new MarkerItem(ip->plot());
