@@ -8,9 +8,38 @@ CONFIG += debug
 CONFIG += link_pkgconfig
 PKGCONFIG += qgraphicsplot
 
-QT += xml
+TEMPLATE = lib
+libname=qusvg-extensions
 
+QT += xml opengl
+
+# change the place where you want the include files to be installed
+INC_DIR = $${INSTALL_ROOT}/include/qusvg-extensions
+
+# change to your desired lib dir
+LIB_DIR = $${INSTALL_ROOT}/lib
 DEFINES -= QT_NO_DEBUG_OUTPUT
+
+VERSION_HEX = 0x010000
+VERSION = 1.0.0
+VER_MAJ = 1
+VER_MIN = 0
+VER_FIX = 0
+
+DEFINES += QUSVG_EXTENSIONS_VERSION_STR=\"\\\"$${VERSION}\\\"\" \
+    QUSVG_EXTENSIONS_VERSION=$${VERSION_HEX} \
+    VER_MAJ=$${VER_MAJ} \
+    VER_MIN=$${VER_MIN} \
+    VER_FIX=$${VER_FIX}
+
+# append a "-qt6" suffix to the library built with qt5
+greaterThan(QT_MAJOR_VERSION, 5) {
+    QTVER_SUFFIX = -qt$${QT_MAJOR_VERSION}
+} else {
+    QTVER_SUFFIX =
+}
+
+TARGET = $${libname}$${QTVER_SUFFIX}
 
 packagesExist(qumbia-svg) {
   PKGCONFIG += qumbia-svg
@@ -32,7 +61,7 @@ SOURCES += src/main.cpp \
                 src/qusvg_extensions.cpp \
                 src/qusvgitemplot.cpp
 
-HEADERS += src/qusvg_extensions.h \
+PUBLICHEADERS += src/qusvg_extensions.h \
     src/qusvgitemplot.h
 
 # cuuimake runs uic
@@ -40,7 +69,8 @@ HEADERS += src/qusvg_extensions.h \
 # but we need to include ui_xxxx.h file amongst the headers
 # in order to be recompiled when it changes
 #
-HEADERS += \
+
+HEADERS += $${PUBLICHEADERS}
     ui/ui_qusvg_extensions.h
 
 # - ui: where to find cuuimake ui_*.h files
@@ -51,13 +81,20 @@ HEADERS += \
 #
 INCLUDEPATH += ui src
 
-TARGET = qusvg_extensions
+TARGET = qusvg-extensions
 
-!wasm-emscripten {
-    TARGET   = bin/$${TARGET}
-} else {
-    TARGET = wasm/$${TARGET}
-}
+inc.files = $${PUBLICHEADERS}
+inc.path = $${INC_DIR}
+
+target.path=$${LIB_DIR}
+
+
+doc.commands = \
+    doxygen \
+    Doxyfile;
+
+doc.files = doc/
+doc.path = $${DOC_DIR}
 
 #
 # make install works if INSTALL_DIR is given to qmake
@@ -85,15 +122,30 @@ TARGET = qusvg_extensions
 
 # unix:INCLUDEPATH +=  . ../../src
 
-message("-")
-message("NOTE")
-message("You need to run cuuimake in order to build the project")
-message("-")
-message("        cuuimake --show-config to see cuuimake configuration options")
-message("        cuuimake --configure to configure cuuimake")
-message("        cuuimake -jN to execute cuuimake and then make -jN")
-message("        cuuimake --make to run cuuimake and then make")
-message("-")
+# generate pkg config file
+CONFIG += create_pc create_prl no_install_prl
+
+message("libname $${libname}")
+message("prefix $${INSTALL_ROOT}")
+message("target $${target.path}")
+message("inc $${inc.path} ")
+message("version $${VERSION} ")
+
+QMAKE_PKGCONFIG_NAME = $${libname}
+QMAKE_PKGCONFIG_DESCRIPTION = "extensions to the qumbia-svg library, offering items"
+QMAKE_PKGCONFIG_PREFIX = $${INSTALL_ROOT}
+QMAKE_PKGCONFIG_LIBDIR = $${target.path}
+QMAKE_PKGCONFIG_INCDIR = $${inc.path}
+QMAKE_PKGCONFIG_VERSION = $${VERSION}
+QMAKE_PKGCONFIG_DESTDIR = pkgconfig
+
+pkgconfig_f.path = $${LIB_DIR}/pkgconfig
+pkgconfig_f.files = pkgconfig/$${libname}.pc
+
+# INSTALLS = inc lib doc data
+
+INSTALLS = inc target pkgconfig_f
+
 
 RESOURCES += \
     src/qusvg_extensions.qrc

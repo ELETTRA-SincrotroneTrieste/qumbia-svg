@@ -29,7 +29,6 @@ public:
     explicit QuSvgView(QWidget *parent = nullptr);
 
     void setRenderer(RendererType type = Native);
-    void drawBackground(QPainter *p, const QRectF &rect) override;
 
     QSize svgSize() const;
     QSvgRenderer *renderer() const;
