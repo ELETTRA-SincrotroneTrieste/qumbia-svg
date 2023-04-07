@@ -56,14 +56,6 @@ QuSvgView::QuSvgView(QWidget *parent)
     setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 }
 
-void QuSvgView::drawBackground(QPainter *p, const QRectF &)
-{
-    p->save();
-    p->resetTransform();
-    p->drawTiledPixmap(viewport()->rect(), backgroundBrush().texture());
-    p->restore();
-}
-
 QSize QuSvgView::svgSize() const
 {
     return QSize();
@@ -120,6 +112,8 @@ void QuSvgView::resetZoom()
 
 void QuSvgView::paintEvent(QPaintEvent *event)
 {
+    const QRect& r = event->rect();
+    printf("\e[1;36mQuSvgView.paintEvent \e[0;34m %d,%d, %dx%d\e[0m\n", r.x(), r.y(), r.width(), r.height());
     //    QTime t;
     //    t.start();
     if (d->m_renderer == Image) {
@@ -137,7 +131,6 @@ void QuSvgView::paintEvent(QPaintEvent *event)
     } else {
         QGraphicsView::paintEvent(event);
     }
-    //    qDebug() << __PRETTY_FUNCTION__ << "repaint took ms" << t.elapsed();
 }
 
 void QuSvgView::mousePressEvent(QMouseEvent *event) {

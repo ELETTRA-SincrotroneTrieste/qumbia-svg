@@ -20,6 +20,8 @@
 #include <curveitem.h>
 #include <linepainter.h>
 #include <markeritem.h>
+#include <time.h>
+#include <QOpenGLWidget>
 
 #include "qusvgitemplot.h"
 
@@ -34,8 +36,27 @@ Qusvg_extensions::Qusvg_extensions(CumbiaPool *cumbia_pool, QWidget *parent) :
     ui = new Ui::Qusvg_extensions;
     ui->setupUi(this, cu_pool, m_ctrl_factory_pool);
 
+    mBufsiz = 10000;
+    mCnt = 0;
+    x1 = 0.0;
+    y1 = 0.0;
+    x2 = 0.0;
+    y2 = -10.0;
+
     QGridLayout *lo = new QGridLayout(ui->syno_widget);
     svgview = new QuSvgView(this);
+
+    // OPENGL
+    if(qApp->arguments().contains("--opengl")) {
+        QOpenGLWidget *gl = new QOpenGLWidget();
+        QSurfaceFormat format;
+        format.setSamples(4);
+        gl->setFormat(format);
+        svgview->setViewport(gl);
+        svgview->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    }
+    // OPENGL
+
     m_qu_svg = new QuSvg(svgview);
     QuSvgItemEventHandler *item_event_han = new QuSvgItemEventHandler(svgview);
     item_event_han->addActionProvider(new QuSvgHelperAppActionProvider(this, m_qu_svg->quDom(), m_qu_svg->getConnectionsPool()));
@@ -55,8 +76,8 @@ Qusvg_extensions::Qusvg_extensions(CumbiaPool *cumbia_pool, QWidget *parent) :
     }
     QuSvgItemPlot * ip = qobject_cast<QuSvgItemPlot *>(svgview->item("plot1"));
     QList<QColor> palette = QList<QColor> () << QColor(Qt::green) << QColor(Qt::blue) << Qt::magenta << Qt::cyan;
-    mBufsiz = 100;
-    nCurves = 1;
+    mBufsiz = 10000;
+    nCurves = 5;
     /* create the curves */
     for(int i = 0; i < nCurves; i++)
     {
@@ -64,7 +85,7 @@ Qusvg_extensions::Qusvg_extensions(CumbiaPool *cumbia_pool, QWidget *parent) :
         QString name = QString("Curve %1").arg(i + 1);
         /* SceneCurve manages items in the curve. It does not draw anything */
 
-            qDebug() << __PRETTY_FUNCTION__ << ip << ip->plot();
+        qDebug() << __PRETTY_FUNCTION__ << ip << ip->plot();
         SceneCurve *c = ip->plot()->addCurve(name);
         /* set the buffer size */
         c->setBufferSize(mBufsiz);
@@ -74,18 +95,20 @@ Qusvg_extensions::Qusvg_extensions(CumbiaPool *cumbia_pool, QWidget *parent) :
         /* each curve can be configured by the property dialog, so we must add each
          * curve to the list of configurable objects
          */
-//        ui->graphicsPlot->addConfigurableObjects(c->name(), c);
+        //        ui->graphicsPlot->addConfigurableObjects(c->name(), c);
 
         /* do we want the curves be represented by lines? */
         CurveItem *curveItem = new CurveItem(c, ip->plot());
         c->installCurveChangeListener(curveItem);
         LinePainter *lp = new LinePainter(curveItem);
         lp->setLineColor(palette.at(i % palette.size()));
-//        ui->graphicsPlot->addConfigurableObjects(c->name() + " Properties", curveItem);
+        QColor fill_color(lp->lineColor());
+        fill_color.setAlpha(120);
+        lp->setFillArea(fill_color);
     }
 
     ip->plot()->xScaleItem()->setLowerBound(0.0);
-    ip->plot()->xScaleItem()->setUpperBound(1.0);
+    ip->plot()->xScaleItem()->setUpperBound(mBufsiz);
     ip->plot()->yScaleItem()->setLowerBound(0.0);
     ip->plot()->yScaleItem()->setUpperBound(1.0);
     ip->plot()->yScaleItem()->setTickStepLen(0.5);
@@ -103,13 +126,8 @@ Qusvg_extensions::Qusvg_extensions(CumbiaPool *cumbia_pool, QWidget *parent) :
     MarkerItem* marker = new MarkerItem(ip->plot());
     ip->plot()->installMouseEventListener(marker);
 
-    mCnt = 0;
-    x1 = 0.0;
-    y1 = 0.0;
-    x2 = 0.0;
-    y2 = -10.0;
     QTimer *timer = new QTimer(this);
-    timer->setInterval(1000);
+    timer->setInterval(100);
     connect(timer, SIGNAL(timeout()), this, SLOT(updatePlots()));
     timer->start();
 }
@@ -117,18 +135,23 @@ Qusvg_extensions::Qusvg_extensions(CumbiaPool *cumbia_pool, QWidget *parent) :
 void Qusvg_extensions::updatePlots() {
     double amplitude;
     double maxAmplitude;
-    double x, y;
-    int buf = 100;
+    double x1 = 0, y1;
     for(int i = 0; i < nCurves; i++)
     {
+        QVector<double> y, x;
         SceneCurve *c = curves.at(i);
-        maxAmplitude = 1 + i * 2;
-        amplitude = qrand() / (double) RAND_MAX * maxAmplitude - maxAmplitude/2.0;
-        x1 += 3 / (double) 100.0 /*ui->sbPrecision->value()*/;
-        y = sin(x1) * maxAmplitude;
+        maxAmplitude = 0.5;
+        struct timeval tv;
+        srand(mCnt++);
+        amplitude = rand() / (double) RAND_MAX * (maxAmplitude);
+        for(int j = 0; j < mBufsiz; j++) {
+            x1 += 10.0 * M_PI / (double) mBufsiz /*ui->sbPrecision->value()*/;
+            y1 = sin(x1) * amplitude + maxAmplitude;
+            x << j;
+            y << y1;
+        }
         QuSvgItemPlot * ip = qobject_cast<QuSvgItemPlot *>(svgview->item("plot1"));
-        qDebug() << __PRETTY_FUNCTION__ << "QuSvgItemPlot item " << ip;
-        ip->plot()->appendData(c->name(), x1, y);
+        ip->plot()->setData(c->name(), x, y);
     }
     mCnt++;
 }
