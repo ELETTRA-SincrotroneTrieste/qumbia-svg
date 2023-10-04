@@ -59,7 +59,8 @@ bool QuSvgJson::readJsonFile(const QString& file_path, QJsonDocument& json_doc) 
                     line->setArrowDirection(x<lastX != y<lastY? EArrow::RIGTHTOP: EArrow::RIGTHBOTTOM);
                     cout << " drawLine()" << lastX << ", " << lastY << ", " << x << ", " << y << " atan: " << 180.0/M_PI*atan2(y-lastY, x-lastX);
                 }
-                if ((y != lastY) && (x != lastX)) addMagnet(this, "bending", x, y, 180.0/M_PI*atan2(y-lastY, x-lastX)+180);
+                if ((y != lastY) && (x != lastX))
+                    addMagnet(this, "bending", x, y, 180.0/M_PI*atan2(y-lastY, x-lastX)+180);
                 lastX = x;
                 lastY = y;
                 cout << endl;
