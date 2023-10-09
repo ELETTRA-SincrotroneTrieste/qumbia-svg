@@ -33,7 +33,6 @@ SOURCES += \
         src/cumbia/qusvgconnectionspool.cpp \
         src/cumbia/qusvgresultdata.cpp \
         src/cumbia/qusvgresultdatainterpreter.cpp \
-        src/json/qusvgjson.cpp \
         src/qugraphicssvgitem.cpp \
         src/qugraphicssvgitemxtensionfactory.cpp \
         src/qusvglayerhelper.cpp \
@@ -53,7 +52,6 @@ HEADERS += \
     src/cumbia/qusvgreplacewildcardhelperinterface.h \
     src/cumbia/qusvgresultdata.h \
     src/cumbia/qusvgresultdatainterpreter.h \
-    src/json/qusvgjson.h \
     src/qugraphicssvgitem.h \
     src/qugraphicssvgitemxtensionfactory.h \
     src/qusvglayerhelper.h \
