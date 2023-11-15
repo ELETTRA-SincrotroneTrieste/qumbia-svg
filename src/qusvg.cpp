@@ -61,6 +61,7 @@ bool QuSvg::loadFile(const QString &fileName)
 
 bool QuSvg::loadSvg(const QByteArray &svg)
 {
+    pretty_pri("loaded svg");
     d->m_msg.clear();
     bool success = d->qudom->setContent(svg);
     if(!success)
