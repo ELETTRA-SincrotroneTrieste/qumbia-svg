@@ -12,11 +12,13 @@ class QuGraphicsSvgItem : public QGraphicsSvgItem
     Q_OBJECT
 public:
     enum Shape { Undefined, ShapeText, ShapeRect, ShapeEllipse, ShapePath };
+    enum Type { QuGraphicsSvgItemType = QGraphicsItem::UserType + 1 };
 
     QuGraphicsSvgItem();
 
     bool clickable() const;
     Shape getShape() const;
+    int type() const;
 
 public slots:
     void setClickable(const QString& c);

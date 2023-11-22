@@ -47,7 +47,7 @@ void QuGraphicsSvgItem::setShape(const QString &s) {
     else if(s.endsWith("path", Qt::CaseInsensitive) == 0)
         d->shape = ShapePath;
     else
-        d->shape = Undefined;
+        d->shape = ShapeRect;
 }
 
 /*!
@@ -56,6 +56,10 @@ void QuGraphicsSvgItem::setShape(const QString &s) {
  */
 QuGraphicsSvgItem::Shape QuGraphicsSvgItem::getShape() const {
     return d->shape;
+}
+
+int QuGraphicsSvgItem::type() const {
+    return QuGraphicsSvgItemType;
 }
 
 void QuGraphicsSvgItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -100,6 +104,9 @@ void QuGraphicsSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 
 void QuGraphicsSvgItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    qDebug() << __PRETTY_FUNCTION__ << "shape" << d->shape
+             << "pressed" << d->pressed <<
+                             "hover" << d->hover << "option.rect" << option->rect;
     QGraphicsSvgItem::paint(painter, option, widget);
     if(d->pressed || d->hover) {
         QPen pen = painter->pen();

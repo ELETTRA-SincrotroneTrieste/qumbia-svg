@@ -182,6 +182,14 @@ QuGraphicsSvgItem *QuSvgView::item(const QString &id) const {
     return d->items_cache.contains(id) ? d->items_cache[id] : nullptr;
 }
 
+QList<QuGraphicsSvgItem *> QuSvgView::qusvgitems() const {
+    QList<QuGraphicsSvgItem *> l;
+    foreach(QGraphicsItem* i, QuSvgView::items())
+        if(i->type() == QuGraphicsSvgItem::QuGraphicsSvgItemType)
+            l.append(static_cast<QuGraphicsSvgItem *>(i));
+    return l;
+}
+
 void QuSvgView::m_createItem(QString id) {
     QuDomElement rootel(d->m_dom);
     QuDomElement el = rootel[id];

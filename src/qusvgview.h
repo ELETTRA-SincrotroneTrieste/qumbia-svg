@@ -33,6 +33,7 @@ public:
     QSize svgSize() const;
     QSvgRenderer *renderer() const;
     QuGraphicsSvgItem *item(const QString& id) const;
+    QList<QuGraphicsSvgItem *> qusvgitems() const;
 
     qreal zoomFactor() const;
 
