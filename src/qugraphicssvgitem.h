@@ -12,7 +12,7 @@ class QuGraphicsSvgItem : public QGraphicsSvgItem
     Q_OBJECT
 public:
     enum Shape { Undefined, ShapeText, ShapeRect, ShapeEllipse, ShapePath };
-    enum Type { QuGraphicsSvgItemType = QGraphicsItem::UserType + 1 };
+    enum ItemType { QuGraphicsSvgItemType = QGraphicsItem::UserType + 1 };
 
     QuGraphicsSvgItem();
 

@@ -89,6 +89,18 @@ QString QuDom::getAttribute(const QDomElement &el, const QString &attribute)
     return el.attribute(attribute);
 }
 
+QDomNamedNodeMap QuDom::attributes(const QString &id, const QDomElement &parent) const {
+    return attributes(findById(id, parent));
+}
+
+QDomNamedNodeMap QuDom::attributes(const QuDomElement &qude) const {
+    if(!qude.isNull()) {
+        const QDomElement& e = qude.element();
+        return e.attributes();
+    }
+    return QDomNamedNodeMap();
+}
+
 /* 1. Find the elements having the "item" attribute set to a value different from "false"
  *    and fill a map of ids -> QDomElement that will be associated to a QGraphicsSvgItem
  * 2. Look for the "read" nodes and create a QuSvgReadLink for each of them. QuSvgReadLink
@@ -134,6 +146,27 @@ bool QuDom::setItemAttribute(const QString &id, const QString &attnam, const QSt
         e.a(attnam, value); // calls m_notify_element_change on this
     }
     return !e.isNull();
+}
+
+QString QuDom::itemAttribute(const QString &id, const QString &attnam) const
+{
+    QuDomElement e = this->findById(id, getDocument().firstChildElement());
+    if(!e.isNull()) {
+        printf("QuDom.itemAttribute: found by id %s attnam %s tag %s id %s\n", qstoc(id), qstoc(attnam),
+               qstoc(e.element().tagName()), qstoc(e.element().attribute("id")));
+        return e.attribute(attnam);
+    }
+    return QString();
+}
+
+QString QuDom::itemTag(const QString &id) const {
+    QuDomElement e = this->findById(id, getDocument().firstChildElement());
+    if(!e.isNull()) {
+        printf("QuDom.itemTag: found by id %s tag %s id %s\n", qstoc(id),
+               qstoc(e.element().tagName()), qstoc(e.element().attribute("id")));
+        return e.element().tagName();
+    }
+    return QString();
 }
 
 QDomNode QuDom::m_findTexChild(const QDomNode &parent) {
@@ -260,7 +293,6 @@ QuDomElement QuDom::findById(const QString& id, const QDomElement& parent) const
     QDomElement root;
     if(d->id_cache.contains(id)) {
        root = d->id_cache[id].toElement();
-       qDebug() << __PRETTY_FUNCTION__ << "CACHE HHIT" << id;
     }
     if(root.isNull())
         root = parent.toElement();
@@ -272,6 +304,30 @@ QuDomElement QuDom::findById(const QString& id, const QDomElement& parent) const
     if(!found.isNull() && d->cache_on_access)
         d->id_cache[id] = found;
     return QuDomElement(this, found);
+}
+
+/*!
+ * \brief returns the list of ids of elements children of the given parent with the
+ *        given tag name
+ * \param tag the tag name to match
+ * \param parent parent QDomElement. If null, search is performed starting from the
+ *        root dom document
+ * \return a list of strings with the found ids.
+ *
+ * The list will contain IDs of elements with the *item* attribute not *false*
+ * (IDs of corresponding QuGraphicsSvgItems)
+ */
+QStringList QuDom::idsByTagName(const QString &tag, const QDomElement &parent) const {
+    QStringList ids;
+    const QDomElement &e = parent.isNull() ? d->domdoc.toElement() : parent;
+    QDomNodeList nl = e.elementsByTagName(tag);
+    for(int i = 0; i < nl.size(); i++)
+        if(nl.at(i).isElement()) {
+            const QString& id = nl.at(i).toElement().attribute("id");
+            if (d->id_cache.contains(id))
+                ids.push_back(nl.at(i).toElement().attribute("id"));
+        }
+    return ids;
 }
 
 /*!

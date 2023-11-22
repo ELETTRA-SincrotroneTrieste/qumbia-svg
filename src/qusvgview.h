@@ -33,6 +33,8 @@ public:
     QSize svgSize() const;
     QSvgRenderer *renderer() const;
     QuGraphicsSvgItem *item(const QString& id) const;
+    QString id(QuGraphicsSvgItem *it) const;
+    QList<QuGraphicsSvgItem *> itemsByTag(const QString& tag) const;
     QList<QuGraphicsSvgItem *> qusvgitems() const;
 
     qreal zoomFactor() const;
@@ -47,9 +49,17 @@ public slots:
 
 signals:
     void zoomChanged();
+
+    /*!
+     * \brief click event
+     * \param items list of items under the mouse
+     * \param scenePos position in scene coordinates
+     * \param pos position in item coordinates
+     */
     void itemClicked(const QList<QGraphicsItem *>& items,
                      const QPointF& scenePos,
                      const QPointF& pos);
+
     void itemContextMenuRequest(const QList<QGraphicsItem *>& items,
                                   const QPointF& scenePos,
                                   const QPointF& pos) ;

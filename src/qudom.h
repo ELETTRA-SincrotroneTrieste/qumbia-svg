@@ -42,9 +42,11 @@ public:
     bool setContent(const QByteArray &svg);
 
     QString getAttribute(const QDomElement& el, const QString& attribute);
+    QDomNamedNodeMap attributes(const QString& id, const QDomElement &parent = QDomElement()) const;
+    QDomNamedNodeMap attributes(const QuDomElement& qude) const;
 
     QuDomElement findById(const QString &id, const QDomElement &parent) const;
-
+    QStringList idsByTagName(const QString& tag, const QDomElement& parent = QDomElement()) const;
     QDomElement operator[] (const char *id);
     const QDomElement operator[] (const char *id) const;
 
@@ -56,7 +58,8 @@ public:
     void parse(const QDomNode &parent) const;
 
     bool setItemAttribute(const QString& id, const QString& attnam, const QString& attval);
-    QString itemAttribute(const QString& id, const QString& attnam);
+    QString itemAttribute(const QString& id, const QString& attnam) const;
+    QString itemTag(const QString& id) const;
 
     bool setItemText(const QString& id, const QString& text);
     QString itemText(const QString& id) const;

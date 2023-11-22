@@ -59,7 +59,7 @@ QuGraphicsSvgItem::Shape QuGraphicsSvgItem::getShape() const {
 }
 
 int QuGraphicsSvgItem::type() const {
-    return QuGraphicsSvgItemType;
+    return static_cast<int>(QuGraphicsSvgItemType);
 }
 
 void QuGraphicsSvgItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -82,7 +82,7 @@ void QuGraphicsSvgItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
 
 void QuGraphicsSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
-    qDebug() << __PRETTY_FUNCTION__ << this;
+//    qDebug() << __PRETTY_FUNCTION__ << this;
     emit itemEntered(this);
     if(d->clickable) {
         d->hover = true;
@@ -94,7 +94,7 @@ void QuGraphicsSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 void QuGraphicsSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 {
     emit itemLeft(this);
-    qDebug() << __PRETTY_FUNCTION__ << this;
+//    qDebug() << __PRETTY_FUNCTION__ << this;
     if(d->hover) {
         d->hover = false;
         update();
@@ -104,9 +104,6 @@ void QuGraphicsSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 
 void QuGraphicsSvgItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    qDebug() << __PRETTY_FUNCTION__ << "shape" << d->shape
-             << "pressed" << d->pressed <<
-                             "hover" << d->hover << "option.rect" << option->rect;
     QGraphicsSvgItem::paint(painter, option, widget);
     if(d->pressed || d->hover) {
         QPen pen = painter->pen();

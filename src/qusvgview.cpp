@@ -113,7 +113,6 @@ void QuSvgView::resetZoom()
 void QuSvgView::paintEvent(QPaintEvent *event)
 {
     const QRect& r = event->rect();
-    printf("\e[1;36mQuSvgView.paintEvent \e[0;34m %d,%d, %dx%d\e[0m\n", r.x(), r.y(), r.width(), r.height());
     //    QTime t;
     //    t.start();
     if (d->m_renderer == Image) {
@@ -139,7 +138,6 @@ void QuSvgView::mousePressEvent(QMouseEvent *event) {
 }
 
 void QuSvgView::mouseReleaseEvent(QMouseEvent *event) {
-    qDebug() << __PRETTY_FUNCTION__ << event->pos() << items(event->pos());
     if(d->mouse_pressed && event->button() == Qt::LeftButton) {
         d->mouse_pressed = false;
         QList<QGraphicsItem *> items_under = items(event->pos());
@@ -149,7 +147,6 @@ void QuSvgView::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 void QuSvgView::contextMenuEvent(QContextMenuEvent *event) {
-    qDebug() << __PRETTY_FUNCTION__ << event->pos() << items(event->pos());
     emit itemContextMenuRequest(items(event->pos()), mapToScene(event->pos()), event->pos());
     QGraphicsView::contextMenuEvent(event);
 }
@@ -180,6 +177,18 @@ QSvgRenderer *QuSvgView::renderer() const
 
 QuGraphicsSvgItem *QuSvgView::item(const QString &id) const {
     return d->items_cache.contains(id) ? d->items_cache[id] : nullptr;
+}
+
+QString QuSvgView::id(QuGraphicsSvgItem *it) const {
+    return d->items_cache.key(it, QString());
+}
+
+QList<QuGraphicsSvgItem *> QuSvgView::itemsByTag(const QString &tag) const {
+    QList<QuGraphicsSvgItem *> l;
+    const QStringList& ids = d->m_dom->idsByTagName(tag, QDomElement());
+    foreach(const QString& id, ids)
+        l << d->items_cache[id];
+    return l;
 }
 
 QList<QuGraphicsSvgItem *> QuSvgView::qusvgitems() const {
