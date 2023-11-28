@@ -137,6 +137,14 @@ void QuSvgView::mousePressEvent(QMouseEvent *event) {
     QGraphicsView::mousePressEvent(event);
 }
 
+/*!
+ * \brief emits itemClicked with the list of items at the position pos in the view.
+ *
+ * The items are listed in descending stacking order (i.e., the first item in
+ * the list is the uppermost item, and the last item is the lowermost item). pos is in viewport coordinates.
+ *
+ * \param event
+ */
 void QuSvgView::mouseReleaseEvent(QMouseEvent *event) {
     if(d->mouse_pressed && event->button() == Qt::LeftButton) {
         d->mouse_pressed = false;
