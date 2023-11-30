@@ -1,24 +1,29 @@
-#ifndef QUGRASVGITEMGEOM_H
-#define QUGRASVGITEMGEOM_H
+#ifndef QUGRAPHICSITEMGEOM_H
+#define QUGRAPHICSITEMGEOM_H
 
 #include <qugraphicssvgitem.h>
 #include <qudom.h>
 
 class QuSvgItemGeom_P;
 
-class QuGraSvgItemGeom
+class QuGraphicsItemGeom
 {
 public:
-    QuGraSvgItemGeom(QuGraphicsSvgItem *item, const QuDom *dom);
-    virtual ~QuGraSvgItemGeom();
+    QuGraphicsItemGeom(QuGraphicsSvgItem *item, const QuDom *dom);
+    virtual ~QuGraphicsItemGeom();
     float rotation() const;
 
-    QPolygonF rect() const;
+    QPolygon transformedBounds() const;
+    QPointF transformedOrigin() const;
+
     QPointF center() const;
+    QPointF origin() const;
     QRectF bounds() const;
 
+    QPointF map(const QPointF& p) const;
+
     void setOrigin(const float &xrel, const float &yrel);
-    QPointF origin() const;
+    QPointF origin_rel() const;
 
     void setMapScale(const float &wrel, const float& hrel);
     void setMapScale(const float& scale);
@@ -36,4 +41,4 @@ private:
     float m_get_rotation(const QString& xform) const;
 };
 
-#endif // QUGRASVGITEMGEOM_H
+#endif // QUGRAPHICSITEMGEOM_H

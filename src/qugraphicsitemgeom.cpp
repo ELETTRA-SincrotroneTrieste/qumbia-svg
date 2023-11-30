@@ -1,4 +1,4 @@
-#include "qugrasvgitemgeom.h"
+#include "qugraphicsitemgeom.h"
 
 #include <QPolygonF>
 #include <QRegularExpression>
@@ -18,19 +18,19 @@ public:
     float x0, y0; // origin of the axes
 };
 
-QuGraSvgItemGeom::QuGraSvgItemGeom(QuGraphicsSvgItem *item, const QuDom *dom) {
+QuGraphicsItemGeom::QuGraphicsItemGeom(QuGraphicsSvgItem *item, const QuDom *dom) {
     d = new QuSvgItemGeom_P(item, m_get_rotation(dom->itemAttribute(item->elementId(), "transform")));
 }
 
-QuGraSvgItemGeom::~QuGraSvgItemGeom() {
+QuGraphicsItemGeom::~QuGraphicsItemGeom() {
     delete d;
 }
 
-float QuGraSvgItemGeom::rotation() const {
+float QuGraphicsItemGeom::rotation() const {
     return d->rotation;
 }
 
-float QuGraSvgItemGeom::m_get_rotation(const QString &xform) const {
+float QuGraphicsItemGeom::m_get_rotation(const QString &xform) const {
     float rotate = 0.0;
     QRegularExpressionMatch ma = re->match(xform);
     if(ma.capturedTexts().size() > 1)
@@ -38,7 +38,18 @@ float QuGraSvgItemGeom::m_get_rotation(const QString &xform) const {
     return rotate;
 }
 
-QPolygonF QuGraSvgItemGeom::rect() const {
+/*!
+ * \brief returns a QPolygon with *four points* representing the four
+ *        vertexes of the QuGraphicsItemGeom::bounds rect rotated
+ *        by the value QuGraphicsItemGeom::rotation
+ *
+ * \return a QPolygon representing a rectangle where p1 is the top left, p2 is the
+ *         top right, p3 the bottom left, p4 the bottom right
+ *
+ * The polygon is the rectangle obtained with QuGraSvgItemGeom::bounds rotated
+ * by QuGraSvgItemGeom::rotation degrees
+ */
+QPolygon QuGraphicsItemGeom::transformedBounds() const {
     const QRectF & bo = bounds();
     qDebug() << __PRETTY_FUNCTION__ << d->item->elementId() << "rect" << bo << "bounding rect" << d->item->boundingRect();
     double rad = 2 * M_PI * d->rotation / 360.0;
@@ -63,35 +74,78 @@ QPolygonF QuGraSvgItemGeom::rect() const {
 
     const QVector<QPointF> &pts{QPointF(pn1x,pn1y), QPointF(pn2x,pn2y), QPointF(pn4x,pn4y), QPointF(pn3x,pn3y)};
     QPolygonF poly(pts);
-    return poly;
+    return poly.toPolygon();
 }
 
-QPointF QuGraSvgItemGeom::center() const {
+/*! \brief returns the center of the rectangle given by *bounds*
+ * \return a point representing the center of the item rectangle
+ * \see bounds
+ */
+QPointF QuGraphicsItemGeom::center() const {
     return bounds().center();
 }
 
-QRectF QuGraSvgItemGeom::bounds() const {
+QPointF QuGraphicsItemGeom::origin() const {
+    const QRectF& b = bounds();
+    float x = b.x() + b.width() * d->x0;
+    float y = b.y() + b.height() * d->y0;
+    return QPointF(x, y);
+}
+
+/*!
+ * \brief item bounds, untransformed rectangle
+ * \return svg renderer *boundsOnElement* on item or bounds
+ *         set manually through QuGraphicsItemGeom::setMapScale
+ */
+QRectF QuGraphicsItemGeom::bounds() const {
     return d->bounds.isNull() ?
                d->bounds = d->item->renderer()->boundsOnElement(d->item->elementId()) : d->bounds;
+}
+
+/*!
+ * \brief map a point according to the rotation and center
+ * \param p point in the item
+ * \return the point *p* rotated around the center
+ */
+QPointF QuGraphicsItemGeom::map(const QPointF &p) const {
+    double rad = 2 * M_PI * d->rotation / 360.0;
+    const QRectF& b = bounds();
+    const QPointF& c = b.center();
+    qDebug() << __PRETTY_FUNCTION__ << "rotated by " << 360 * rad / 2.0 / M_PI << "which was " << d->rotation;
+    const float& mx = p.x() * cos(rad) - p.y() * sin(rad) +  c.x() * (1 - cos(rad)) + c.y() * sin(rad);
+    const float& my = p.y() * cos(rad) + p.x() * sin(rad) +  c.y() * (1 - cos(rad)) - c.x() * sin(rad);
+    return QPointF(mx, my);
 }
 
 /*!
  * \brief return the  origin of the axes, relative to the scene
  * \return
  */
-QPointF QuGraSvgItemGeom::origin() const {
-    const QRectF& b = bounds();
-    float x = b.x() + b.width() * d->x0;
-    float y = b.y() + b.height() * d->y0;
-    double rad = 2 * M_PI * d->rotation / 360.0;
-    const QPointF& c = b.center();
-    qDebug() << __PRETTY_FUNCTION__ << "rotated by " << 360 * rad / 2.0 / M_PI << "which was " << d->rotation;
-    const float& ox = x * cos(rad) - y * sin(rad) +  c.x() * (1 - cos(rad)) + c.y() * sin(rad);
-    const float& oy = y * cos(rad) + x * sin(rad) +  c.y() * (1 - cos(rad)) - c.x() * sin(rad);
-    return QPointF(ox, oy);
+QPointF QuGraphicsItemGeom::transformedOrigin() const {
+    return map(origin());
 }
 
-void QuGraSvgItemGeom::setMapScale(const float &wrel, const float& hrel) {
+/*!
+ * \brief get the values of the x and y axes origin expressed as percentage of
+ *        width and height
+ * \return point.x: the relative position of Y axis, from 0 to 1
+ *         point.y: the relative position of the X axis, from 0 to 1
+ * \see setOrigin
+ */
+QPointF QuGraphicsItemGeom::origin_rel() const {
+    return QPointF(d->x0, d->y0);
+}
+
+/*!
+ * \brief scale the item rectangle defined by the svg renderer *boundsOnItem*
+ *        to a custom rectangle, scaled by a width and height *factor*
+ * \param wrel factor > 0 for width scaling
+ * \param hrel factor > 0 for height scaling
+ *
+ * \note if either wrel or hrel are <= 0, the item bounds are reset to
+ *       the rectangle established by QSvgRenderer::boundsOnItem
+ */
+void QuGraphicsItemGeom::setMapScale(const float &wrel, const float& hrel) {
     d->bounds = QRectF();
     if(wrel > 0 || hrel > 0) {
         bounds();
@@ -102,11 +156,9 @@ void QuGraSvgItemGeom::setMapScale(const float &wrel, const float& hrel) {
     }
 }
 
-void QuGraSvgItemGeom::setMapScale(const float &scale) {
+void QuGraphicsItemGeom::setMapScale(const float &scale) {
     setMapScale(scale, scale);
 }
-
-
 
 /*!
  * \brief set the relative origin of the XY plane respect to the item rect
@@ -116,7 +168,7 @@ void QuGraSvgItemGeom::setMapScale(const float &scale) {
  * Values equal to 0.5 for both xrel and yrel place the origin of the axes at the
  * center of the item's bounding rectangle
  */
-void QuGraSvgItemGeom::setOrigin(const float &xrel, const float& yrel) {
+void QuGraphicsItemGeom::setOrigin(const float &xrel, const float& yrel) {
     d->x0 = xrel;
     d->y0 = yrel;
 }
