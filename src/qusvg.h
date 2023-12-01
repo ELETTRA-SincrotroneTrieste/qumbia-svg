@@ -13,7 +13,7 @@ class CuControlsReaderFactoryI;
 class CuControlsWriterFactoryI;
 class QuSvgDataListener;
 class QuSvgConnectionsPool;
-class QuGraphicsSvgItem;
+class QuGraphicsItem;
 
 /*! \mainpage
  *
@@ -23,9 +23,9 @@ class QuGraphicsSvgItem;
  * The <a href="https://doc.qt.io/qt-5/qtsvg-module.html">Qt SVG C++ module</a> provides functionality for handling SVG images. The *cumbia* engines and
  * infrastructures can be used to change any SVG element.
  * An *svg* node with the *item* attribute defined and not set to *false* is
- * rendered in a dedicated QuGraphicsSvgItem, an extension of
+ * rendered in a dedicated QuGraphicsItem, an extension of
  * the Qt <a href="https://doc.qt.io/qt-5/qgraphicssvgitem.html">QGraphicsSvgItem</a>.
- * QuGraphicsSvgItem represents the "*item*" node and its children on a
+ * QuGraphicsItem represents the "*item*" node and its children on a
  * <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a>.
  * The <a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsScene</a> class
  * provides a surface for managing a large number of 2D graphical items.
@@ -43,7 +43,7 @@ class QuGraphicsSvgItem;
  *
  * \subsubsection main_classes Classes
  * QuSvg (main class), QuDom (DOM representation), QuDomElement (QDomElement wrapper with
- * improved search and access functionality), QuGraphicsSvgItem (extends QGraphicsSvgItem),
+ * improved search and access functionality), QuGraphicsItem (extends QGraphicsSvgItem),
  * QuSvgView (<a href="https://doc.qt.io/qt-5/qgraphicsscene.html">QGraphicsView</a>
  * extension that creates items, manages zoom operations, signals click and context
  * menu events).

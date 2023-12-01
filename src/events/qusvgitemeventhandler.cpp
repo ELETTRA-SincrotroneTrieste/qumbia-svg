@@ -1,5 +1,5 @@
 #include "qusvgitemeventhandler.h"
-#include "qugraphicssvgitem.h"
+#include "qugraphicsitem.h"
 #include "qusvgview.h"
 #include <QGraphicsItem>
 #include <cumacros.h>
@@ -9,7 +9,7 @@
 class QuSvgItemEventHandlerPrivate {
 public:
     QList<QuSvgActionProviderInterface *> action_providers;
-    QMap<QAction *, QuGraphicsSvgItem *> items_map;
+    QMap<QAction *, QuGraphicsItem *> items_map;
 };
 
 QuSvgItemEventHandler::QuSvgItemEventHandler(QuSvgView *view) : QObject(view) {
@@ -18,10 +18,10 @@ QuSvgItemEventHandler::QuSvgItemEventHandler(QuSvgView *view) : QObject(view) {
             this, SLOT(processItemClicked(const QList<QGraphicsItem *> &)));
     connect(view, SIGNAL(itemContextMenuRequest(const QList<QGraphicsItem *> &,QPointF,QPointF)),
             this, SLOT(processOnItemContextMenuRequest(const QList<QGraphicsItem *> &)));
-    connect(view, SIGNAL(itemEntered(QuGraphicsSvgItem *)),
-            this, SLOT(processItemEntered(QuGraphicsSvgItem *)));
-    connect(view, SIGNAL(itemLeft(QuGraphicsSvgItem *)),
-            this, SLOT(processItemLeft(QuGraphicsSvgItem *)));
+    connect(view, SIGNAL(itemEntered(QuGraphicsItem *)),
+            this, SLOT(processItemEntered(QuGraphicsItem *)));
+    connect(view, SIGNAL(itemLeft(QuGraphicsItem *)),
+            this, SLOT(processItemLeft(QuGraphicsItem *)));
 }
 
 QuSvgItemEventHandler::~QuSvgItemEventHandler() {
@@ -35,7 +35,7 @@ void QuSvgItemEventHandler::addActionProvider(QuSvgActionProviderInterface *ap) 
 
 void QuSvgItemEventHandler::processItemClicked(const QList<QGraphicsItem *> &items) {
     foreach(QGraphicsItem *git, items) {
-        QuGraphicsSvgItem *it = qobject_cast<QuGraphicsSvgItem *>(git->toGraphicsObject());
+        QuGraphicsItem *it = qobject_cast<QuGraphicsItem *>(git->toGraphicsObject());
         if(it) {
             foreach(QuSvgActionProviderInterface *ai, d->action_providers) {
                 if(ai->handlesEventType(it, QuSvgActionProviderInterface::ClickEvent)) {
@@ -54,7 +54,7 @@ void QuSvgItemEventHandler::processOnItemContextMenuRequest(const QList<QGraphic
     d->items_map.clear();
     QMenu *menu = nullptr;
     foreach(QGraphicsItem *git, items) {
-        QuGraphicsSvgItem *it = qobject_cast<QuGraphicsSvgItem *>(git->toGraphicsObject());
+        QuGraphicsItem *it = qobject_cast<QuGraphicsItem *>(git->toGraphicsObject());
         if(it) {
             QStringList action_names;
             foreach(QuSvgActionProviderInterface *ai, d->action_providers) {

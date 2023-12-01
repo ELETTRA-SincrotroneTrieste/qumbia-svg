@@ -1,21 +1,24 @@
-#include "qugraphicssvgitem.h"
+#include "qugraphicsitem.h"
+#include "qugraphicsitemhelper_i.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QtDebug>
 #include <QPainter>
+#include <QMapIterator>
 #include <QStyleOptionGraphicsItem>
 
-class QuGraphicsSvgItemPrivate {
+class QuGraphicsItemPrivate {
 public:
     bool clickable;
     bool pressed, hover;
-    QuGraphicsSvgItem::Shape shape;
+    QuGraphicsItem::Shape shape;
     QRectF bounding_rect;
+    QMap<int, QuGraphicsItemHelper_I *> helpermap;
 };
 
-QuGraphicsSvgItem::QuGraphicsSvgItem()
+QuGraphicsItem::QuGraphicsItem()
     : QGraphicsSvgItem()
 {
-    d = new QuGraphicsSvgItemPrivate;
+    d = new QuGraphicsItemPrivate;
     d->clickable = false;
     d->pressed = false;
     d->hover = false;
@@ -23,11 +26,19 @@ QuGraphicsSvgItem::QuGraphicsSvgItem()
     setAcceptHoverEvents(true);
 }
 
-bool QuGraphicsSvgItem::clickable() const {
+QuGraphicsItem::~QuGraphicsItem() {
+    QMapIterator<int, QuGraphicsItemHelper_I*> it(d->helpermap);
+    while(it.hasNext()) {
+        delete it.next().value();
+    }
+    delete d;
+}
+
+bool QuGraphicsItem::clickable() const {
     return d->clickable;
 }
 
-void QuGraphicsSvgItem::setClickable(const QString& c) {
+void QuGraphicsItem::setClickable(const QString& c) {
     d->clickable = (c.compare("true", Qt::CaseInsensitive) == 0);
     if(d->shape == Undefined)
         d->shape = ShapeRect;
@@ -37,7 +48,7 @@ void QuGraphicsSvgItem::setClickable(const QString& c) {
  * \brief set the shape of the item, from the svg tag name
  * \param s the shape as string (e.g. text, rect, ellipse)
  */
-void QuGraphicsSvgItem::setShape(const QString &s) {
+void QuGraphicsItem::setShape(const QString &s) {
     if(s.endsWith("rect", Qt::CaseInsensitive) == 0)
         d->shape = ShapeRect;
     else if(s.endsWith("ellipse", Qt::CaseInsensitive) == 0)
@@ -54,15 +65,36 @@ void QuGraphicsSvgItem::setShape(const QString &s) {
  * \brief Get the name of the shape of this item
  * \return the name of the shape set with setShape
  */
-QuGraphicsSvgItem::Shape QuGraphicsSvgItem::getShape() const {
+QuGraphicsItem::Shape QuGraphicsItem::getShape() const {
     return d->shape;
 }
 
-int QuGraphicsSvgItem::type() const {
-    return static_cast<int>(QuGraphicsSvgItemType);
+int QuGraphicsItem::type() const {
+    return static_cast<int>(QuGraphicsItemType);
 }
 
-void QuGraphicsSvgItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+/*!
+ * \brief get the helper associated with the helper id
+ * \param id an identifier of a helper class
+ * \return the registered helper or nullptr
+ *
+ * Helper classes register themselves to QuGraphicsItem when instantiated
+ */
+QuGraphicsItemHelper_I *QuGraphicsItem::helper(int id) const {
+    return d->helpermap.value(id, nullptr);
+}
+
+void QuGraphicsItem::installHelper(int id, QuGraphicsItemHelper_I *helper) {
+    d->helpermap[id] = helper;
+}
+
+QuGraphicsItemHelper_I* QuGraphicsItem::uninstallHelper(int id) {
+    QuGraphicsItemHelper_I* h = d->helpermap[id];
+    d->helpermap.remove(id);
+    return h;
+}
+
+void QuGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if(d->clickable) {
         d->pressed = true;
         update();
@@ -71,7 +103,7 @@ void QuGraphicsSvgItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         QGraphicsSvgItem::mousePressEvent(event);
 }
 
-void QuGraphicsSvgItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
+void QuGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
     if(d->pressed && e->button() == Qt::LeftButton) {
         d->pressed = false;
         update();
@@ -80,7 +112,7 @@ void QuGraphicsSvgItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
         QGraphicsSvgItem::mouseReleaseEvent(e);
 }
 
-void QuGraphicsSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
+void QuGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
 //    qDebug() << __PRETTY_FUNCTION__ << this;
     emit itemEntered(this);
@@ -91,7 +123,7 @@ void QuGraphicsSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
     QGraphicsSvgItem::hoverEnterEvent(e);
 }
 
-void QuGraphicsSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
+void QuGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 {
     emit itemLeft(this);
 //    qDebug() << __PRETTY_FUNCTION__ << this;
@@ -102,7 +134,7 @@ void QuGraphicsSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
     QGraphicsSvgItem::hoverLeaveEvent(e);
 }
 
-void QuGraphicsSvgItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void QuGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QGraphicsSvgItem::paint(painter, option, widget);
     if(d->pressed || d->hover) {

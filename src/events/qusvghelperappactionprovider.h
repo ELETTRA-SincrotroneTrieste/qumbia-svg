@@ -30,10 +30,10 @@ public:
 
     // QuSvgActionProviderInterface interface
 public:
-    QStringList getActionNames(QuGraphicsSvgItem *it) const;
-    bool onClicked(QuGraphicsSvgItem *it);
-    bool onContextAction(QuGraphicsSvgItem *it, const QString &action_name);
-    bool handlesEventType(QuGraphicsSvgItem *it, EventType et) const;
+    QStringList getActionNames(QuGraphicsItem *it) const;
+    bool onClicked(QuGraphicsItem *it);
+    bool onContextAction(QuGraphicsItem *it, const QString &action_name);
+    bool handlesEventType(QuGraphicsItem *it, EventType et) const;
     QString message() const;
     bool hasError() const;
     QString name() const;

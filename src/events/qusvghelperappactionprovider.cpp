@@ -3,7 +3,7 @@
 #include "qusvgreplacewildcardhelperinterface.h"
 #include <qudom.h>
 #include <qudomelement.h>
-#include <qugraphicssvgitem.h>
+#include <qugraphicsitem.h>
 #include <cupluginloader.h>
 #include <quaction-extension-plugininterface.h>
 #include <QPluginLoader>
@@ -46,19 +46,19 @@ QuSvgHelperAppActionProvider::~QuSvgHelperAppActionProvider()
     delete d;
 }
 
-QStringList QuSvgHelperAppActionProvider::getActionNames(QuGraphicsSvgItem *it) const {
+QStringList QuSvgHelperAppActionProvider::getActionNames(QuGraphicsItem *it) const {
     Q_UNUSED(it)
     return QStringList() << "Helper Application";
 }
 
-bool QuSvgHelperAppActionProvider::onClicked(QuGraphicsSvgItem *it) {
+bool QuSvgHelperAppActionProvider::onClicked(QuGraphicsItem *it) {
     qDebug() << __PRETTY_FUNCTION__ << it;
     Q_UNUSED(it)
     d->errmsg.clear();
     return false;
 }
 
-bool QuSvgHelperAppActionProvider::onContextAction(QuGraphicsSvgItem *it, const QString &action_name) {
+bool QuSvgHelperAppActionProvider::onContextAction(QuGraphicsItem *it, const QString &action_name) {
     qDebug() << __PRETTY_FUNCTION__ << it->elementId() << action_name   ;
     d->errmsg.clear();
     if(action_name != "Helper Application")
@@ -85,7 +85,7 @@ bool QuSvgHelperAppActionProvider::onContextAction(QuGraphicsSvgItem *it, const 
     return false;
 }
 
-bool QuSvgHelperAppActionProvider::handlesEventType(QuGraphicsSvgItem *it, QuSvgActionProviderInterface::EventType et) const {
+bool QuSvgHelperAppActionProvider::handlesEventType(QuGraphicsItem *it, QuSvgActionProviderInterface::EventType et) const {
     d->errmsg.clear();
     const QuDomElement root(d->qudom);
     // find the target

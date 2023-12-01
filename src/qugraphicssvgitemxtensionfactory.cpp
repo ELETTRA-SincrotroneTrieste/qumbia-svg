@@ -3,33 +3,33 @@
 #include <qudomelement.h>
 #include <QMap>
 #include <QString>
-#include <qugraphicssvgitem.h>
+#include <qugraphicsitem.h>
 #include <QtDebug>
 
-class QuGraphicsSvgItemXtensionFactoryPrivate {
+class QuGraphicsItemXtensionFactoryPrivate {
 public:
-    QMap<QString, QuGraphicsSvgItemFactory *> factories;
+    QMap<QString, QuGraphicsItemFactory *> factories;
 };
 
-QuGraphicsSvgItemXtensionFactory::QuGraphicsSvgItemXtensionFactory() : d(new QuGraphicsSvgItemXtensionFactoryPrivate) {
+QuGraphicsItemXtensionFactory::QuGraphicsItemXtensionFactory() : d(new QuGraphicsItemXtensionFactoryPrivate) {
 
 }
 
-QuGraphicsSvgItemXtensionFactory::~QuGraphicsSvgItemXtensionFactory() {
+QuGraphicsItemXtensionFactory::~QuGraphicsItemXtensionFactory() {
     d->factories.clear();
 }
 
-QuGraphicsSvgItem *QuGraphicsSvgItemXtensionFactory::create(const QuDomElement &de) const {
+QuGraphicsItem *QuGraphicsItemXtensionFactory::create(const QuDomElement &de) const {
     qDebug() << __PRETTY_FUNCTION__ << "type of QuDomElement" << de.attribute("type") << "factories" << d->factories;
     if(d->factories.contains(de.attribute("type")))
         return d->factories[de.attribute("type")]->create();
-    return new QuGraphicsSvgItem();
+    return new QuGraphicsItem();
 }
 
-void QuGraphicsSvgItemXtensionFactory::registerItemFactory(const QString &type, QuGraphicsSvgItemFactory *itemfa) {
+void QuGraphicsItemXtensionFactory::registerItemFactory(const QString &type, QuGraphicsItemFactory *itemfa) {
     d->factories[type] = itemfa;
 }
 
-void QuGraphicsSvgItemXtensionFactory::unregisterItemFactory(const QString &type) {
+void QuGraphicsItemXtensionFactory::unregisterItemFactory(const QString &type) {
     d->factories.remove(type);
 }

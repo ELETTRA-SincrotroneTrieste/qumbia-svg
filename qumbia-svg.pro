@@ -33,9 +33,9 @@ SOURCES += \
         src/cumbia/qusvgconnectionspool.cpp \
         src/cumbia/qusvgresultdata.cpp \
         src/cumbia/qusvgresultdatainterpreter.cpp \
+        src/qugraphicsitem.cpp \
         src/qugraphicsitemaxes.cpp \
         src/qugraphicsitemgeom.cpp \
-        src/qugraphicssvgitem.cpp \
         src/qugraphicssvgitemxtensionfactory.cpp \
         src/qusvglayerhelper.cpp \
         src/cumbia/qusvgreader.cpp \
@@ -54,8 +54,10 @@ HEADERS += \
     src/cumbia/qusvgreplacewildcardhelperinterface.h \
     src/cumbia/qusvgresultdata.h \
     src/cumbia/qusvgresultdatainterpreter.h \
+    src/qugraphicsitem.h \
     src/qugraphicsitemaxes.h \
     src/qugraphicsitemgeom.h \
+    src/qugraphicsitemhelper_i.h \
     src/qugraphicssvgitem.h \
     src/qugraphicssvgitemxtensionfactory.h \
     src/qusvglayerhelper.h \

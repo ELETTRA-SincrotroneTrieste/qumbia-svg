@@ -1,30 +1,30 @@
 #ifndef QUGRAPHICSSVGITEMXTENSIONFACTORY_H
 #define QUGRAPHICSSVGITEMXTENSIONFACTORY_H
 
-class QuGraphicsSvgItem;
+class QuGraphicsItem;
 class QuDomElement;
 class QString;
 
-class QuGraphicsSvgItemXtensionFactoryPrivate;
+class QuGraphicsItemXtensionFactoryPrivate;
 
-class QuGraphicsSvgItemFactory {
+class QuGraphicsItemFactory {
 public:
-    virtual QuGraphicsSvgItem *create() const = 0;
+    virtual QuGraphicsItem *create() const = 0;
 };
 
-class QuGraphicsSvgItemXtensionFactory
+class QuGraphicsItemXtensionFactory
 {
 public:
-    QuGraphicsSvgItemXtensionFactory();
-    virtual ~QuGraphicsSvgItemXtensionFactory();
+    QuGraphicsItemXtensionFactory();
+    virtual ~QuGraphicsItemXtensionFactory();
 
-    QuGraphicsSvgItem *create(const QuDomElement &de) const;
+    QuGraphicsItem *create(const QuDomElement &de) const;
 
-    void registerItemFactory(const QString& type, QuGraphicsSvgItemFactory *itemfa);
+    void registerItemFactory(const QString& type, QuGraphicsItemFactory *itemfa);
     void unregisterItemFactory(const QString& type);
 
 private:
-    QuGraphicsSvgItemXtensionFactoryPrivate *d;
+    QuGraphicsItemXtensionFactoryPrivate *d;
 };
 
 #endif // QUGRAPHICSSVGITEMXTENSIONFACTORY_H

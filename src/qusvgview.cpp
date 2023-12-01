@@ -1,6 +1,6 @@
 #include "qusvgview.h"
 #include "qusvg.h"
-#include "qugraphicssvgitem.h"
+#include "qugraphicsitem.h"
 #include "qudom.h"
 #include "qugraphicssvgitemxtensionfactory.h"
 
@@ -37,9 +37,9 @@ public:
     QImage m_image;
     QStringList m_ids;
     QMap<QString, QString> svg_cache;
-    QMap<QString, QuGraphicsSvgItem *> items_cache;
+    QMap<QString, QuGraphicsItem *> items_cache;
     QSvgRenderer *renderer;
-    QuGraphicsSvgItemXtensionFactory *xt_factory;
+    QuGraphicsItemXtensionFactory *xt_factory;
     bool mouse_pressed;
 };
 
@@ -49,7 +49,7 @@ QuSvgView::QuSvgView(QWidget *parent)
     d = new QuSvgViewPrivate;
     d->m_renderer = Native;
     d->mouse_pressed = false;
-    d->xt_factory = new QuGraphicsSvgItemXtensionFactory;
+    d->xt_factory = new QuGraphicsItemXtensionFactory;
 
     setScene(new QGraphicsScene(this));
     setTransformationAnchor(AnchorUnderMouse);
@@ -88,7 +88,7 @@ qreal QuSvgView::zoomFactor() const
     return transform().m11();
 }
 
-QuGraphicsSvgItemXtensionFactory *QuSvgView::extension_factory() const {
+QuGraphicsItemXtensionFactory *QuSvgView::extension_factory() const {
     return d->xt_factory;
 }
 
@@ -183,34 +183,34 @@ QSvgRenderer *QuSvgView::renderer() const
     return findChild<QSvgRenderer *>();
 }
 
-QuGraphicsSvgItem *QuSvgView::item(const QString &id) const {
+QuGraphicsItem *QuSvgView::item(const QString &id) const {
     return d->items_cache.contains(id) ? d->items_cache[id] : nullptr;
 }
 
-QString QuSvgView::id(QuGraphicsSvgItem *it) const {
+QString QuSvgView::id(QuGraphicsItem *it) const {
     return d->items_cache.key(it, QString());
 }
 
-QList<QuGraphicsSvgItem *> QuSvgView::itemsByTag(const QString &tag) const {
-    QList<QuGraphicsSvgItem *> l;
+QList<QuGraphicsItem *> QuSvgView::itemsByTag(const QString &tag) const {
+    QList<QuGraphicsItem *> l;
     const QStringList& ids = d->m_dom->idsByTagName(tag, QDomElement());
     foreach(const QString& id, ids)
         l << d->items_cache[id];
     return l;
 }
 
-QList<QuGraphicsSvgItem *> QuSvgView::qusvgitems() const {
-    QList<QuGraphicsSvgItem *> l;
+QList<QuGraphicsItem *> QuSvgView::qusvgitems() const {
+    QList<QuGraphicsItem *> l;
     foreach(QGraphicsItem* i, QuSvgView::items())
-        if(i->type() == QuGraphicsSvgItem::QuGraphicsSvgItemType)
-            l.append(static_cast<QuGraphicsSvgItem *>(i));
+        if(i->type() == QuGraphicsItem::QuGraphicsItemType)
+            l.append(static_cast<QuGraphicsItem *>(i));
     return l;
 }
 
 void QuSvgView::m_createItem(QString id) {
     QuDomElement rootel(d->m_dom);
     QuDomElement el = rootel[id];
-    QuGraphicsSvgItem *svgItem = d->xt_factory->create(el);
+    QuGraphicsItem *svgItem = d->xt_factory->create(el);
 
     svgItem->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 //    svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
@@ -248,7 +248,7 @@ void QuSvgView::onDocumentLoaded(QuDom *dom, const QStringList &ids) {
 void QuSvgView::onElementChange(const QString &id, QuDomElement *dom_e) {
     QString item_id;
     d->items_cache.contains(id) ? item_id = id : item_id = dom_e->itemId();
-    QuGraphicsSvgItem *it = d->items_cache.value(item_id);
+    QuGraphicsItem *it = d->items_cache.value(item_id);
     if(it) {
         QRectF oldBounds = renderer()->boundsOnElement(item_id);
         QSvgRenderer *renderer = findChild<QSvgRenderer *>();

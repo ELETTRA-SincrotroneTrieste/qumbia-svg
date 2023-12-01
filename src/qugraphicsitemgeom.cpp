@@ -11,15 +11,16 @@ Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, re, {".*rotate\\(([0-9\\.\\+\\-]+)
 
 class QuSvgItemGeom_P {
 public:
-    QuSvgItemGeom_P(QuGraphicsSvgItem *it, float rot) : rotation(rot), item(it), x0{0.5}, y0{0.5} {  }
+    QuSvgItemGeom_P(QuGraphicsItem *it, float rot) : rotation(rot), item(it), x0{0.5}, y0{0.5} {  }
     float rotation;
-    QuGraphicsSvgItem *item;
+    QuGraphicsItem *item;
     QRectF bounds;
     float x0, y0; // origin of the axes
 };
 
-QuGraphicsItemGeom::QuGraphicsItemGeom(QuGraphicsSvgItem *item, const QuDom *dom) {
+QuGraphicsItemGeom::QuGraphicsItemGeom(QuGraphicsItem *item, const QuDom *dom) {
     d = new QuSvgItemGeom_P(item, m_get_rotation(dom->itemAttribute(item->elementId(), "transform")));
+    d->item->installHelper(QuGraphicsItemGeom_Helper, this);
 }
 
 QuGraphicsItemGeom::~QuGraphicsItemGeom() {
@@ -28,6 +29,16 @@ QuGraphicsItemGeom::~QuGraphicsItemGeom() {
 
 float QuGraphicsItemGeom::rotation() const {
     return d->rotation;
+}
+
+/*!
+ * \brief bounding rect of the polygon enclosing the bounds of the item *transformed*
+ *        by the transformation matrix (e.g. rotation)
+ * \return bounding rect of QuGraphicsItemGeom::transformedBounds
+ * \see QuGraphicsItemGeom::transformedBounds
+ */
+QRectF QuGraphicsItemGeom::transformedBoundingRect() const {
+    return transformedBounds().boundingRect();
 }
 
 float QuGraphicsItemGeom::m_get_rotation(const QString &xform) const {
@@ -51,12 +62,10 @@ float QuGraphicsItemGeom::m_get_rotation(const QString &xform) const {
  */
 QPolygon QuGraphicsItemGeom::transformedBounds() const {
     const QRectF & bo = bounds();
-    qDebug() << __PRETTY_FUNCTION__ << d->item->elementId() << "rect" << bo << "bounding rect" << d->item->boundingRect();
     double rad = 2 * M_PI * d->rotation / 360.0;
     const QPointF& c = bo.center();
     const double &x0 = c.x(), &y0 = c.y();
     double p1x = bo.topLeft().x(), p1y = bo.topLeft().y();
-    qDebug() << __PRETTY_FUNCTION__ << "rotated by " << 360 * rad / 2.0 / M_PI << "which was " << d->rotation;
     const double pn1x = p1x * cos(rad) - p1y * sin(rad) +  x0 * (1 - cos(rad)) + y0 * sin(rad);
     const double pn1y = p1y * cos(rad) + p1x * sin(rad) +  y0 * (1 - cos(rad)) - x0 * sin(rad);
 
@@ -111,7 +120,6 @@ QPointF QuGraphicsItemGeom::map(const QPointF &p) const {
     double rad = 2 * M_PI * d->rotation / 360.0;
     const QRectF& b = bounds();
     const QPointF& c = b.center();
-    qDebug() << __PRETTY_FUNCTION__ << "rotated by " << 360 * rad / 2.0 / M_PI << "which was " << d->rotation;
     const float& mx = p.x() * cos(rad) - p.y() * sin(rad) +  c.x() * (1 - cos(rad)) + c.y() * sin(rad);
     const float& my = p.y() * cos(rad) + p.x() * sin(rad) +  c.y() * (1 - cos(rad)) - c.x() * sin(rad);
     return QPointF(mx, my);
@@ -123,6 +131,16 @@ QPointF QuGraphicsItemGeom::map(const QPointF &p) const {
  */
 QPointF QuGraphicsItemGeom::transformedOrigin() const {
     return map(origin());
+}
+
+/*!
+ * \brief convenience function that maps the bounds top left point into
+ *        the transformed coordinates
+ * \return the equivalent of QuGraphicsItemGeom::map(QPointF(bounds().x(), bounds().y()))
+ */
+QPointF QuGraphicsItemGeom::transformedTopLeft() const {
+    const QRectF & bo = bounds();
+    return map(QPointF(bo.left(),  bo.top()));
 }
 
 /*!
@@ -158,6 +176,32 @@ void QuGraphicsItemGeom::setMapScale(const float &wrel, const float& hrel) {
 
 void QuGraphicsItemGeom::setMapScale(const float &scale) {
     setMapScale(scale, scale);
+}
+
+/*!
+ * \brief returns the QuGraphicsItemGeom id
+ * \return QuGraphicsItemGeom::QuGraphicsItemGeom_Helper
+ *
+ * \see QuGraphicsItem::helper
+ */
+int QuGraphicsItemGeom::id() const {
+    return QuGraphicsItemGeom_Helper;
+}
+
+/*!
+ * \brief return a pointer to the owner item
+ * \return pointer to QuGraphicsItem
+ */
+QuGraphicsItem *QuGraphicsItemGeom::item() const {
+    return d->item;
+}
+
+/*!
+ * \brief detach this helper from the item.
+ * \see QugraphicsItemHelper_I::detach
+ */
+void QuGraphicsItemGeom::detach() {
+    d->item->uninstallHelper(this->id());
 }
 
 /*!

@@ -1,5 +1,5 @@
 ﻿#include "qusvgwriteactionprovider.h"
-#include "qugraphicssvgitem.h"
+#include "qugraphicsitem.h"
 #include "qusvgview.h"
 #include "qudom.h"
 #include "qudomelement.h"
@@ -122,7 +122,7 @@ QDialog *QuSvgWriteActionProvider::m_makeDialog(QWidget *parent,
     return dlg;
 }
 
-QStringList QuSvgWriteActionProvider::getActionNames(QuGraphicsSvgItem *it) const {
+QStringList QuSvgWriteActionProvider::getActionNames(QuGraphicsItem *it) const {
     QStringList al;
     QString target, type;
     m_pre_process(it, target, type);
@@ -131,7 +131,7 @@ QStringList QuSvgWriteActionProvider::getActionNames(QuGraphicsSvgItem *it) cons
     return al;
 }
 
-bool QuSvgWriteActionProvider::onClicked(QuGraphicsSvgItem *it) {
+bool QuSvgWriteActionProvider::onClicked(QuGraphicsItem *it) {
     QString target, type;
     QuWriter *w = nullptr;
     m_pre_process(it, target, type);
@@ -153,7 +153,7 @@ bool QuSvgWriteActionProvider::onClicked(QuGraphicsSvgItem *it) {
     return !target.isEmpty() && !type.isEmpty();
 }
 
-bool QuSvgWriteActionProvider::onContextAction(QuGraphicsSvgItem *it, const QString &action_name) {
+bool QuSvgWriteActionProvider::onContextAction(QuGraphicsItem *it, const QString &action_name) {
     QString target, type;
     m_pre_process(it, target, type);
     qDebug() << __PRETTY_FUNCTION__ << "target " << target << "type  "  << type;
@@ -163,7 +163,7 @@ bool QuSvgWriteActionProvider::onContextAction(QuGraphicsSvgItem *it, const QStr
     return !type.isEmpty() && target == action_name;
 }
 
-bool QuSvgWriteActionProvider::handlesEventType(QuGraphicsSvgItem *it, QuSvgActionProviderInterface::EventType et) const {
+bool QuSvgWriteActionProvider::handlesEventType(QuGraphicsItem *it, QuSvgActionProviderInterface::EventType et) const {
     QString target, type;
     m_pre_process(it, target, type);
     if(et == QuSvgActionProviderInterface::ClickEvent && !target.isEmpty())
@@ -181,7 +181,7 @@ QString QuSvgWriteActionProvider::message() const {
     return d->msg;
 }
 
-void QuSvgWriteActionProvider::m_pre_process(QuGraphicsSvgItem *item,
+void QuSvgWriteActionProvider::m_pre_process(QuGraphicsItem *item,
                                              QString& target,
                                              QString& type) const {
     QuDomElement root(d->dom);

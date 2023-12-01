@@ -10,7 +10,7 @@
 
 #include <cumacros.h>
 
-#include "qugraphicssvgitem.h"
+#include "qugraphicsitem.h"
 #include "qusvgconnectionspool.h"
 #include "qusvgdatalistener.h"
 #include "qusvgresultdatainterpreter.h"

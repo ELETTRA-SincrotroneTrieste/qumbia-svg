@@ -1,7 +1,7 @@
 #ifndef QUSVGACTIONPROVIDER_H
 #define QUSVGACTIONPROVIDER_H
 
-class QuGraphicsSvgItem;
+class QuGraphicsItem;
 class QPointF;
 class QAction;
 class CumbiaPool;
@@ -45,16 +45,16 @@ private:
     QDialog *m_makeDialog(QWidget* parent, const QString& type,
                           const QString &target);
 
-    void m_pre_process(QuGraphicsSvgItem *item, QString &point, QString &type) const ;
+    void m_pre_process(QuGraphicsItem *item, QString &point, QString &type) const ;
 
     // QuSvgActionProviderInterface interface
 public:
-    QStringList getActionNames(QuGraphicsSvgItem *it) const;
-    bool onContextAction(QuGraphicsSvgItem *it, const QString &action_name);
-    bool onClicked(QuGraphicsSvgItem *it);
-    bool onEntered(QuGraphicsSvgItem *it);
-    bool onLeft(QuGraphicsSvgItem *it);
-    bool handlesEventType(QuGraphicsSvgItem *it, EventType et) const;
+    QStringList getActionNames(QuGraphicsItem *it) const;
+    bool onContextAction(QuGraphicsItem *it, const QString &action_name);
+    bool onClicked(QuGraphicsItem *it);
+    bool onEntered(QuGraphicsItem *it);
+    bool onLeft(QuGraphicsItem *it);
+    bool handlesEventType(QuGraphicsItem *it, EventType et) const;
     bool hasError() const;
     QString message() const;
     QString name() const;

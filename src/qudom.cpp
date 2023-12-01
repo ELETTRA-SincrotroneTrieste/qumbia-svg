@@ -152,8 +152,6 @@ QString QuDom::itemAttribute(const QString &id, const QString &attnam) const
 {
     QuDomElement e = this->findById(id, getDocument().firstChildElement());
     if(!e.isNull()) {
-        printf("QuDom.itemAttribute: found by id %s attnam %s tag %s id %s\n", qstoc(id), qstoc(attnam),
-               qstoc(e.element().tagName()), qstoc(e.element().attribute("id")));
         return e.attribute(attnam);
     }
     return QString();
@@ -162,8 +160,6 @@ QString QuDom::itemAttribute(const QString &id, const QString &attnam) const
 QString QuDom::itemTag(const QString &id) const {
     QuDomElement e = this->findById(id, getDocument().firstChildElement());
     if(!e.isNull()) {
-        printf("QuDom.itemTag: found by id %s tag %s id %s\n", qstoc(id),
-               qstoc(e.element().tagName()), qstoc(e.element().attribute("id")));
         return e.element().tagName();
     }
     return QString();
@@ -315,7 +311,7 @@ QuDomElement QuDom::findById(const QString& id, const QDomElement& parent) const
  * \return a list of strings with the found ids.
  *
  * The list will contain IDs of elements with the *item* attribute not *false*
- * (IDs of corresponding QuGraphicsSvgItems)
+ * (IDs of corresponding QuGraphicsItems)
  */
 QStringList QuDom::idsByTagName(const QString &tag, const QDomElement &parent) const {
     QStringList ids;

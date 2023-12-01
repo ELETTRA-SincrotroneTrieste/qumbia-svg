@@ -14,10 +14,10 @@ class QPaintEvent;
 QT_END_NAMESPACE
 
 class QuSvgViewPrivate;
-class QuGraphicsSvgItem;
+class QuGraphicsItem;
 class QuSvg;
 class QuDom;
-class QuGraphicsSvgItemXtensionFactory;
+class QuGraphicsItemXtensionFactory;
 
 class QuSvgView : public QGraphicsView, public QuDomListener
 {
@@ -32,14 +32,14 @@ public:
 
     QSize svgSize() const;
     QSvgRenderer *renderer() const;
-    QuGraphicsSvgItem *item(const QString& id) const;
-    QString id(QuGraphicsSvgItem *it) const;
-    QList<QuGraphicsSvgItem *> itemsByTag(const QString& tag) const;
-    QList<QuGraphicsSvgItem *> qusvgitems() const;
+    QuGraphicsItem *item(const QString& id) const;
+    QString id(QuGraphicsItem *it) const;
+    QList<QuGraphicsItem *> itemsByTag(const QString& tag) const;
+    QList<QuGraphicsItem *> qusvgitems() const;
 
     qreal zoomFactor() const;
 
-    QuGraphicsSvgItemXtensionFactory *extension_factory() const;
+    QuGraphicsItemXtensionFactory *extension_factory() const;
 
 public slots:
     void setHighQualityAntialiasing(bool highQualityAntialiasing);

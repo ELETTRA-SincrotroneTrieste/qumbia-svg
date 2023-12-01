@@ -5,7 +5,7 @@
 #include <QStringList>
 #include <QGraphicsItem>
 
-class QuGraphicsSvgItem;
+class QuGraphicsItem;
 class QuSvgItemEventHandlerPrivate;
 class QuSvgView;
 
@@ -13,10 +13,10 @@ class QuSvgActionProviderInterface {
 public:
     enum EventType { ClickEvent, ContextualEvent, EnterEvent, LeaveEvent };
 
-    virtual QStringList getActionNames(QuGraphicsSvgItem *it) const = 0;
-    virtual bool onClicked(QuGraphicsSvgItem *it) = 0;
-    virtual bool onContextAction(QuGraphicsSvgItem *it, const QString& action_name = QString()) = 0;
-    virtual bool handlesEventType(QuGraphicsSvgItem *it, EventType et) const = 0;
+    virtual QStringList getActionNames(QuGraphicsItem *it) const = 0;
+    virtual bool onClicked(QuGraphicsItem *it) = 0;
+    virtual bool onContextAction(QuGraphicsItem *it, const QString& action_name = QString()) = 0;
+    virtual bool handlesEventType(QuGraphicsItem *it, EventType et) const = 0;
     virtual QString message() const = 0;
     virtual bool hasError() const = 0;
     virtual QString name() const = 0;
