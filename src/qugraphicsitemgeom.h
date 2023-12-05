@@ -50,7 +50,7 @@ class QuSvgItemGeom_P;
 class QuGraphicsItemGeom : public QuGraphicsItemHelper_I
 {
 public:
-    enum HelperId { QuGraphicsItemGeom_Helper = 0x2 };
+    enum HelperId { Geom = 0x2 };
 
     QuGraphicsItemGeom(QuGraphicsItem *item, const QuDom *dom);
     virtual ~QuGraphicsItemGeom();
@@ -58,21 +58,15 @@ public:
 
     QRectF transformedBoundingRect() const;
     QPolygon transformedBounds() const;
-    QPointF transformedOrigin() const;
     QPointF transformedTopLeft() const;
 
     QPointF center() const;
-    QPointF origin() const;
     QRectF bounds() const;
 
     QPointF map(const QPointF& p) const;
 
-    void setOrigin(const float &xrel, const float &yrel);
-    QPointF origin_rel() const;
-
     void setMapScale(const float &wrel, const float& hrel);
     void setMapScale(const float& scale);
-
 
     void setXUpperBound(double xu);
     void setXLowerBound(double xl);

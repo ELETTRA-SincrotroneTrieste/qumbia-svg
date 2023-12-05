@@ -27,7 +27,7 @@ class QuGraphicsItemGeom;
 class QuGraphicsItemAxes : public QuGraphicsItemHelper_I
 {
 public:
-    enum HelperId { QuGraphicsItemAxes_Helper = 0x8 };
+    enum HelperId { Axes = 0x8 };
 
     QuGraphicsItemAxes(QuGraphicsItemGeom *g);
     virtual ~QuGraphicsItemAxes();
@@ -36,6 +36,12 @@ public:
     void setPen(QGraphicsLineItem *axis, const QPen& p);
     void setAxesBounds(const double& xl, const double& xu, const double &yl, const double &yu);
     void setYAxisBounds(const double &yl, const double& yu);
+
+    QPointF origin() const;
+    QPointF transformedOrigin() const;
+
+    void setOriginRel(const float &xrel, const float &yrel);
+    QPointF originRel() const;
 
     QPointF xp(const double& x) const;
     QPointF yp(const double& y) const;

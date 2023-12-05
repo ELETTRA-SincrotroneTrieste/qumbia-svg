@@ -36,6 +36,8 @@ SOURCES += \
         src/qugraphicsitem.cpp \
         src/qugraphicsitemaxes.cpp \
         src/qugraphicsitemgeom.cpp \
+        src/qugraphicsitemselectionmanager.cpp \
+        src/qugraphicssvgitemsearch.cpp \
         src/qugraphicssvgitemxtensionfactory.cpp \
         src/qusvglayerhelper.cpp \
         src/cumbia/qusvgreader.cpp \
@@ -58,7 +60,9 @@ HEADERS += \
     src/qugraphicsitemaxes.h \
     src/qugraphicsitemgeom.h \
     src/qugraphicsitemhelper_i.h \
+    src/qugraphicsitemselectionmanager.h \
     src/qugraphicssvgitem.h \
+    src/qugraphicssvgitemsearch.h \
     src/qugraphicssvgitemxtensionfactory.h \
     src/qusvglayerhelper.h \
         src/cumbia/qusvgreader.h \

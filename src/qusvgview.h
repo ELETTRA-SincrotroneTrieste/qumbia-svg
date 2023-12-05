@@ -56,9 +56,7 @@ signals:
      * \param scenePos position in scene coordinates
      * \param pos position in item coordinates
      */
-    void itemClicked(const QList<QGraphicsItem *>& items,
-                     const QPointF& scenePos,
-                     const QPointF& pos);
+    void clicked(const QList<QGraphicsItem *>& items);
 
     void itemContextMenuRequest(const QList<QGraphicsItem *>& items,
                                   const QPointF& scenePos,

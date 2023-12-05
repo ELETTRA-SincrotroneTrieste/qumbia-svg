@@ -11,16 +11,15 @@ Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, re, {".*rotate\\(([0-9\\.\\+\\-]+)
 
 class QuSvgItemGeom_P {
 public:
-    QuSvgItemGeom_P(QuGraphicsItem *it, float rot) : rotation(rot), item(it), x0{0.5}, y0{0.5} {  }
+    QuSvgItemGeom_P(QuGraphicsItem *it, float rot) : rotation(rot), item(it){  }
     float rotation;
     QuGraphicsItem *item;
     QRectF bounds;
-    float x0, y0; // origin of the axes
 };
 
 QuGraphicsItemGeom::QuGraphicsItemGeom(QuGraphicsItem *item, const QuDom *dom) {
     d = new QuSvgItemGeom_P(item, m_get_rotation(dom->itemAttribute(item->elementId(), "transform")));
-    d->item->installHelper(QuGraphicsItemGeom_Helper, this);
+    d->item->installHelper(Geom, this);
 }
 
 QuGraphicsItemGeom::~QuGraphicsItemGeom() {
@@ -94,13 +93,6 @@ QPointF QuGraphicsItemGeom::center() const {
     return bounds().center();
 }
 
-QPointF QuGraphicsItemGeom::origin() const {
-    const QRectF& b = bounds();
-    float x = b.x() + b.width() * d->x0;
-    float y = b.y() + b.height() * d->y0;
-    return QPointF(x, y);
-}
-
 /*!
  * \brief item bounds, untransformed rectangle
  * \return svg renderer *boundsOnElement* on item or bounds
@@ -126,14 +118,6 @@ QPointF QuGraphicsItemGeom::map(const QPointF &p) const {
 }
 
 /*!
- * \brief return the  origin of the axes, relative to the scene
- * \return
- */
-QPointF QuGraphicsItemGeom::transformedOrigin() const {
-    return map(origin());
-}
-
-/*!
  * \brief convenience function that maps the bounds top left point into
  *        the transformed coordinates
  * \return the equivalent of QuGraphicsItemGeom::map(QPointF(bounds().x(), bounds().y()))
@@ -143,16 +127,7 @@ QPointF QuGraphicsItemGeom::transformedTopLeft() const {
     return map(QPointF(bo.left(),  bo.top()));
 }
 
-/*!
- * \brief get the values of the x and y axes origin expressed as percentage of
- *        width and height
- * \return point.x: the relative position of Y axis, from 0 to 1
- *         point.y: the relative position of the X axis, from 0 to 1
- * \see setOrigin
- */
-QPointF QuGraphicsItemGeom::origin_rel() const {
-    return QPointF(d->x0, d->y0);
-}
+
 
 /*!
  * \brief scale the item rectangle defined by the svg renderer *boundsOnItem*
@@ -180,12 +155,12 @@ void QuGraphicsItemGeom::setMapScale(const float &scale) {
 
 /*!
  * \brief returns the QuGraphicsItemGeom id
- * \return QuGraphicsItemGeom::QuGraphicsItemGeom_Helper
+ * \return QuGraphicsItemGeom::Geom
  *
  * \see QuGraphicsItem::helper
  */
 int QuGraphicsItemGeom::id() const {
-    return QuGraphicsItemGeom_Helper;
+    return Geom;
 }
 
 /*!
@@ -202,17 +177,4 @@ QuGraphicsItem *QuGraphicsItemGeom::item() const {
  */
 void QuGraphicsItemGeom::detach() {
     d->item->uninstallHelper(this->id());
-}
-
-/*!
- * \brief set the relative origin of the XY plane respect to the item rect
- * \param xrel number between 0.0 and 1.0 for the Y axis origin. Default 0.5
- * \param yrel number between 0.0 and 1.0 for the X axis origin. Default 0.5
- *
- * Values equal to 0.5 for both xrel and yrel place the origin of the axes at the
- * center of the item's bounding rectangle
- */
-void QuGraphicsItemGeom::setOrigin(const float &xrel, const float& yrel) {
-    d->x0 = xrel;
-    d->y0 = yrel;
 }

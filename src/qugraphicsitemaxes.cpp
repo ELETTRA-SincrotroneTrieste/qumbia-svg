@@ -7,20 +7,60 @@ class QuGraphicsItemAxes_P {
 public:
     QuGraphicsItemAxes_P(QuGraphicsItemGeom *g)
         : X(nullptr), Y(nullptr), owner_i(g->item()), geom(g),
-        xlb(-1000), xub(1000), ylb(-1000), yub(1000) {}
+        xlb(-1000), xub(1000), ylb(-1000), yub(1000), x0{0.5}, y0{0.5}  {}
     QGraphicsLineItem *X, *Y;
     QuGraphicsItem *owner_i;
     QuGraphicsItemGeom *geom;
     double xlb, xub, ylb, yub;
+    double x0, y0; // origin of the axes
 };
 
 QuGraphicsItemAxes::QuGraphicsItemAxes(QuGraphicsItemGeom *g) {
     d = new QuGraphicsItemAxes_P(g);
-    d->owner_i->installHelper(QuGraphicsItemAxes_Helper, this);
+    d->owner_i->installHelper(Axes, this);
 }
 
 QuGraphicsItemAxes::~QuGraphicsItemAxes() {
     delete d;
+}
+
+QPointF QuGraphicsItemAxes::origin() const {
+    const QRectF& b = d->geom->bounds();
+    float x = b.x() + b.width() * d->x0;
+    float y = b.y() + b.height() * d->y0;
+    return QPointF(x, y);
+}
+
+/*!
+ * \brief set the relative origin of the XY plane respect to the item rect
+ * \param xrel number between 0.0 and 1.0 for the Y axis origin. Default 0.5
+ * \param yrel number between 0.0 and 1.0 for the X axis origin. Default 0.5
+ *
+ * Values equal to 0.5 for both xrel and yrel place the origin of the axes at the
+ * center of the item's bounding rectangle
+ */
+void QuGraphicsItemAxes::setOriginRel(const float &xrel, const float& yrel) {
+    d->x0 = xrel;
+    d->y0 = yrel;
+}
+
+/*!
+ * \brief return the  origin of the axes, relative to the scene
+ * \return
+ */
+QPointF QuGraphicsItemAxes::transformedOrigin() const {
+    return d->geom->map(origin());
+}
+
+/*!
+ * \brief get the values of the x and y axes origin expressed as percentage of
+ *        width and height
+ * \return point.x: the relative position of Y axis, from 0 to 1
+ *         point.y: the relative position of the X axis, from 0 to 1
+ * \see setOrigin
+ */
+QPointF QuGraphicsItemAxes::originRel() const {
+    return QPointF(d->x0, d->y0);
 }
 
 /*!
@@ -34,13 +74,14 @@ QuGraphicsItemAxes::~QuGraphicsItemAxes() {
  * \note
  * QuGraphicsItemAxes::X shall be explicitly called after geometry changes
  *
+ * \note ownership of X is handed to the caller. A second call to QuGraphicsItemAxes::X
+ * will allocate another axis
+ *
  * \see QuGraphicsItemAxes::Y
  *
  * \return a QGraphicsLineItem representing the X axis
  */
 QGraphicsLineItem *QuGraphicsItemAxes::X() {
-    if(d->X)
-        delete d->X;
     d->X = new QGraphicsLineItem(nullptr);
     QGraphicsLineItem *a1 = new QGraphicsLineItem(d->X);
     QGraphicsLineItem *a2 = new QGraphicsLineItem(d->X);
@@ -51,8 +92,7 @@ QGraphicsLineItem *QuGraphicsItemAxes::X() {
 }
 
 QGraphicsLineItem *QuGraphicsItemAxes::Y()
-{    if(d->Y)
-        delete d->Y;
+{
     d->Y = new QGraphicsLineItem(nullptr);
     QGraphicsLineItem *a1 = new QGraphicsLineItem(d->Y);
     QGraphicsLineItem *a2 = new QGraphicsLineItem(d->Y);
@@ -82,12 +122,12 @@ void QuGraphicsItemAxes::setYAxisBounds(const double &yl, const double &yu) {
 
 /*!
  * \brief returns the QuGraphicsItemAxes id
- * \return QuGraphicsItemAxes::QuGraphicsItemAxes_Helper
+ * \return QuGraphicsItemAxes::Axes
  *
  * \see QuGraphicsItem::helper
  */
 int QuGraphicsItemAxes::id() const {
-    return QuGraphicsItemAxes_Helper;
+    return Axes;
 }
 
 QuGraphicsItem *QuGraphicsItemAxes::item() const {
@@ -103,13 +143,13 @@ void QuGraphicsItemAxes::detach() {
 }
 
 QPointF QuGraphicsItemAxes::xp(const double &x) const {
-    const double &yp = d->geom->origin().y();
+    const double &yp = origin().y();
     const double& xv = (x - d->xlb ) / (d->xub - d->xlb);
     return d->geom->map(QPointF(d->geom->bounds().x() + xv * d->geom->bounds().width(), yp ));
 }
 
 QPointF QuGraphicsItemAxes::yp(const double &y) const {
-    const double &xp = d->geom->origin().x();
+    const double &xp = origin().x();
     const double& yv = ( y - d->ylb ) / (d->yub - d->ylb);
     const QPointF& p = QPointF(xp, d->geom->bounds().y() + yv * d->geom->bounds().height());
     return d->geom->map(p);
@@ -130,7 +170,7 @@ void QuGraphicsItemAxes::updateAxes() {
 
 void QuGraphicsItemAxes::updateXAxis() {
     if(d->X) {
-        const QPointF& o = d->geom->origin_rel();
+        const QPointF& o = originRel();
         double oy = o.y(); // origin of the axes
         QPointF p1, p2;
         const QRectF& r = d->geom->bounds();
@@ -160,7 +200,7 @@ void QuGraphicsItemAxes::updateXAxis() {
 
 void QuGraphicsItemAxes::updateYAxis() {
     if(d->Y) {
-        const QPointF& o = d->geom->origin_rel();
+        const QPointF& o = originRel();
         double ox = o.x(); // origin of the axes
         QPointF p1, p2;
         const QRectF& r = d->geom->bounds();
@@ -186,3 +226,4 @@ void QuGraphicsItemAxes::updateYAxis() {
         }
     }
 }
+
