@@ -35,6 +35,7 @@ public:
     QuGraphicsItem *item(const QString& id) const;
     QString id(QuGraphicsItem *it) const;
     QList<QuGraphicsItem *> itemsByTag(const QString& tag) const;
+    QList<QuGraphicsItem *> findItems(const QRegularExpression& re) const;
     QList<QuGraphicsItem *> qusvgitems() const;
 
     qreal zoomFactor() const;

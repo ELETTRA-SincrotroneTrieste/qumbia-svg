@@ -22,6 +22,7 @@
 // refresh svg
 #include <QTimer>
 #include <QTime>
+#include <QRegularExpressionMatch>
 
 #include <QApplication>
 #include <QRandomGenerator>
@@ -36,7 +37,6 @@ public:
     QuSvgView::RendererType m_renderer;
     QImage m_image;
     QStringList m_ids;
-    QMap<QString, QString> svg_cache;
     QMap<QString, QuGraphicsItem *> items_cache;
     QSvgRenderer *renderer;
     QuGraphicsItemXtensionFactory *xt_factory;
@@ -199,9 +199,21 @@ QList<QuGraphicsItem *> QuSvgView::itemsByTag(const QString &tag) const {
     return l;
 }
 
+QList<QuGraphicsItem *> QuSvgView::findItems(const QRegularExpression &re) const  {
+    QList<QuGraphicsItem *> l;
+    const QStringList& ids = d->items_cache.keys();
+    QRegularExpressionMatch ma;
+    foreach(const QString& id, ids) {
+        ma = re.match(id);
+        if(ma.hasMatch())
+            l.push_back(d->items_cache[id]);
+    }
+    return l;
+}
+
 QList<QuGraphicsItem *> QuSvgView::qusvgitems() const {
     QList<QuGraphicsItem *> l;
-    foreach(QGraphicsItem* i, QuSvgView::items())
+    foreach(QGraphicsItem* i, QGraphicsView::items())
         if(i->type() == QuGraphicsItem::QuGraphicsItemType)
             l.append(static_cast<QuGraphicsItem *>(i));
     return l;

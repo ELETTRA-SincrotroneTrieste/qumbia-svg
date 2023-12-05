@@ -84,8 +84,7 @@ bool QuDom::setContent(const QByteArray &svg)
     return d->error.isEmpty();
 }
 
-QString QuDom::getAttribute(const QDomElement &el, const QString &attribute)
-{
+QString QuDom::getAttribute(const QDomElement &el, const QString &attribute) {
     return el.attribute(attribute);
 }
 
