@@ -28,11 +28,7 @@
 #include <QRandomGenerator>
 
 #ifndef QT_NO_OPENGL
-    #if QT_VERSION < QT_VERSION_CHECK(6,0,0)
-        #include <QGLWidget>
-    #else
-        #include <QOpenGLWidget>
-    #endif
+    #include <QOpenGLWidget>
 #endif
 
 class QuSvgViewPrivate {
@@ -71,11 +67,7 @@ void QuSvgView::setRenderer(RendererType type)
 
     if (d->m_renderer == OpenGL) {
 #ifndef QT_NO_OPENGL
-#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
-        setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
-#else
         setViewport(new QOpenGLWidget());
-#endif
 #endif
     } else {
         setViewport(new QWidget);
