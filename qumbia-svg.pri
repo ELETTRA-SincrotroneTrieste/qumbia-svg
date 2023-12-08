@@ -48,7 +48,7 @@ unix:!android-g++ {
 QT       += widgets xml svg opengl
 
 greaterThan(QT_MAJOR_VERSION, 5) {
-    QT += svgwidgets
+    QT += svgwidgets openglwidgets
 }
 
 LIBS += -L$${INSTALL_ROOT}/lib -l$${qumbia_svg_LIB}

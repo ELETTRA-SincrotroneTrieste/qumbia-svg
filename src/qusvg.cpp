@@ -127,7 +127,7 @@ void QuSvg::addDataListener(const QString& id, QuSvgDataListener *l) {
  * @see addDataListener
  */
 void QuSvg::removeDataListener(QuSvgDataListener *l) {
-    QMutableMapIterator<QString, QuSvgDataListener *> mi(d->listeners);
+    QMutableMultiMapIterator<QString, QuSvgDataListener *> mi(d->listeners);
     while(mi.hasNext()) {
         mi.next();
         if(mi.value() == l)

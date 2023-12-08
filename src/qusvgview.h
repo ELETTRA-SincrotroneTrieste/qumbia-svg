@@ -43,7 +43,6 @@ public:
     QuGraphicsItemXtensionFactory *extension_factory() const;
 
 public slots:
-    void setHighQualityAntialiasing(bool highQualityAntialiasing);
     void zoomIn();
     void zoomOut();
     void resetZoom();

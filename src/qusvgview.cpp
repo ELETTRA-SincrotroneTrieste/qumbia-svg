@@ -28,7 +28,11 @@
 #include <QRandomGenerator>
 
 #ifndef QT_NO_OPENGL
-#include <QGLWidget>
+    #if QT_VERSION < QT_VERSION_CHECK(6,0,0)
+        #include <QGLWidget>
+    #else
+        #include <QOpenGLWidget>
+    #endif
 #endif
 
 class QuSvgViewPrivate {
@@ -67,20 +71,15 @@ void QuSvgView::setRenderer(RendererType type)
 
     if (d->m_renderer == OpenGL) {
 #ifndef QT_NO_OPENGL
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
         setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+#else
+        setViewport(new QOpenGLWidget());
+#endif
 #endif
     } else {
         setViewport(new QWidget);
     }
-}
-
-void QuSvgView::setHighQualityAntialiasing(bool highQualityAntialiasing)
-{
-#ifndef QT_NO_OPENGL
-    setRenderHint(QPainter::HighQualityAntialiasing, highQualityAntialiasing);
-#else
-    Q_UNUSED(highQualityAntialiasing);
-#endif
 }
 
 qreal QuSvgView::zoomFactor() const
@@ -166,7 +165,11 @@ void QuSvgView::sceneChanged(const QList<QRectF> &rects)
 
 void QuSvgView::wheelEvent(QWheelEvent *event)
 {
+#if QT_VERSION > QT_VERSION_CHECK(5,15,0)
+    m_zoomBy(qPow(1.2, event->angleDelta().y() / 240.0));
+#else
     m_zoomBy(qPow(1.2, event->delta() / 240.0));
+#endif
 }
 
 void QuSvgView::m_zoomBy(qreal factor)

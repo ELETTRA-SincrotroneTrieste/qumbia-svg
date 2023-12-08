@@ -100,8 +100,13 @@ QString QuSvgReadLink::toString() const {
 }
 
 void QuSvgReadLink::m_get_options(const QString& opt_att) {
+#if QT_VERSION >= QT_VERSION_CHECK(5,15,0)
+    foreach(QString prop, opt_att.split(";", Qt::SkipEmptyParts)) {
+        QStringList sl = prop.split(":", Qt::SkipEmptyParts);
+#else
     foreach(QString prop, opt_att.split(";", QString::SkipEmptyParts)) {
         QStringList sl = prop.split(":", QString::SkipEmptyParts);
+#endif
         if(sl.size() == 2 && !sl.first().isEmpty() && !sl.last().isEmpty())
             options[sl.first()] = sl.last();
     }
