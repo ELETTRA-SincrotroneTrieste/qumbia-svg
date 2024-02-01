@@ -236,7 +236,11 @@ void QuSvgView::m_createItem(QString id) {
             svgItem->setProperty(qstoc(property), el.a(property));
 
     const QRectF &item_r = d->renderer->boundsOnElement(id);
+#if QT_VERSION >= QT_VERSION_CHECK(5,15,0)
     const QTransform& m = d->renderer->transformForElement(id);
+#else
+    const QMatrix& m = d->renderer->matrixForElement(id);
+#endif
     !m.isIdentity() ? svgItem->setPos(m.mapRect(item_r).topLeft())
                     : svgItem->setPos(item_r.topLeft());
 //    if(!m.isIdentity()) {
