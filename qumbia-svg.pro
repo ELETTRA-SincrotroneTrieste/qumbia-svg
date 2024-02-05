@@ -75,9 +75,6 @@ HEADERS += \
     src/events/qusvgitemeventhandler.h \
     src/events/qusvgwriteactionprovider.h
 
-DISTFILES += \
-    Doxyfile
-
 unix {
     doc.commands = \
     doxygen \
@@ -90,11 +87,8 @@ unix {
     inc.files = $${HEADERS}
     inc.path = $${QUMBIA_SVG_INCLUDES}
 
-    other_inst.files = $${DISTFILES}
-    other_inst.path = $${QUMBIA_SVG_INCLUDES}
-
     target.path = $${QUMBIA_SVG_LIBDIR}
-    INSTALLS += target inc other_inst
+    INSTALLS += target inc
 
 #message("=====================================")
 #message("DOC INSTALL SKIPPED!!!!!!!!!!!!!!!!")
