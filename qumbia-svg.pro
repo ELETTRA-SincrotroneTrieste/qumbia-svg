@@ -18,8 +18,8 @@ isEmpty(buildtype) {
 
 CONFIG += $${buildtype}
 
-VERSION_HEX = 0x0100100
-VERSION = 1.1.0
+VERSION_HEX = 0x0200000
+VERSION = 2.0.0
 
 TARGET = $${qumbia_svg_LIB}
 TEMPLATE = lib
