@@ -18,15 +18,10 @@ isEmpty(buildtype) {
 
 CONFIG += $${buildtype}
 
-VERSION_HEX = 0x0200000
-VERSION = 2.0.0
-
 TARGET = $${qumbia_svg_LIB}
 TEMPLATE = lib
 
-DEFINES -= QT_NO_DEBUG_OUTPUT
-
-DEFINES += QUMBIASVG_LIBRARY
+DEFINES += QT_NO_DEBUG_OUTPUT
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
